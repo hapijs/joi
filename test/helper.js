@@ -9,6 +9,19 @@ const internals = {};
 const { expect } = Code;
 
 
+exports.equal = function (a, b) {
+
+    try {
+        expect(a).to.equal(b, { deepFunction: true, skip: ['$_temp'] });
+    }
+    catch (err) {
+        console.error(err.stack);
+        err.at = internals.thrownAt();      // Adjust error location to test
+        throw err;
+    }
+};
+
+
 exports.validate = function (schema, prefs, tests) {
 
     if (!tests) {
@@ -25,8 +38,8 @@ exports.validate = function (schema, prefs, tests) {
             }
 
             const { error, value } = schema.validate(input, prefs);
-            const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
 
+            const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
             expect(error).to.equal(errord);
             expect(value).to.equal(valued);
 

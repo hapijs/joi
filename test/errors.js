@@ -4,6 +4,8 @@ const Code = require('@hapi/code');
 const Joi = require('..');
 const Lab = require('@hapi/lab');
 
+const Helper = require('./helper');
+
 
 const internals = {};
 
@@ -965,7 +967,7 @@ describe('errors', () => {
             const err = schema.validate(value).error;
             expect(err.message).equal('"type" must be [string]');
             expect(err.annotate()).to.contain('"type" must be [string]');
-            expect(value).to.equal(Joi.number().min(1));
+            Helper.equal(value, Joi.number().min(1));
         });
     });
 });

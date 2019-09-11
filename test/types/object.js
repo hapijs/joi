@@ -3585,7 +3585,7 @@ describe('object', () => {
             });
 
             expect(first.describe()).to.equal(after1.describe());
-            expect(first).to.equal(after1, { skip: ['$_temp'] });
+            Helper.equal(first, after1);
             expect(before.describe()).to.equal(bd);
         });
     });

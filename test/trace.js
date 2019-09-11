@@ -942,5 +942,27 @@ describe('Trace', () => {
                 { type: 'entry', path: ['child', 'child', 'child'] }
             ]);
         });
+
+        it('handles link.concat() after resolved', () => {
+
+            const a = Joi.object({
+                x: Joi.link('..')
+            });
+
+            const b = Joi.object({
+                x: Joi.forbidden()
+            });
+
+            a.validate({ x: {} }, { debug: true });
+
+            const schema = a.concat(b);
+            const debug = schema.validate({ x: {} }, { debug: true }).debug;
+            expect(debug).to.equal([
+                { type: 'entry', path: [] },
+                { type: 'rule', name: 'when', result: '0.concat', path: ['x'] },
+                { type: 'entry', path: ['x'] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'x', path: ['x'] }
+            ]);
+        });
     });
 });

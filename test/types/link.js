@@ -29,9 +29,11 @@ describe('link', () => {
         })
             .id('type');
 
-        expect(schema.validate({ a: 1, b: 2 }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: '2' }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: 2 }, true],
+            [{ a: '1', b: '2' }, true],
+            [{ a: [1], b: '2' }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('links named schema (implicit)', () => {
@@ -49,9 +51,11 @@ describe('link', () => {
             })
         });
 
-        expect(schema.validate({ a: { b: { c: { d: '1' } }, e: { f: '2' } } }).error).to.not.exist();
-        expect(schema.validate({ a: { b: { c: { d: 1 } }, e: { f: 2 } } }).error).to.not.exist();
-        expect(schema.validate({ a: { b: { c: { d: {} } }, e: { f: 2 } } }).error).to.be.an.error('"a.b.c.d" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: { b: { c: { d: '1' } }, e: { f: '2' } } }, true],
+            [{ a: { b: { c: { d: 1 } }, e: { f: 2 } } }, true],
+            [{ a: { b: { c: { d: {} } }, e: { f: 2 } } }, false, '"a.b.c.d" must be one of [string, number]']
+        ]);
     });
 
     it('links shared schema', () => {
@@ -66,9 +70,11 @@ describe('link', () => {
             .shared(shared)
             .id('type');
 
-        expect(schema.validate({ a: 1, b: 2 }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: '2' }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: 2 }, true],
+            [{ a: '1', b: '2' }, true],
+            [{ a: [1], b: '2' }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('links schema nodes', () => {
@@ -78,9 +84,11 @@ describe('link', () => {
             b: Joi.link('a')
         });
 
-        expect(schema.validate({ a: 1, b: 2 }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: '2' }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: 2 }, true],
+            [{ a: '1', b: '2' }, true],
+            [{ a: [1], b: '2' }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('links schema cousin nodes', () => {
@@ -92,9 +100,11 @@ describe('link', () => {
             }
         });
 
-        expect(schema.validate({ a: 1, b: { c: 2 } }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: { c: '2' } }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: { c: '2' } }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: { c: 2 } }, true],
+            [{ a: '1', b: { c: '2' } }, true],
+            [{ a: [1], b: { c: '2' } }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('links schema cousin nodes (root)', () => {
@@ -106,9 +116,11 @@ describe('link', () => {
             }
         });
 
-        expect(schema.validate({ a: 1, b: { c: 2 } }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: { c: '2' } }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: { c: '2' } }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: { c: 2 } }, true],
+            [{ a: '1', b: { c: '2' } }, true],
+            [{ a: [1], b: { c: '2' } }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('validates a recursive schema', () => {
@@ -175,11 +187,13 @@ describe('link', () => {
             }
         });
 
-        expect(schema.validate({ a: { y: 1 }, b: { y: 1 } }).error).to.not.exist();
-        expect(schema.validate({ a: { y: 1 }, b: { y: 2 } }).error).to.be.an.error('"b.y" must be [1]');
+        Helper.validate(schema, [
+            [{ a: { y: 1 }, b: { y: 1 } }, true],
+            [{ a: { y: 1 }, b: { y: 2 } }, false, '"b.y" must be [1]']
+        ]);
     });
 
-    it('reresolves schema', () => {
+    it('re-resolves schema', () => {
 
         const link = Joi.link('x').relative();
         const schema = Joi.object({
@@ -193,8 +207,10 @@ describe('link', () => {
             }
         });
 
-        expect(schema.validate({ a: { y: 1 }, b: { y: 2 } }).error).to.not.exist();
-        expect(schema.validate({ a: { y: 1 }, b: { y: 1 } }).error).to.be.an.error('"b.y" must be [2]');
+        Helper.validate(schema, [
+            [{ a: { y: 1 }, b: { y: 2 } }, true],
+            [{ a: { y: 1 }, b: { y: 1 } }, false, '"b.y" must be [2]']
+        ]);
     });
 
     it('validates a recursive schema (in alternatives)', () => {
@@ -233,9 +249,11 @@ describe('link', () => {
 
         const schema = b.concat(a);
 
-        expect(schema.validate({ a: 1, b: 2, c: 3 }).error).to.not.exist();
-        expect(schema.validate({ a: '1', b: '2', c: 3 }).error).to.not.exist();
-        expect(schema.validate({ a: [1], b: '2' }).error).to.be.an.error('"a" must be one of [string, number]');
+        Helper.validate(schema, [
+            [{ a: 1, b: 2, c: 3 }, true],
+            [{ a: '1', b: '2', c: 3 }, true],
+            [{ a: [1], b: '2' }, false, '"a" must be one of [string, number]']
+        ]);
     });
 
     it('errors on invalid reference', () => {
@@ -344,8 +362,13 @@ describe('link', () => {
                 x: Joi.forbidden()
             });
 
-            expect(a.validate({ x: {} }).error).to.not.exist();
-            expect(a.concat(b).validate({ x: {} }).error).to.be.an.error('"x" is not allowed');
+            Helper.validate(a, [
+                [{ x: {} }, true]
+            ]);
+
+            Helper.validate(a.concat(b), [
+                [{ x: {} }, false, '"x" is not allowed']
+            ]);
         });
 
         it('applies concat after ref resolved', () => {

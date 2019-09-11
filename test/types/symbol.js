@@ -33,7 +33,7 @@ describe('symbol', () => {
 
             const schema = Joi.symbol();
             const clone = schema.clone();
-            expect(schema).to.equal(clone);
+            Helper.equal(schema, clone);
             expect(schema).to.not.shallow.equal(clone);
         });
     });

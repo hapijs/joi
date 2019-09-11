@@ -83,7 +83,7 @@ describe('any', () => {
                 }
             };
 
-            expect(Joi.string().valid('x').messages(messages)).to.equal(Joi.string().valid('x').prefs({ messages }));
+            Helper.equal(Joi.string().valid('x').messages(messages), Joi.string().valid('x').prefs({ messages }));
         });
     });
 

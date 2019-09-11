@@ -160,7 +160,7 @@ describe('Modify', () => {
             const before = Joi.string().empty(Joi.number().id('x'));
             const after = Joi.string().empty(Joi.number().min(10).id('x'));
 
-            expect(before.fork('x', (schema) => schema.min(10))).to.equal(after, { skip: ['$_temp'] });
+            Helper.equal(before.fork('x', (schema) => schema.min(10)), after);
         });
 
         it('adjusts reused schema in multiple places', () => {
@@ -183,7 +183,7 @@ describe('Modify', () => {
             expect(after.extract('a')).to.shallow.equal(after.extract('b'));
 
             const modified = before.fork('x', (schema) => schema.min(10));
-            expect(modified).to.equal(after);
+            Helper.equal(modified, after);
             expect(modified.extract('a')).to.shallow.equal(modified.extract('b'));
         });
 
@@ -211,7 +211,7 @@ describe('Modify', () => {
                     }).id('objects')
                 ]);
 
-                expect(first).to.equal(after1, { skip: ['$_temp'] });
+                Helper.equal(first, after1);
 
                 const second = first.fork('numbers', (schema) => schema.min(10));
 
@@ -224,7 +224,7 @@ describe('Modify', () => {
                     }).id('objects')
                 ]);
 
-                expect(second).to.equal(after2, { skip: ['$_temp'] });
+                Helper.equal(second, after2);
             });
 
             it('adjusts when schema', () => {
@@ -249,7 +249,7 @@ describe('Modify', () => {
                         ])
                 });
 
-                expect(forked).to.equal(after);
+                Helper.equal(forked, after);
             });
 
             it('adjusts alternatives schema', () => {
@@ -278,7 +278,7 @@ describe('Modify', () => {
                         })
                 });
 
-                expect(forked).to.equal(after);
+                Helper.equal(forked, after);
             });
         });
 
@@ -312,7 +312,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5).id('five'));
 
-                expect(first).to.equal(after1, { skip: ['$_temp'] });
+                Helper.equal(first, after1);
 
                 const second = first.fork('numbers', (schema) => schema.min(10));
 
@@ -328,7 +328,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5).id('five'));
 
-                expect(second).to.equal(after2, { skip: ['$_temp'] });
+                Helper.equal(second, after2);
 
                 const third = second.fork('five', (schema) => schema.allow(-5));
 
@@ -344,7 +344,7 @@ describe('Modify', () => {
                     .has(Joi.object())
                     .has(Joi.valid(5, -5).id('five'));
 
-                expect(third).to.equal(after3, { skip: ['$_temp'] });
+                Helper.equal(third, after3);
             });
         });
 
@@ -370,8 +370,8 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(before.fork('b.c.d', (schema) => schema.min(10))).to.equal(after);
-                expect(before.fork([['b', 'c', 'd']], (schema) => schema.min(10))).to.equal(after);
+                Helper.equal(before.fork('b.c.d', (schema) => schema.min(10)), after);
+                Helper.equal(before.fork([['b', 'c', 'd']], (schema) => schema.min(10)), after);
             });
 
             it('forks multiple times', () => {
@@ -407,7 +407,7 @@ describe('Modify', () => {
                     x: Joi.number().required()
                 });
 
-                expect(fourth).to.equal(after);
+                Helper.equal(fourth, after);
 
                 expect(before.describe()).to.equal(bd);
                 expect(first.describe()).to.equal(fd);
@@ -448,7 +448,7 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(first).to.equal(a1);
+                Helper.equal(first, a1);
 
                 const a2 = Joi.object({
                     x: Joi.number(),
@@ -459,7 +459,7 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(second).to.equal(a2);
+                Helper.equal(second, a2);
 
                 const a3 = Joi.object({
                     x: Joi.number(),
@@ -470,7 +470,7 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(third).to.equal(a3);
+                Helper.equal(third, a3);
 
                 const a4 = Joi.object({
                     x: Joi.number().required(),
@@ -481,7 +481,7 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(fourth).to.equal(a4);
+                Helper.equal(fourth, a4);
 
                 expect(before.describe()).to.equal(bd);
                 expect(first.describe()).to.equal(fd);
@@ -509,8 +509,8 @@ describe('Modify', () => {
                     })
                 });
 
-                expect(before.fork('b.c.D', (schema) => schema.min(10))).to.equal(after);
-                expect(before.fork([['b', 'c', 'D']], (schema) => schema.min(10))).to.equal(after);
+                Helper.equal(before.fork('b.c.D', (schema) => schema.min(10)), after);
+                Helper.equal(before.fork([['b', 'c', 'D']], (schema) => schema.min(10)), after);
             });
 
             it('sets keys as required', () => {
@@ -675,7 +675,7 @@ describe('Modify', () => {
         it('unsets id', () => {
 
             const schema = Joi.any().id('x');
-            expect(schema.id()).to.equal(Joi.any(), { skip: ['$_temp'] });
+            Helper.equal(schema.id(), Joi.any());
         });
 
         it('errors on invalid id', () => {
@@ -686,7 +686,7 @@ describe('Modify', () => {
         it('overrides id', () => {
 
             const schema = Joi.any().id('x');
-            expect(schema.id('y')).to.equal(Joi.any().id('y'), { skip: ['$_temp'] });
+            Helper.equal(schema.id('y'), Joi.any().id('y'));
         });
     });
 

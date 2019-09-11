@@ -1490,7 +1490,7 @@ describe('alternatives', () => {
                 ])
             });
 
-            expect(first).to.equal(after);
+            Helper.equal(first, after);
             expect(first.describe()).to.equal(after.describe());
             expect(before.describe()).to.equal(bd);
         });
@@ -1526,7 +1526,7 @@ describe('alternatives', () => {
                     .alter(alt2)
             });
 
-            expect(first).to.equal(after);
+            Helper.equal(first, after);
             expect(first.describe()).to.equal(after.describe());
             expect(before.describe()).to.equal(bd);
         });

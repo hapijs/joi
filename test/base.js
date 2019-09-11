@@ -2436,13 +2436,13 @@ describe('any', () => {
             const first = before.tailor('x');
             const after1 = Joi.number().min(10).alter(alterations);
 
-            expect(first).to.equal(after1);
+            Helper.equal(first, after1);
             expect(first.describe()).to.equal(after1.describe());
 
             const second = first.tailor(['y', 'z']);
             const after2 = Joi.number().min(10).max(50).integer().alter(alterations);
 
-            expect(second).to.equal(after2);
+            Helper.equal(second, after2);
         });
 
         it('customizes root schema (multiple alter calls)', () => {
@@ -2461,13 +2461,13 @@ describe('any', () => {
             const first = before.tailor('x');
             const after1 = Joi.number().min(10).alter(alter1).alter(alter2);
 
-            expect(first).to.equal(after1);
+            Helper.equal(first, after1);
             expect(first.describe()).to.equal(after1.describe());
 
             const second = first.tailor(['y', 'z']);
             const after2 = Joi.number().min(10).max(50).integer().alter(alter1).alter(alter2);
 
-            expect(second).to.equal(after2);
+            Helper.equal(second, after2);
         });
 
         it('customizes nested schema', () => {
@@ -2500,7 +2500,7 @@ describe('any', () => {
                     .pattern(/.*/, numberxy)
             });
 
-            expect(tailored).to.equal(after, { skip: ['$_temp'] });
+            Helper.equal(tailored, after);
             expect(tailored.describe()).to.equal(after.describe());
         });
     });

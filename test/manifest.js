@@ -4,6 +4,7 @@ const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Joi = require('..');
 
+const Helper = require('./helper');
 
 const internals = {};
 
@@ -521,7 +522,7 @@ describe('Manifest', () => {
             });
 
             const built = custom.build(desc);
-            expect(built).to.equal(schema, { skip: ['$_temp', '$_root'] });
+            Helper.equal(built, schema);
         });
 
         it('builds extended schema (complex)', () => {
@@ -670,7 +671,7 @@ describe('Manifest', () => {
             });
 
             const built = custom.build(desc);
-            expect(built).to.equal(schema, { skip: ['$_temp'] });
+            Helper.equal(built, schema);
         });
     });
 });
@@ -680,6 +681,6 @@ internals.test = function (schemas) {
 
     for (const schema of schemas) {
         const built = Joi.build(schema.describe());
-        expect(built).to.equal(schema, { skip: ['$_temp'] });
+        Helper.equal(built, schema);
     }
 };
