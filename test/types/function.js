@@ -226,7 +226,7 @@ describe('function', () => {
                 type: 'any.required',
                 context: { label: 'a', key: 'a' }
             }],
-            [a, true],
+            [a, true, Helper.skip],
             [b, false, {
                 message: '"a" must be a string',
                 path: ['a'],
@@ -259,7 +259,7 @@ describe('function', () => {
         c.a = 'abc';
 
         Helper.validate(schema, [
-            [a, true],
+            [a, true, Helper.skip],
             [function (x) { }, false, {
                 message: '"a" is required',
                 path: ['a'],

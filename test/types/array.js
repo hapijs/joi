@@ -1311,7 +1311,7 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
-                [1, true],
+                [1, true, [1]],
                 [['a'], false, {
                     message: '"[0]" must be a number',
                     path: [0],
@@ -1339,9 +1339,9 @@ describe('array', () => {
 
             Helper.validate(schema, [
                 [[1, 2, 3], true],
-                [1, true],
+                [1, true, [1]],
                 [[1, 'a'], true],
-                ['a', true],
+                ['a', true, ['a']],
                 [true, false, {
                     message: '"value" does not match any of the allowed types',
                     path: [],
@@ -2494,7 +2494,7 @@ describe('array', () => {
                     type: 'number.base',
                     context: { label: '[0]', key: 0, value: 'a' }
                 }],
-                [['1', '2', 4], true]
+                [['1', '2', 4], true, [1, 2, 4]]
             ]);
         });
 

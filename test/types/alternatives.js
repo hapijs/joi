@@ -48,7 +48,7 @@ describe('alternatives', () => {
         });
 
         Helper.validate(schema, [
-            [{ a: '5' }, true]
+            [{ a: '5' }, true, { a: 5 }]
         ]);
     });
 
@@ -62,7 +62,7 @@ describe('alternatives', () => {
         });
 
         Helper.validate(schema, [
-            [{ a: '5' }, true]
+            [{ a: '5' }, true, { a: 5 }]
         ]);
     });
 
@@ -539,7 +539,7 @@ describe('alternatives', () => {
                 });
 
                 Helper.validate(schema, [
-                    [{ a: 'x', b: 5, c: '5' }, true],
+                    [{ a: 'x', b: 5, c: '5' }, true, { a: 'x', b: 5, c: 5 }],
                     [{ a: 'x', b: 5, c: '1' }, false, {
                         message: '"a" does not match any of the allowed types',
                         path: ['a'],
@@ -652,7 +652,7 @@ describe('alternatives', () => {
                         type: 'any.only',
                         context: { value: 'x', valids: [ref], label: 'a', key: 'a' }
                     }],
-                    [{ a: 1, b: 5, c: '1' }, true],
+                    [{ a: 1, b: 5, c: '1' }, true, { a: 1, b: 5, c: 1 }],
                     [{ a: '1', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         path: ['a'],
@@ -678,7 +678,7 @@ describe('alternatives', () => {
                         type: 'any.only',
                         context: { value: 'x', valids: [ref], label: 'a', key: 'a' }
                     }],
-                    [{ a: 1, b: 5, c: '1' }, true],
+                    [{ a: 1, b: 5, c: '1' }, true, { a: 1, b: 5, c: 1 }],
                     [{ a: '1', b: 5, c: '1' }, false, {
                         message: '"a" must be [ref:c]',
                         path: ['a'],

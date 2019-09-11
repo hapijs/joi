@@ -35,7 +35,7 @@ describe('binary', () => {
         const schema = Joi.binary().valid(hello);
 
         Helper.validate(schema, [
-            ['hello', true],
+            ['hello', true, Buffer.from('hello')],
             [hello, true],
             [Buffer.from('hello'), true],
             ['goodbye', false, {

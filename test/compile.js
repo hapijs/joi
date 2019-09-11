@@ -87,7 +87,7 @@ describe('cast', () => {
             const dnow = new Date(now);
             Helper.validate(Joi.compile(dnow), [
                 [new Date(now), true],
-                [now, true],
+                [now, true, new Date(now)],
                 [now * 2, false, {
                     message: `"value" must be [${dnow.toISOString()}]`,
                     path: [],

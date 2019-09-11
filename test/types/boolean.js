@@ -133,7 +133,7 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().falsy('N');
             Helper.validate(rule, [
-                ['N', true],
+                ['N', true, false],
                 ['Y', false, {
                     message: '"value" must be a boolean',
                     path: [],
@@ -155,8 +155,8 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().falsy('N', 'Never');
             Helper.validate(rule, [
-                ['N', true],
-                ['Never', true],
+                ['N', true, false],
+                ['Never', true, false],
                 ['Y', false, {
                     message: '"value" must be a boolean',
                     path: [],
@@ -178,8 +178,8 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().falsy('N').falsy('Never');
             Helper.validate(rule, [
-                ['N', true],
-                ['Never', true],
+                ['N', true, false],
+                ['Never', true, false],
                 ['Y', false, {
                     message: '"value" must be a boolean',
                     path: [],
@@ -460,15 +460,15 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().truthy('Y', 'Si', 1).falsy('N', 'Never', 0).allow(null).required();
             Helper.validate(rule, [
-                ['N', true],
-                ['Never', true],
-                ['Y', true],
-                ['y', true],
-                ['Si', true],
+                ['N', true, false],
+                ['Never', true, false],
+                ['Y', true, true],
+                ['y', true, true],
+                ['Si', true, true],
                 [true, true],
                 [false, true],
-                [1, true],
-                [0, true],
+                [1, true, true],
+                [0, true, false],
                 [null, true],
                 ['M', false, {
                     message: '"value" must be a boolean',
@@ -491,7 +491,7 @@ describe('boolean', () => {
             const b = Joi.boolean().falsy('no');
 
             Helper.validate(a, [
-                ['yes', true],
+                ['yes', true, true],
                 ['no', false, {
                     message: '"value" must be a boolean',
                     path: [],
@@ -501,7 +501,7 @@ describe('boolean', () => {
             ]);
 
             Helper.validate(b, [
-                ['no', true],
+                ['no', true, false],
                 ['yes', false, {
                     message: '"value" must be a boolean',
                     path: [],
@@ -511,8 +511,8 @@ describe('boolean', () => {
             ]);
 
             Helper.validate(a.concat(b), [
-                ['yes', true],
-                ['no', true]
+                ['yes', true, true],
+                ['no', true, false]
             ]);
         });
 
@@ -536,7 +536,7 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().truthy('Y');
             Helper.validate(rule, [
-                ['Y', true],
+                ['Y', true, true],
                 [true, true],
                 [false, true],
                 ['N', false, {
@@ -558,8 +558,8 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().truthy('Y', 'Si');
             Helper.validate(rule, [
-                ['Si', true],
-                ['Y', true],
+                ['Si', true, true],
+                ['Y', true, true],
                 [true, true],
                 [false, true],
                 ['N', false, {
@@ -581,8 +581,8 @@ describe('boolean', () => {
 
             const rule = Joi.boolean().truthy('Y').truthy('Si');
             Helper.validate(rule, [
-                ['Si', true],
-                ['Y', true],
+                ['Si', true, true],
+                ['Y', true, true],
                 [true, true],
                 [false, true],
                 ['N', false, {

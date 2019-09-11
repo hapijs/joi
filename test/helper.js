@@ -9,6 +9,9 @@ const internals = {};
 const { expect } = Code;
 
 
+exports.skip = Symbol('skip');
+
+
 exports.equal = function (a, b) {
 
     try {
@@ -38,9 +41,9 @@ exports.validate = function (schema, prefs, tests) {
                 expect(expected, 'Failing tests messages must be tested').to.exist();
             }
 
+            const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
             const { error, value } = schema.validate(input, prefs);
 
-            const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
             expect(error).to.equal(errord);
             expect(value).to.equal(valued);
 
@@ -60,14 +63,17 @@ exports.validate = function (schema, prefs, tests) {
 
             if (test.length === 2) {
                 if (pass) {
-                    expect(value).to.equal(input, { deepFunction: true });
+                    expect(input).to.equal(value);
                 }
 
                 continue;
             }
 
             if (pass) {
-                expect(value).to.equal(expected);
+                if (expected !== exports.skip) {
+                    expect(value).to.equal(expected);
+                }
+
                 continue;
             }
 

@@ -979,28 +979,13 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).and('a', 'b.c');
+            })
+                .and('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
-
-            Helper.validate(schema, [[sampleObject, true]]);
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains [a] without its required peers [b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" contains [a] without its required peers [b.c]',
-                path: [],
-                type: 'object.and',
-                context: {
-                    present: ['a'],
-                    presentWithLabels: ['a'],
-                    missing: ['b.c'],
-                    missingWithLabels: ['b.c'],
-                    label: 'value',
-                    value: error2.details[0].context.value
-                }
-            }]);
+            Helper.validate(schema, [
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true, Helper.skip],
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, false, '"value" contains [a] without its required peers [b.c]']
+            ]);
         });
 
         it('should apply labels with nested objects', () => {
@@ -2314,7 +2299,8 @@ describe('object', () => {
                 txt: Joi.string(),
                 upc: Joi.string().allow(null, ''),
                 code: Joi.number()
-            }).nand('txt', 'upc', 'code');
+            })
+                .nand('txt', 'upc', 'code');
 
             Helper.validate(schema, { abortEarly: false }, [[{ txt: 'x', upc: 'y', code: 123 }, false, {
                 message: '"txt" must not exist simultaneously with [upc, code]',
@@ -2381,7 +2367,9 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
-            }).nand('a', 'b');
+            })
+                .nand('a', 'b');
+
             Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"first" must not exist simultaneously with [second]',
                 path: [],
@@ -2403,14 +2391,12 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.object({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).nand('a', 'b.c');
-
-            const sampleObject = { a: 'test', b: { d: 80 } };
-            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+            })
+                .nand('a', 'b.c');
 
             Helper.validate(schema, [
-                [sampleObject, true],
-                [sampleObject2, false, {
+                [{ a: 'test', b: { d: 80 } }, true],
+                [{ a: 'test', b: { c: 'test2' } }, false, {
                     message: '"a" must not exist simultaneously with [b.c]',
                     path: [],
                     type: 'object.nand',
@@ -2420,7 +2406,7 @@ describe('object', () => {
                         peers: ['b.c'],
                         peersWithLabels: ['b.c'],
                         label: 'value',
-                        value: sampleObject2
+                        value: { a: 'test', b: { c: 'test2' } }
                     }
                 }]
             ]);
@@ -2435,26 +2421,10 @@ describe('object', () => {
             })
                 .nand('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
-
-            Helper.validate(schema, [[sampleObject, true]]);
-
-            const error = schema.validate(sampleObject2).error;
-            expect(error).to.be.an.error('"a" must not exist simultaneously with [b.c]');
-            expect(error.details).to.equal([{
-                message: '"a" must not exist simultaneously with [b.c]',
-                path: [],
-                type: 'object.nand',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peers: ['b.c'],
-                    peersWithLabels: ['b.c'],
-                    label: 'value',
-                    value: error.details[0].context.value
-                }
-            }]);
+            Helper.validate(schema, [
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, true, Helper.skip],
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, false, '"a" must not exist simultaneously with [b.c]']
+            ]);
         });
 
         it('should apply labels with nested objects', () => {
@@ -2702,14 +2672,12 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.function().keys({ c: Joi.string() }),
                 d: Joi.number()
-            }).or('a', 'b.c');
-
-            const sampleObject = { b: Object.assign(() => { }, { c: 'bc' }) };
-            const sampleObject2 = { d: 90 };
+            })
+                .or('a', 'b.c');
 
             Helper.validate(schema, [
-                [sampleObject, true],
-                [sampleObject2, false, {
+                [{ b: Object.assign(() => { }, { c: 'bc' }) }, true, Helper.skip],
+                [{ d: 90 }, false, {
                     message: '"value" must contain at least one of [a, b.c]',
                     path: [],
                     type: 'object.missing',
@@ -2717,7 +2685,7 @@ describe('object', () => {
                         peers: ['a', 'b.c'],
                         peersWithLabels: ['a', 'b.c'],
                         label: 'value',
-                        value: sampleObject2
+                        value: { d: 90 }
                     }
                 }]
             ]);
@@ -2789,7 +2757,9 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
-            }).oxor('a', 'b');
+            })
+                .oxor('a', 'b');
+
             Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"value" contains a conflict between optional exclusive peers [first, second]',
                 path: [],
@@ -2811,14 +2781,12 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.object({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).oxor('a', 'b.c');
-
-            const sampleObject = { a: 'test', b: { d: 80 } };
-            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
+            })
+                .oxor('a', 'b.c');
 
             Helper.validate(schema, [
-                [sampleObject, true],
-                [sampleObject2, false, {
+                [{ a: 'test', b: { d: 80 } }, true],
+                [{ a: 'test', b: { c: 'test2' } }, false, {
                     message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
                     path: [],
                     type: 'object.oxor',
@@ -2828,7 +2796,7 @@ describe('object', () => {
                         present: ['a', 'b.c'],
                         presentWithLabels: ['a', 'b.c'],
                         label: 'value',
-                        value: sampleObject2
+                        value: { a: 'test', b: { c: 'test2' } }
                     }
                 }]
             ]);
@@ -2840,28 +2808,13 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).oxor('a', 'b.c');
+            })
+                .oxor('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
-
-            Helper.validate(schema, [[sampleObject, true]]);
-
-            const error = schema.validate(sampleObject2).error;
-            expect(error).to.be.an.error('"value" contains a conflict between optional exclusive peers [a, b.c]');
-            expect(error.details).to.equal([{
-                message: '"value" contains a conflict between optional exclusive peers [a, b.c]',
-                path: [],
-                type: 'object.oxor',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    present: ['a', 'b.c'],
-                    presentWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: error.details[0].context.value
-                }
-            }]);
+            Helper.validate(schema, [
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, true, Helper.skip],
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, false, '"value" contains a conflict between optional exclusive peers [a, b.c]']
+            ]);
         });
     });
 
@@ -3801,24 +3754,9 @@ describe('object', () => {
                 .with('a', 'b.c');
 
             Helper.validate(schema, [
-                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true]
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true, Helper.skip],
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, false, '"a" missing required peer "b.c"']
             ]);
-
-            const error = schema.validate({ a: 'test', b: Object.assign(() => { }, { d: 80 }) }).error;
-            expect(error).to.be.an.error('"a" missing required peer "b.c"');
-            expect(error.details).to.equal([{
-                message: '"a" missing required peer "b.c"',
-                path: [],
-                type: 'object.with',
-                context: {
-                    main: 'a',
-                    mainWithLabel: 'a',
-                    peer: 'b.c',
-                    peerWithLabel: 'b.c',
-                    label: 'value',
-                    value: error.details[0].context.value
-                }
-            }]);
         });
 
         it('should apply labels with nested objects', () => {
@@ -4254,7 +4192,8 @@ describe('object', () => {
             const schema = Joi.object({
                 code: Joi.string(),
                 upc: Joi.string().allow('')
-            }).xor('code', 'upc');
+            })
+                .xor('code', 'upc');
 
             Helper.validate(schema, [
                 [{ upc: '' }, true],
@@ -4289,26 +4228,8 @@ describe('object', () => {
 
         it('errors when a parameter is not a string', () => {
 
-            let error;
-            try {
-                Joi.object().xor({});
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-
-            expect(error).to.equal(true);
-
-            try {
-                Joi.object().xor(123);
-                error = false;
-            }
-            catch (e) {
-                error = true;
-            }
-
-            expect(error).to.equal(true);
+            expect(() => Joi.object().xor({})).to.throw();
+            expect(() => Joi.object().xor(123)).to.throw();
         });
 
         it('should apply labels without any peer', () => {
@@ -4316,7 +4237,9 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
-            }).xor('a', 'b');
+            })
+                .xor('a', 'b');
+
             Helper.validate(schema, [[{}, false, {
                 message: '"value" must contain at least one of [first, second]',
                 path: [],
@@ -4335,7 +4258,9 @@ describe('object', () => {
             const schema = Joi.object({
                 a: Joi.number().label('first'),
                 b: Joi.string().label('second')
-            }).xor('a', 'b');
+            })
+                .xor('a', 'b');
+
             Helper.validate(schema, [[{ a: 1, b: 'b' }, false, {
                 message: '"value" contains a conflict between exclusive peers [first, second]',
                 path: [],
@@ -4358,7 +4283,9 @@ describe('object', () => {
                 b: Joi.string().label('second'),
                 c: Joi.string().label('third'),
                 d: Joi.string().label('fourth')
-            }).xor('a', 'b', 'c', 'd');
+            })
+                .xor('a', 'b', 'c', 'd');
+
             Helper.validate(schema, [[{ a: 1, b: 'b', d: 'd' }, false, {
                 message: '"value" contains a conflict between exclusive peers [first, second, third, fourth]',
                 path: [],
@@ -4380,28 +4307,13 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.object({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).xor('a', 'b.c');
+            })
+                .xor('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: { d: 80 } };
-            const sampleObject2 = { a: 'test', b: { c: 'test2' } };
-
-            Helper.validate(schema, [[sampleObject, true]]);
-
-            const error = schema.validate(sampleObject2).error;
-            expect(error).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
-            expect(error.details).to.equal([{
-                message: '"value" contains a conflict between exclusive peers [a, b.c]',
-                path: [],
-                type: 'object.xor',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    present: ['a', 'b.c'],
-                    presentWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: sampleObject2
-                }
-            }]);
+            Helper.validate(schema, [
+                [{ a: 'test', b: { d: 80 } }, true],
+                [{ a: 'test', b: { c: 'test2' } }, false, '"value" contains a conflict between exclusive peers [a, b.c]']
+            ]);
         });
 
         it('allows nested keys in functions', () => {
@@ -4410,28 +4322,13 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).xor('a', 'b.c');
+            })
+                .xor('a', 'b.c');
 
-            const sampleObject = { a: 'test', b: Object.assign(() => { }, { d: 80 }) };
-            const sampleObject2 = { a: 'test', b: Object.assign(() => { }, { c: 'test2' }) };
-
-            Helper.validate(schema, [[sampleObject, true]]);
-
-            const error2 = schema.validate(sampleObject2).error;
-            expect(error2).to.be.an.error('"value" contains a conflict between exclusive peers [a, b.c]');
-            expect(error2.details).to.equal([{
-                message: '"value" contains a conflict between exclusive peers [a, b.c]',
-                path: [],
-                type: 'object.xor',
-                context: {
-                    peers: ['a', 'b.c'],
-                    peersWithLabels: ['a', 'b.c'],
-                    present: ['a', 'b.c'],
-                    presentWithLabels: ['a', 'b.c'],
-                    label: 'value',
-                    value: error2.details[0].context.value
-                }
-            }]);
+            Helper.validate(schema, [
+                [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, true, Helper.skip],
+                [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, false, '"value" contains a conflict between exclusive peers [a, b.c]']
+            ]);
         });
 
         it('should apply labels without any nested peers', () => {

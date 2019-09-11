@@ -265,7 +265,7 @@ describe('extension', () => {
         Helper.validate(schema, [
             [undefined, true],
             [1, true],
-            ['1', true],
+            ['1', true, 1],
             [{}, false, {
                 message: '"value" must be a number',
                 path: [],

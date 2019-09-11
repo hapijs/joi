@@ -117,7 +117,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [1, true],
-                ['1', true]
+                ['1', true, 1]
             ]);
 
             Helper.validate(a.concat(b), [
@@ -793,8 +793,8 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: {} }, true],
-                [{ a: { c: '5' }, b: 5 }, true],
-                [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                [{ a: { c: '5' }, b: 5 }, true, { a: { c: 5 }, b: 5 }],
+                [{ a: { c: '5' }, b: 6, c: '6' }, true, { a: { c: 5 }, b: 6, c: 6 }],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, {
                     message: '"b" must be one of [ref:a.c, ref:c]',
                     type: 'alternatives.types',
@@ -2350,7 +2350,7 @@ describe('any', () => {
                 }],
                 [{ array: [3] }, true],
                 [{ array: ['12345', 3] }, true],
-                [{ array: ['3'] }, true],
+                [{ array: ['3'] }, true, { array: [3] }],
                 [{ array: [1] }, false, {
                     message: '"array[0]" does not match any of the allowed types',
                     path: ['array', 0],
@@ -2561,8 +2561,8 @@ describe('any', () => {
             ]);
             Helper.validate(Joi.valid(Joi.ref('$a')), { context: { a: new Date(d.getTime()) } }, [[d, true]]);
             Helper.validate(Joi.object({ a: Joi.date(), b: Joi.valid(Joi.ref('a')) }), [[{ a: d, b: d }, true]]);
-            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: d, b: d }, true]]);
-            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: new Date(0), b: d }, false, '"b" must be [ref:a]']]);
+            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: [d], b: d }, true, { a: [d], b: d }]]);
+            Helper.validate(Joi.object({ a: Joi.array().items(Joi.date()).single(), b: Joi.valid(Joi.in('a')) }), [[{ a: [new Date(0)], b: d }, false, '"b" must be [ref:a]']]);
 
             const str = 'foo';
             Helper.validate(Joi.valid(str), [

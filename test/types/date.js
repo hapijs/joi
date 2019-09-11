@@ -92,7 +92,7 @@ describe('date', () => {
         const now = Date.now();
         Helper.validate(Joi.date().valid(new Date(now)), [
             [new Date(now), true],
-            [new Date(now).toISOString(), true]
+            [new Date(now).toISOString(), true, new Date(now)]
         ]);
     });
 
@@ -121,11 +121,13 @@ describe('date', () => {
 
     it('validates only valid dates', () => {
 
+        const now = new Date();
         const invalidDate = new Date('not a valid date');
+
         Helper.validate(Joi.date(), [
-            ['1-1-2013 UTC', true],
-            [new Date().getTime(), true],
-            [new Date().getTime().toFixed(4), true],
+            ['1-1-2013 UTC', true, new Date('1-1-2013 UTC')],
+            [now.getTime(), true, now],
+            [now.getTime().toFixed(4), true, now],
             ['not a valid date', false, {
                 message: '"value" must be a valid date',
                 path: [],
@@ -193,9 +195,10 @@ describe('date', () => {
                 }
             });
 
+            const now = Date.now();
             Helper.validate(custom.date().format('unknown'), [
                 ['x', false, '"value" must be in unknown format'],
-                [Date.now(), true]
+                [now, true, new Date(now)]
             ]);
             Helper.validate(custom.date().format(['unknown']), [['x', false, '"value" must be in [unknown] format']]);
         });
@@ -208,7 +211,7 @@ describe('date', () => {
             const d = new Date('1-1-2000 UTC');
             const message = `"value" must be greater than "${d.toISOString()}"`;
             Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
-                ['1-1-2001 UTC', true],
+                ['1-1-2001 UTC', true, new Date('1-1-2001 UTC')],
                 ['1-1-2000 UTC', false, {
                     message,
                     path: [],
@@ -276,7 +279,7 @@ describe('date', () => {
                     type: 'date.greater',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
-                [{ a: now, b: now + 1e3 }, true],
+                [{ a: now, b: now + 1e3 }, true, { a: new Date(now), b: new Date(now + 1e3) }],
                 [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:a"',
                     path: ['b'],
@@ -299,10 +302,10 @@ describe('date', () => {
             });
 
             Helper.validate(schema, [
-                [{ a: 123, b: 123, c: 0 }, true],
-                [{ a: 123, b: 456, c: 42 }, true],
-                [{ a: 456, b: 123, c: 0 }, true],
-                [{ a: 123, b: 123, c: 42 }, true],
+                [{ a: 123, b: 123, c: 0 }, true, { a: new Date(123), b: new Date(123), c: 0 }],
+                [{ a: 123, b: 456, c: 42 }, true, { a: new Date(123), b: new Date(456), c: 42 }],
+                [{ a: 456, b: 123, c: 0 }, true, { a: new Date(456), b: new Date(123), c: 0 }],
+                [{ a: 123, b: 123, c: 42 }, true, { a: new Date(123), b: new Date(123), c: 42 }],
                 [{ a: 456, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
                     path: ['c'],
@@ -325,7 +328,7 @@ describe('date', () => {
                     type: 'date.greater',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
                 }],
-                [{ b: now + 1e3 }, true],
+                [{ b: now + 1e3 }, true, { b: new Date(now + 1e3) }],
                 [{ b: now - 1e3 }, false, {
                     message: '"b" must be greater than "ref:global:a"',
                     path: ['b'],
@@ -348,7 +351,7 @@ describe('date', () => {
                     type: 'any.ref',
                     context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
-                [{ a: '123', b: now }, true],
+                [{ a: '123', b: now }, true, { a: '123', b: new Date(now) }],
                 [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be greater than "ref:a"',
                     path: ['b'],
@@ -395,8 +398,8 @@ describe('date', () => {
         it('validates isoDate', () => {
 
             Helper.validate(Joi.date().iso(), [
-                ['+002013-06-07T14:21:46.295Z', true],
-                ['-002013-06-07T14:21:46.295Z', true],
+                ['+002013-06-07T14:21:46.295Z', true, new Date('+002013-06-07T14:21:46.295Z')],
+                ['-002013-06-07T14:21:46.295Z', true, new Date('-002013-06-07T14:21:46.295Z')],
                 ['002013-06-07T14:21:46.295Z', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
@@ -415,53 +418,53 @@ describe('date', () => {
                     type: 'date.format',
                     context: { label: 'value', value: '-2013-06-07T14:21:46.295Z', format: 'iso' }
                 }],
-                ['2013-06-07T14:21:46.295Z', true],
+                ['2013-06-07T14:21:46.295Z', true, new Date('2013-06-07T14:21:46.295Z')],
                 ['2013-06-07T14:21:46.295Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T14:21:46.295Z0', format: 'iso' }
                 }],
-                ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07:00', true, new Date('2013-06-07T14:21:46.295+07:00')],
                 ['2013-06-07T14:21:46.295+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T14:21:46.295+07:000', format: 'iso' }
                 }],
-                ['2013-06-07T14:21:46.295-07:00', true],
-                ['2013-06-07T14:21:46Z', true],
+                ['2013-06-07T14:21:46.295-07:00', true, new Date('2013-06-07T14:21:46.295-07:00')],
+                ['2013-06-07T14:21:46Z', true, new Date('2013-06-07T14:21:46Z')],
                 ['2013-06-07T14:21:46Z0', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T14:21:46Z0', format: 'iso' }
                 }],
-                ['2013-06-07T14:21:46+07:00', true],
-                ['2013-06-07T14:21:46-07:00', true],
-                ['2013-06-07T14:21Z', true],
-                ['2013-06-07T14:21+07:00', true],
+                ['2013-06-07T14:21:46+07:00', true, new Date('2013-06-07T14:21:46+07:00')],
+                ['2013-06-07T14:21:46-07:00', true, new Date('2013-06-07T14:21:46-07:00')],
+                ['2013-06-07T14:21Z', true, new Date('2013-06-07T14:21Z')],
+                ['2013-06-07T14:21+07:00', true, new Date('2013-06-07T14:21+07:00')],
                 ['2013-06-07T14:21+07:000', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T14:21+07:000', format: 'iso' }
                 }],
-                ['2013-06-07T14:21-07:00', true],
+                ['2013-06-07T14:21-07:00', true, new Date('2013-06-07T14:21-07:00')],
                 ['2013-06-07T14:21Z+7:00', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T14:21Z+7:00', format: 'iso' }
                 }],
-                ['2013-06-07', true],
+                ['2013-06-07', true, new Date('2013-06-07')],
                 ['2013-06-07T', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
                     type: 'date.format',
                     context: { label: 'value', value: '2013-06-07T', format: 'iso' }
                 }],
-                ['2013-06-07T14:21', true],
+                ['2013-06-07T14:21', true, new Date('2013-06-07T14:21')],
                 ['1-1-2013', false, {
                     message: '"value" must be in ISO 8601 date format',
                     path: [],
@@ -494,7 +497,7 @@ describe('date', () => {
         it('validates isoDate after clone', () => {
 
             const schema = { item: Joi.date().iso().clone() };
-            Helper.validate(Joi.compile(schema), [[{ item: '2013-06-07T14:21:46.295Z' }, true]]);
+            Helper.validate(Joi.compile(schema), [[{ item: '2013-06-07T14:21:46.295Z' }, true, { item: new Date('2013-06-07T14:21:46.295Z') }]]);
         });
     });
 
@@ -535,7 +538,7 @@ describe('date', () => {
                     type: 'date.less',
                     context: { limit: d, label: 'value', value: new Date(0) }
                 }],
-                ['-1', true],
+                ['-1', true, new Date(-1)],
                 ['1-1-2014 UTC', false, {
                     message,
                     path: [],
@@ -583,7 +586,7 @@ describe('date', () => {
                     type: 'date.less',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
-                [{ a: now, b: now - 1e3 }, true]
+                [{ a: now, b: now - 1e3 }, true, { a: new Date(now), b: new Date(now - 1e3) }]
             ]);
         });
 
@@ -606,7 +609,7 @@ describe('date', () => {
                     type: 'date.less',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
-                [{ b: now - 1e3 }, true]
+                [{ b: now - 1e3 }, true, { b: new Date(now - 1e3) }]
             ]);
         });
 
@@ -623,7 +626,7 @@ describe('date', () => {
                     type: 'any.ref',
                     context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
-                [{ a: '100000000000000', b: now }, true],
+                [{ a: '100000000000000', b: now }, true, { a: '100000000000000', b: new Date(now) }],
                 [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than "ref:a"',
                     path: ['b'],
@@ -649,7 +652,7 @@ describe('date', () => {
             ]);
 
             Helper.validate(schema, { context: { a: '100000000000000' } }, [
-                [{ b: now }, true]
+                [{ b: now }, true, { b: new Date(now) }]
             ]);
 
             Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
@@ -676,16 +679,16 @@ describe('date', () => {
                     type: 'date.max',
                     context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
                 }],
-                ['1-1-1970 UTC', true],
-                [0, true],
+                ['1-1-1970 UTC', true, new Date('1-1-1970 UTC')],
+                [0, true, new Date(0)],
                 [1, false, {
                     message,
                     path: [],
                     type: 'date.max',
                     context: { limit: d, label: 'value', value: new Date(1) }
                 }],
-                ['0', true],
-                ['-1', true],
+                ['0', true, new Date(0)],
+                ['-1', true, new Date(-1)],
                 ['1-1-2014 UTC', false, {
                     message,
                     path: [],
@@ -721,14 +724,14 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: now, b: now }, true],
+                [{ a: now, b: now }, true, { a: new Date(now), b: new Date(now) }],
                 [{ a: now, b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
                     path: ['b'],
                     type: 'date.max',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
-                [{ a: now, b: now - 1e3 }, true]
+                [{ a: now, b: now - 1e3 }, true, { a: new Date(now), b: new Date(now - 1e3) }]
             ]);
         });
 
@@ -739,14 +742,14 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, { context: { a: now } }, [
-                [{ b: now }, true],
+                [{ b: now }, true, { b: new Date(now) }],
                 [{ b: now + 1e3 }, false, {
                     message: '"b" must be less than or equal to "ref:global:a"',
                     path: ['b'],
                     type: 'date.max',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now + 1e3) }
                 }],
-                [{ b: now - 1e3 }, true]
+                [{ b: now - 1e3 }, true, { b: new Date(now - 1000) }]
             ]);
         });
 
@@ -761,8 +764,8 @@ describe('date', () => {
             });
 
             Helper.validate(schema, [
-                [{ annual: false, from: '2000-01-01', to: '2010-01-01' }, true],
-                [{ annual: true, from: '2000-01-01', to: '2000-12-30' }, true],
+                [{ annual: false, from: '2000-01-01', to: '2010-01-01' }, true, { annual: false, from: new Date('2000-01-01'), to: new Date('2010-01-01') }],
+                [{ annual: true, from: '2000-01-01', to: '2000-12-30' }, true, { annual: true, from: new Date('2000-01-01'), to: new Date('2000-12-30') }],
                 [{ annual: true, from: '2000-01-01', to: '2010-01-01' }, false, {
                     message: '"to" must be less than or equal to "{number(from) + 364 * day}"',
                     path: ['to'],
@@ -785,7 +788,7 @@ describe('date', () => {
                     type: 'any.ref',
                     context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
-                [{ a: '100000000000000', b: now }, true],
+                [{ a: '100000000000000', b: now }, true, { a: '100000000000000', b: new Date(now) }],
                 [{ a: (now - 1e3).toString(), b: now }, false, {
                     message: '"b" must be less than or equal to "ref:a"',
                     path: ['b'],
@@ -811,7 +814,7 @@ describe('date', () => {
             ]);
 
             Helper.validate(schema, { context: { a: '100000000000000' } }, [
-                [{ b: now }, true]
+                [{ b: now }, true, { b: new Date(now) }]
             ]);
 
             Helper.validate(schema, { context: { a: (now - 1e3).toString() } }, [
@@ -832,8 +835,8 @@ describe('date', () => {
             const d = new Date('1-1-2000 UTC');
             const message = `"value" must be larger than or equal to "${d.toISOString()}"`;
             Helper.validate(Joi.date().min('1-1-2000 UTC'), [
-                ['1-1-2001 UTC', true],
-                ['1-1-2000 UTC', true],
+                ['1-1-2001 UTC', true, new Date('1-1-2001 UTC')],
+                ['1-1-2000 UTC', true, d],
                 [0, false, {
                     message,
                     path: [],
@@ -887,8 +890,8 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, [
-                [{ a: now, b: now }, true],
-                [{ a: now, b: now + 1e3 }, true],
+                [{ a: now, b: now }, true, { a: new Date(now), b: new Date(now) }],
+                [{ a: now, b: now + 1e3 }, true, { a: new Date(now), b: new Date(now + 1000) }],
                 [{ a: now, b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
                     path: ['b'],
@@ -911,9 +914,9 @@ describe('date', () => {
             });
 
             Helper.validate(schema, [
-                [{ a: 123, b: 123, c: 0 }, true],
-                [{ a: 123, b: 456, c: 42 }, true],
-                [{ a: 456, b: 123, c: 0 }, true],
+                [{ a: 123, b: 123, c: 0 }, true, { a: new Date(123), b: new Date(123), c: 0 }],
+                [{ a: 123, b: 456, c: 42 }, true, { a: new Date(123), b: new Date(456), c: 42 }],
+                [{ a: 456, b: 123, c: 0 }, true, { a: new Date(456), b: new Date(123), c: 0 }],
                 [{ a: 123, b: 123, c: 42 }, false, {
                     message: '"c" must be [0]',
                     path: ['c'],
@@ -936,8 +939,8 @@ describe('date', () => {
             const now = Date.now();
 
             Helper.validate(schema, { context: { a: now } }, [
-                [{ b: now }, true],
-                [{ b: now + 1e3 }, true],
+                [{ b: now }, true, { b: new Date(now) }],
+                [{ b: now + 1e3 }, true, { b: new Date(now + 1000) }],
                 [{ b: now - 1e3 }, false, {
                     message: '"b" must be larger than or equal to "ref:global:a"',
                     path: ['b'],
@@ -960,7 +963,7 @@ describe('date', () => {
                     type: 'any.ref',
                     context: { ref, label: 'b', key: 'b', value: 'abc', arg: 'date', reason: 'must have a valid date format' }
                 }],
-                [{ a: '123', b: now }, true],
+                [{ a: '123', b: now }, true, { a: '123', b: new Date(now) }],
                 [{ a: (now + 1e3).toString(), b: now }, false, {
                     message: '"b" must be larger than or equal to "ref:a"',
                     path: ['b'],
@@ -1045,27 +1048,33 @@ describe('date', () => {
 
         it('validates timestamps with decimals', () => {
 
+            const now = new Date();
+
             Helper.validate(Joi.date().timestamp(), [
-                [new Date().getTime().toFixed(4), true]
+                [now.getTime().toFixed(4), true, now]
             ]);
+
             Helper.validate(Joi.date().timestamp('javascript'), [
-                [new Date().getTime().toFixed(4), true]
+                [now.getTime().toFixed(4), true, now]
             ]);
+
             Helper.validate(Joi.date().timestamp('unix'), [
-                [(new Date().getTime() / 1000).toFixed(4), true]
+                [(now.getTime() / 1000).toFixed(4), true, now]
             ]);
         });
 
         it('validates only valid timestamps and returns a friendly error message', () => {
 
             const invalidDate = new Date('not a valid date');
+            const now = new Date();
+
             Helper.validate(Joi.date().timestamp(), [
-                [new Date().getTime(), true],
-                [new Date().getTime().toFixed(4), true],
-                ['1.452126061677e+12', true],
-                [1.452126061677e+12, true],
-                [1E3, true],
-                ['1E3', true],
+                [now.getTime(), true, now],
+                [now.getTime().toFixed(4), true, now],
+                ['1.452126061677e+12', true, new Date(1.452126061677e+12)],
+                [1.452126061677e+12, true, new Date(1.452126061677e+12)],
+                [1E3, true, new Date(1000)],
+                ['1E3', true, new Date(1000)],
                 [',', false, {
                     message: '"value" must be in timestamp or number of milliseconds format',
                     path: [],

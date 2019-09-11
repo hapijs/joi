@@ -300,7 +300,7 @@ describe('Joi', () => {
 
         Helper.validate(schema, [
             [5, true],
-            ['5', true]
+            ['5', true, 5]
         ]);
     });
 

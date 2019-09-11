@@ -716,7 +716,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ b: 5 }, true],
             [{ a: 10, b: 5 }, true],
-            [{ a: 10, b: '5' }, true],
+            [{ a: 10, b: '5' }, true, { a: 10, b: 5 }],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 path: ['a'],
@@ -758,7 +758,7 @@ describe('ref', () => {
         Helper.validate(schema, [
             [{ b: 5 }, true],
             [{ a: 10, b: 5 }, true],
-            [{ a: 10, b: '5' }, true],
+            [{ a: 10, b: '5' }, true, { a: 10, b: 5 }],
             [{ a: 5 }, false, {
                 message: '"a" must be [ref:b]',
                 path: ['a'],
@@ -967,8 +967,8 @@ describe('ref', () => {
         for (const schema of [{ a, b, c }, { b, a, c }, { b, c, a }, { a, c, b }, { c, a, b }, { c, b, a }]) {
             Helper.validate(Joi.object().keys(schema), [
                 [{ a: {} }, true],
-                [{ a: { c: '5' }, b: 5 }, true],
-                [{ a: { c: '5' }, b: 6, c: '6' }, true],
+                [{ a: { c: '5' }, b: 5 }, true, { a: { c: 5 }, b: 5 }],
+                [{ a: { c: '5' }, b: 6, c: '6' }, true, { a: { c: 5 }, b: 6, c: 6 }],
                 [{ a: { c: '5' }, b: 7, c: '6' }, false, {
                     message: '"b" must be one of [ref:a.c, ref:c]',
                     type: 'alternatives.types',

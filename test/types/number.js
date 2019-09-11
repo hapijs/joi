@@ -1107,9 +1107,9 @@ describe('number', () => {
                     type: 'number.base',
                     context: { label: 'value', value: ' ' }
                 }],
-                [' 2', true],
-                ['\t\r43', true],
-                ['43 ', true],
+                [' 2', true, 2],
+                ['\t\r43', true, 43],
+                ['43 ', true, 43],
                 ['', false, {
                     message: '"value" must be a number',
                     path: [],
@@ -1129,7 +1129,7 @@ describe('number', () => {
                     type: 'number.base',
                     context: { label: 'value', value: NaN }
                 }],
-                ['100', true]
+                ['100', true, 100]
             ]);
         });
 
