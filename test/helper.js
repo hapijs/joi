@@ -60,7 +60,7 @@ exports.validate = function (schema, prefs, tests) {
 
             if (test.length === 2) {
                 if (pass) {
- //                   expect(value).to.equal(input, { deepFunction: true });
+                    expect(value).to.equal(input, { deepFunction: true });
                 }
 
                 continue;

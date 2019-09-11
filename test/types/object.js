@@ -1684,7 +1684,9 @@ describe('object', () => {
                 test1: Joi.string()
             }).rename('test', 'test1', { override: true });
 
-            Helper.validate(schema, [[{ test: 'b', test1: 'a' }, true]]);
+            Helper.validate(schema, [
+                [{ test: 'b', test1: 'a' }, true, { test1: 'b' }]
+            ]);
         });
 
         it('renames when data is nested in an array via items', () => {
