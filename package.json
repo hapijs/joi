@@ -4,6 +4,7 @@
   "version": "16.0.0-preview",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
+  "browser": "dist/joi-browser.min.js",
   "keywords": [
     "schema",
     "validation"
@@ -22,8 +23,13 @@
     "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x"
   },
   "scripts": {
+    "prepublishOnly": "cd browser && npm install && npm run build",
     "test": "lab -t 100 -a @hapi/code -L",
     "test-cov-html": "lab -r html -o coverage.html -a @hapi/code"
   },
+  "files": [
+    "lib/**/*",
+    "dist/*"
+  ],
   "license": "BSD-3-Clause"
 }

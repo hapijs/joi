@@ -24,3 +24,13 @@ os:
   - "linux"
   - "osx"
   - "windows"
+
+matrix:
+    include:
+        -   node_js: "node"
+            os: "linux"
+            name: "Browser tests"
+            addons:
+                chrome: stable
+            install: "npm install && cd browser && npm install"
+            script: "pwd && npm test"

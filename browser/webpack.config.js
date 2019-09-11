@@ -6,7 +6,8 @@ const Webpack = require('webpack');
 module.exports = {
     entry: '../lib/index.js',
     output: {
-        filename: './joi-browser.min.js',
+        filename: 'joi-browser.min.js',
+        path: Path.join(__dirname, '../dist'),
         library: 'joi',
         libraryTarget: 'umd'
     },
