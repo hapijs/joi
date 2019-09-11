@@ -3818,7 +3818,8 @@ describe('object', () => {
                 a: Joi.string(),
                 b: Joi.function().keys({ c: Joi.string(), d: Joi.number() }),
                 d: Joi.number()
-            }).with('a', 'b.c');
+            })
+                .with('a', 'b.c');
 
             Helper.validate(schema, [
                 [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, true]
@@ -4005,7 +4006,7 @@ describe('object', () => {
             }).without('a', 'b');
 
             Helper.validate(schema, [
-                [{ a: 'hi', b: 'there' }, true]
+                [{ a: 'hi', b: 'there' }, true, { b: 'there' }]
             ]);
         });
 

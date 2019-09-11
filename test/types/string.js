@@ -5353,9 +5353,9 @@ describe('string', () => {
 
             const schema = Joi.string().lowercase().trim();
             Helper.validate(schema, [
-                [' abc', true],
-                [' ABC', true],
-                ['ABC', true],
+                [' abc', true, 'abc'],
+                [' ABC', true, 'abc'],
+                ['ABC', true, 'abc'],
                 [1, false, {
                     message: '"value" must be a string',
                     path: [],
@@ -6264,9 +6264,9 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['\u00F1\u00F1', true],
-                ['\u00F1n\u0303', true],
-                ['n\u0303n\u0303', true]
+                ['\u00F1\u00F1', true, '\u00F1\u00F1'.normalize('NFC')],
+                ['\u00F1n\u0303', true, '\u00F1n\u0303'.normalize('NFC')],
+                ['n\u0303n\u0303', true, 'n\u0303n\u0303'.normalize('NFC')]
             ]);
         });
 
@@ -6308,8 +6308,8 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['\u00F1', true],
-                ['n\u0303', true]
+                ['\u00F1', true, '\u00F1'.normalize('NFD')],
+                ['n\u0303', true, 'n\u0303'.normalize('NFD')]
             ]);
         });
 
@@ -6715,7 +6715,7 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['abcd ', true]
+                ['abcd ', true, 'abcd']
             ]);
         });
 
@@ -6734,8 +6734,8 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['abc ', true],
-                ['abcd ', true]
+                ['abc ', true, 'abc'],
+                ['abcd ', true, 'abcd']
             ]);
         });
 
@@ -6765,7 +6765,7 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['abcd ', true]
+                ['abcd ', true, 'abcd']
             ]);
         });
 
@@ -6773,9 +6773,9 @@ describe('string', () => {
 
             const schema = Joi.string().trim().lowercase();
             Helper.validate(schema, [
-                [' abc', true],
-                [' ABC', true],
-                ['ABC', true]
+                [' abc', true, 'abc'],
+                [' ABC', true, 'abc'],
+                ['ABC', true, 'abc']
             ]);
         });
 
@@ -6916,8 +6916,8 @@ describe('string', () => {
 
             const schema = Joi.string().uppercase().trim();
             Helper.validate(schema, [
-                [' abc', true],
-                [' ABC', true],
+                [' abc', true, 'ABC'],
+                [' ABC', true, 'ABC'],
                 ['ABC', true],
                 [1, false, {
                     message: '"value" must be a string',
@@ -6972,7 +6972,7 @@ describe('string', () => {
                     type: 'any.only',
                     context: { value: '12', valids: ['AB', 'BC'], label: 'value' }
                 }],
-                ['ab', true],
+                ['ab', true, 'AB'],
                 ['abc', false, {
                     message: '"value" must be one of [AB, BC]',
                     path: [],
@@ -7003,7 +7003,7 @@ describe('string', () => {
                     type: 'any.only',
                     context: { value: '', valids: ['AB', 'BC'], label: 'value' }
                 }],
-                ['bc', true],
+                ['bc', true, 'BC'],
                 ['BC', true],
                 ['de', false, {
                     message: '"value" must be one of [AB, BC]',
@@ -8515,8 +8515,8 @@ describe('string', () => {
             Helper.validate(Joi.string().valid('a', 'b').insensitive(), [
                 ['a', true],
                 ['b', true],
-                ['A', true],
-                ['B', true],
+                ['A', true, 'a'],
+                ['B', true, 'b'],
                 [4, false, {
                     message: '"value" must be one of [a, b]',
                     path: [],
@@ -8532,8 +8532,8 @@ describe('string', () => {
             Helper.validate(Joi.string().valid(...valids).insensitive(), [
                 ['a', true],
                 ['b', true],
-                ['A', true],
-                ['B', true],
+                ['A', true, 'a'],
+                ['B', true, 'b'],
                 [4, false, {
                     message: '"value" must be one of [a, b, 5, c]',
                     path: [],
