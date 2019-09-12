@@ -103,10 +103,10 @@
     - [`date.min(date)`](#datemindate)
     - [`date.timestamp([type])`](#datetimestamptype)
   - [`function` - inherits from `object`](#function---inherits-from-object)
-    - [`function.arity(n)`](#funcarityn)
-    - [`function.class()`](#funcclass)
-    - [`function.maxArity(n)`](#funcmaxarityn)
-    - [`function.minArity(n)`](#funcminarityn)
+    - [`function.arity(n)`](#functionarityn)
+    - [`function.class()`](#-functionclass)
+    - [`function.maxArity(n)`](#-functionmaxarityn)
+    - [`function.minArity(n)`](#-functionminarityn)
   - [`link(ref)`](#linkref)
     - [`link.ref(ref)`](#linkrefref)
     - [`link.concat(schema)`](#linkconcatschema)
@@ -2095,7 +2095,7 @@ const schema = Joi.function().arity(2);
 
 Possible validation errors: [`function.arity`](#functionarity)
 
-#### `function.class()`
+#### <a /> `function.class()`
 
 Requires the function to be a class.
 
@@ -2105,7 +2105,7 @@ const schema = Joi.function().class();
 
 Possible validation errors: [`function.class`](#functionclass)
 
-#### `function.maxArity(n)`
+#### <a></a> `function.maxArity(n)`
 
 Specifies the maximal arity of the function where:
 - `n` - the maximum arity expected.
@@ -2116,7 +2116,7 @@ const schema = Joi.function().maxArity(3);
 
 Possible validation errors: [`function.maxArity`](#functionmaxarity)
 
-#### `function.minArity(n)`
+#### <a /> `function.minArity(n)`
 
 Specifies the minimal arity of the function where:
 - `n` - the minimal arity expected.
