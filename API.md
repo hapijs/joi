@@ -2870,6 +2870,7 @@ Requires the string value to be a valid email address.
 
 - `options` - optional settings:
     - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
+    - `ignoreLength` - if `true`, ignore invalid email length errors. Defaults to `false`.
     - `minDomainSegments` - Number of segments required for the domain. The default setting excludes
       single segment domains such as `example@io` which is a valid email but very uncommon. Defaults
       to `2`.
