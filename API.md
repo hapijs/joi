@@ -1122,6 +1122,8 @@ Applies a set of rule options to the current ruleset or last rule added where:
 
 When applying rule options, the last rule (e.g. `min()`) is used unless there is an active ruleset defined (e.g. `$.min().max()`) in which case the options are applied to all the provided rules. Once `rule()` is called, the previous rules can no longer be modified and any active ruleset is terminated.
 
+Rule modifications can only be applied to supported rules. Most of the `any` methods do not support rule modifications because they are implemented using schema flags (e.g. `required()`) or special internal implementation (e.g. `valid()`). In those cases, use the `any.messages()` method to override the error codes for the errors you want to customize.
+
 #### `any.ruleset` - aliases: `$`
 
 Starts a ruleset in order to apply multiple [rule options](#anyruleoptions). The set ends when

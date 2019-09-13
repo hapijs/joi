@@ -2206,20 +2206,20 @@ describe('any', () => {
             expect(() => Joi.string().trim().$.min(1)._ruleRemove('trim').rule({})).to.not.throw();
 
             expect(() => Joi.number().ruleset.min(10).concat(Joi.any())).to.throw('Cannot concatenate onto a schema with open ruleset');
-            expect(() => Joi.number().concat(Joi.number().min(10)).rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.number().concat(Joi.number().min(10)).rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
             expect(() => Joi.number().concat(Joi.number().$.min(10))).to.throw('Cannot concatenate a schema with open ruleset');
 
             expect(() => Joi.any().ruleset.rule({})).to.throw('Cannot apply rules to empty ruleset');
-            expect(() => Joi.any().rule({})).to.throw('Cannot apply rules to empty ruleset');
-            expect(() => Joi.number().min(10).rule({}).rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.any().rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
+            expect(() => Joi.number().min(10).rule({}).rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
             expect(() => Joi.string().ruleset.trim()._ruleRemove('trim').rule({})).to.throw('Cannot apply rules to empty ruleset');
             expect(() => Joi.string().trim()._ruleRemove('trim').rule({})).to.throw('Cannot apply rules to empty ruleset');
 
             expect(() => Joi.number().ruleset.min(10).concat(Joi.any().ruleset).rule({})).to.throw('Cannot concatenate onto a schema with open ruleset');
-            expect(() => Joi.number().min(10).concat(Joi.number().$.max(11).rule({})).rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.number().min(10).concat(Joi.number().$.max(11).rule({})).rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
 
-            expect(() => Joi.string().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset');
-            expect(() => Joi.string().lowercase().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset');
+            expect(() => Joi.string().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
+            expect(() => Joi.string().lowercase().insensitive().rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
             expect(() => Joi.string().$.lowercase().insensitive()).to.throw('Cannot set flag inside a ruleset');
         });
 
