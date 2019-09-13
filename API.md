@@ -1433,7 +1433,7 @@ const schema = Joi.object({
     bar: Joi.string()
 }).when(
     Joi.object({
-        capacity: Joi.string().only("A").required(),
+        capacity: Joi.string().valid("A").required(),
         foo: Joi.not("Z")
     }).unknown(),
     {
