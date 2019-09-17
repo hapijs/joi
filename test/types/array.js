@@ -575,6 +575,35 @@ describe('array', () => {
                 [['one', 'two', 3, 4], true, ['one', 'two']]
             ]);
         });
+
+        it('returns custom item error', () => {
+
+            const schema = Joi.array().items(
+                Joi.object({
+                    a: Joi.number().error(new Error('custom'))
+                })
+            );
+
+            Helper.validate(schema, [
+                [[{ a: 'x' }], false, 'custom'],
+                [[{ a: 'x' }, { a: 'y' }], false, 'custom']
+            ]);
+        });
+
+        it('returns custom item error (required)', () => {
+
+            const schema = Joi.array().items(
+                Joi.object({
+                    a: Joi.number().error(new Error('custom'))
+                })
+                    .required()
+            );
+
+            Helper.validate(schema, [
+                [[{ a: 'x' }], false, 'custom'],
+                [[{ a: 'x' }, { a: 'y' }], false, 'custom']
+            ]);
+        });
     });
 
     describe('length()', () => {
