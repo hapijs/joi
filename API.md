@@ -1,10 +1,7 @@
-<!-- version -->
-# 15.1.0 API Reference
-<!-- versionstop -->
 
 <!-- toc -->
 
-- [Joi](#joi)
+- [joi](#joi)
   - [`version`](#version)
   - [`validate(value, schema, [options], [callback])`](#validatevalue-schema-options-callback)
   - [`compile(schema)`](#compileschema)
@@ -261,7 +258,7 @@
 
 <!-- tocstop -->
 
-## Joi
+## joi
 
 ### `version`
 
