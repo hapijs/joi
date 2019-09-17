@@ -10,11 +10,11 @@
     "validation"
   ],
   "dependencies": {
-    "@hapi/address": "2.x.x",
-    "@hapi/formula": "1.x.x",
-    "@hapi/hoek": "8.x.x",
-    "@hapi/pinpoint": "1.x.x",
-    "@hapi/topo": "3.x.x"
+    "@hapi/address": "^2.1.1",
+    "@hapi/formula": "^1.2.0",
+    "@hapi/hoek": "^8.2.4",
+    "@hapi/pinpoint": "^1.0.2",
+    "@hapi/topo": "^3.1.3"
   },
   "devDependencies": {
     "@hapi/bourne": "1.x.x",
