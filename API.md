@@ -1,6 +1,4 @@
 
-<img src="https://raw.github.com/hapijs/joi/master/images/validation.png" align="right" />
-
 <!-- toc -->
 
 - [joi](#joi)
