@@ -1,5 +1,5 @@
 <!-- version -->
-# 16.0.0 API Reference
+# 16.1.0 API Reference
 <!-- versionstop -->
 
 <!-- toc -->
@@ -71,7 +71,7 @@
     - [`any.validateAsync(value, [options])`](#anyvalidateasyncvalue-options)
     - [`any.warn()`](#anywarn)
     - [`any.warning(code, [context])`](#anywarningcode-context)
-    - [`any.when(condition, options)`](#anywhencondition-options)
+    - [`any.when([condition], options)`](#anywhencondition-options)
   - [`alternatives`](#alternatives)
     - [`alternatives.conditional(condition, options)`](#alternativesconditionalcondition-options)
     - [`alternatives.match(mode)`](#alternativesmatchmode)
@@ -1373,10 +1373,10 @@ try {
 catch (err) { }
 ```
 
-#### `any.when(condition, options)`
+#### `any.when([condition], options)`
 
 Adds conditions that are evaluated during validation and modify the schema before it is applied to the value, where:
-- `condition` - a key name, [reference](#refkey-options), or a schema.
+- `condition` - a key name, [reference](#refkey-options), or a schema. If omitted, defaults to `Joi.ref('.')`.
 - `options` - an object with:
     - `is` - the condition expressed as a **joi** schema. Anything that is not a **joi** schema will be converted using [Joi.compile](#compileschema-options). By default, the `is` condition schema allows for `undefined` values. Use `.required()` to override. For example, use `is: Joi.number().required()` to guarantee that a **joi** reference exists and is a number.
     - `not` - the negative version of `is` (`then` and `otherwise` have reverse roles).

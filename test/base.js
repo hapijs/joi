@@ -1719,7 +1719,7 @@ describe('any', () => {
 
             const schema = Joi.number().invalid(2).invalid(Joi.override, 1);
             Helper.validate(schema, [
-                [1, false , '"value" contains an invalid value'],
+                [1, false, '"value" contains an invalid value'],
                 [2, true, 2]
             ]);
         });
@@ -2782,7 +2782,9 @@ describe('any', () => {
 
         it('throws when options are invalid', () => {
 
-            expect(() => Joi.when('a')).to.throw('Options must be of type object');
+            expect(() => Joi.when('a', 4)).to.throw('Options must be of type object');
+            expect(() => Joi.when('a')).to.throw('Missing options');
+            expect(() => Joi.when(0)).to.throw('Missing options');
         });
 
         it('throws when break used with then and otherwise', () => {
@@ -2877,6 +2879,19 @@ describe('any', () => {
                     type: 'any.only',
                     context: { value: 1, label: 'c', key: 'c', valids: [2] }
                 }]
+            ]);
+        });
+
+        it('supports implicit this', () => {
+
+            const schema = Joi.object({
+                c: Joi.number()
+                    .when({ is: 1, then: Joi.strip() })
+            });
+
+            Helper.validate(schema, [
+                [{ c: 0 }, true],
+                [{ c: 1 }, true, {}]
             ]);
         });
 
