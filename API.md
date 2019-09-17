@@ -1,10 +1,7 @@
-<!-- version -->
-# 16.1.0 API Reference
-<!-- versionstop -->
 
 <!-- toc -->
 
-- [Joi](#joi)
+- [joi](#joi)
   - [`assert(value, schema, [message], [options])`](#assertvalue-schema-message-options)
   - [`attempt(value, schema, [message], [options])`](#attemptvalue-schema-message-options)
   - [`cache.provision([options])`](#cacheprovisionoptions)
@@ -289,7 +286,7 @@
 
 <!-- tocstop -->
 
-## Joi
+## joi
 
 ### `assert(value, schema, [message], [options])`
 
