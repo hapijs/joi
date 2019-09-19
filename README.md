@@ -1,6 +1,6 @@
 <a href="https://hapi.dev"><img src="https://raw.githubusercontent.com/hapijs/assets/master/images/family.png" width="180px" align="right" /></a>
 
-# joi
+# @hapi/joi
 
 The most powerful schema description language and data validator for JavaScript.
 
@@ -58,7 +58,7 @@ schema.validate({});
 // Also -
 
 try {
-    const value = await schema.validate({ username: 'abc', birth_year: 1994 });
+    const value = await schema.validateAsync({ username: 'abc', birth_year: 1994 });
 }
 catch (err) { }
 ```
@@ -102,10 +102,6 @@ Second, the value is validated against the defined schema:
 
 ```js
 const { error, value } = schema.validate({ a: 'a string' });
-
-// or
-
-schema.validate({ a: 'a string' }, function (error, value) { });
 ```
 
 If the input is valid, then the `error` will be `null`. If the input is invalid, `error` is assigned
@@ -118,7 +114,7 @@ The schema can be a plain JavaScript object where every key is assigned a **joi*
 const schema = Joi.string().min(10);
 ```
 
-If the schema is a **joi** type, the `schema.validate(value, callback)` can be called directly on the type. When passing a non-type schema object,
+If the schema is a **joi** type, the `schema.validate(value)` can be called directly on the type. When passing a non-type schema object,
 the module converts it internally to an object() type equivalent to:
 
 ```js
