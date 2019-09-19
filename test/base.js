@@ -3258,6 +3258,18 @@ describe('any', () => {
             ]);
         });
 
+        it('works with prefs()', () => {
+
+            const schema = Joi.number()
+                .prefs({ errors: { label: 'key' } })
+                .when('$x', { then: Joi.number().min(1) });
+
+            Helper.validate(schema, { context: { x: true } }, [
+                [1, true],
+                [0, false, '"value" must be larger than or equal to 1']
+            ]);
+        });
+
         it('describes the base schema', () => {
 
             const schema = Joi.number()
