@@ -1643,8 +1643,7 @@ await alt.validateAsync('a');
 ### `array`
 
 Generates a schema object that matches an array data type. Note that undefined values inside arrays are not allowed by
-default but can be by using `sparse()`. If the validation `convert` option is on (enabled by default), a string will be
-converted to an `array` if specified via `JSON.parse()`.
+default but can be by using `sparse()`.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -2387,8 +2386,7 @@ Possible validation errors: [`number.unsafe`](#numberunsafe)
 ### `object`
 
 Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
-to allowing any child key. If the validation `convert` option is on (enabled by default), a string will be converted to
-an `object` if specified via `JSON.parse()`.
+to allowing any child key.
 
 Supports the same methods of the [`any()`](#any) type.
 
