@@ -266,6 +266,20 @@ describe('Manifest', () => {
                 ]
             });
         });
+
+        it('describes defaults', () => {
+
+            const schema = Joi.object({
+                foo: Joi.string().default('bar')
+            })
+                .default({ foo: 'bar' });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                flags: { default: { foo: 'bar' } },
+                keys: { foo: { type: 'string', flags: { default: 'bar' } } }
+            });
+        });
     });
 
     describe('build()', () => {

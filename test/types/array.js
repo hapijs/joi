@@ -1465,7 +1465,8 @@ describe('array', () => {
                         label: 'value',
                         value: [null, 1, 2]
                     }
-                }]
+                }],
+                [{}, false, '"value" must be an array']
             ]);
         });
 
@@ -1634,7 +1635,8 @@ describe('array', () => {
                         label: 'value',
                         value: [0, '1']
                     }
-                }]
+                }],
+                [{}, false, '"value" must be an array']
             ]);
         });
 
