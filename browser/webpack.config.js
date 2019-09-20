@@ -50,5 +50,9 @@ module.exports = {
                 }
             }
         ]
+    },
+    node: {
+        url: 'empty',
+        util: 'empty'
     }
 };

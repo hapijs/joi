@@ -16,4 +16,6 @@ WebpackConfig.module.rules[2].use.options.presets[0][1].exclude = [
     '@babel/plugin-transform-regenerator'
 ];
 
+delete WebpackConfig.node.util;
+
 module.exports = WebpackConfig;
