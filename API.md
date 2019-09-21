@@ -425,10 +425,10 @@ And the following constants:
 - `true`
 - `false`
 
-### `extend(extension)`
+### `extend(...extensions)`
 
 Creates a new customized instance of the **joi** module where:
-- `extension` - the extension configuration as described in [Extensions](#extensions).
+- `extensions` - the extensions configurations as described in [Extensions](#extensions).
 
 Note that the original **joi** module is not modified by this.
 
@@ -3244,7 +3244,6 @@ Possible validation errors: [`symbol.map`](#symbolmap)
 The [`extend()`](#extendextension) method adds custom types to **joi**. Extensions can be :
 - a single extension object
 - a factory function generating an extension object
-- or an array of those
 
 Full documentation is upcoming.
 
