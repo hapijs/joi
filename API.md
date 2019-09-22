@@ -10,7 +10,7 @@
   - [`defaults(modifier)`](#defaultsmodifier)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
-  - [`extend(extension)`](#extendextension)
+  - [`extend(extensions)`](#extendextensions)
   - [`isExpression(expression)`](#isexpressionexpression)
   - [`in(ref, [options])`](#inref-options)
   - [`isRef(ref)`](#isrefref)
@@ -1268,7 +1268,7 @@ Validates a value using the current schema and options where:
       - `false` - remove any label prefix from error message, including the `""`.
     - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global  context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
-    - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api). 
+    - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api).
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.
@@ -2200,7 +2200,7 @@ Will throw an error during validation if left uninitialized (e.g. `Joi.link()` c
 
 ### `number`
 
-Generates a schema object that matches a number data type (as well as strings that can be converted to numbers). 
+Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
 
 By default, it only allows safe numbers, see [`number.unsafe()`](#numberunsafeenabled).
 
@@ -3211,7 +3211,7 @@ Possible validation errors: [`string.uri`](#stringuri), [`string.uriCustomScheme
 
 Generates a schema object that matches a `Symbol` data type.
 
-If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match. 
+If the validation `convert` option is on (enabled by default), the mappings declared in `map()` will be tried for an eventual match.
 
 Supports the same methods of the [`any()`](#any) type.
 
@@ -3228,7 +3228,7 @@ Allows values to be transformed into `Symbol`s, where:
 - `map` - mapping declaration that can be:
   - an object, where keys are strings, and values are `Symbol`s
   - an array of arrays of length 2, where for each sub-array, the 1st element must be anything but an object, a function or a `Symbol`, and the 2nd element must be a Symbol
-  - a `Map`, following the same principles as the array above 
+  - a `Map`, following the same principles as the array above
 
 ```js
 const schema = Joi.symbol().map([
@@ -3241,7 +3241,7 @@ Possible validation errors: [`symbol.map`](#symbolmap)
 
 ## Extensions
 
-The [`extend()`](#extendextension) method adds custom types to **joi**. Extensions can be :
+The [`extend()`](#extendextensions) method adds custom types to **joi**. Extensions can be :
 - a single extension object
 - a factory function generating an extension object
 
