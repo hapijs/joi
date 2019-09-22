@@ -10,7 +10,7 @@
   - [`defaults(modifier)`](#defaultsmodifier)
   - [`expression(template, [options])` - aliases: `x`](#expressiontemplate-options---aliases-x)
     - [Template syntax](#template-syntax)
-  - [`extend(extensions)`](#extendextensions)
+  - [`extend(...extensions)`](#extendextensions)
   - [`isExpression(expression)`](#isexpressionexpression)
   - [`in(ref, [options])`](#inref-options)
   - [`isRef(ref)`](#isrefref)
@@ -50,7 +50,7 @@
     - [`any.note(...notes)`](#anynotenotes)
     - [`any.only()`](#anyonly)
     - [`any.optional()`](#anyoptional)
-    - [`any.prefs(options)` - aliases: `preferences`, `options`](#anyprefsoptions--aliases-preferences-options)
+    - [`any.prefs(options)` - aliases: `preferences`, `options`](#anyprefsoptions---aliases-preferences-options)
     - [`any.presence(mode)`](#anypresencemode)
     - [`any.raw([enabled])`](#anyrawenabled)
     - [`any.required()` - aliases: `exist`](#anyrequired---aliases-exist)
@@ -2198,6 +2198,10 @@ then initialized. If `ref` was not passed to the constructor, `link.ref()` must 
 
 Will throw an error during validation if left uninitialized (e.g. `Joi.link()` called without a link and `link.ref()` not called).
 
+#### `link.concat(schema)`
+
+Same as [`any.concat()`](#anyconcatschema) but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link. Will throw an exception during validation if the merged types are not compatible.
+
 ### `number`
 
 Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
@@ -2217,10 +2221,6 @@ await number.validateAsync(5);
 ```
 
 Possible validation errors: [`number.base`](#numberbase), [`number.infinity`](#numberinfinity)
-
-#### `link.concat(schema)`
-
-Same as [`any.concat()`](#anyconcatschema) but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link. Will throw an exception during validation if the merged types are not compatible.
 
 #### `number.greater(limit)`
 
