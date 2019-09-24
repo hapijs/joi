@@ -171,6 +171,26 @@
   - [`symbol`](#symbol)
     - [`symbol.map(map)`](#symbolmapmap)
 - [Extensions](#extensions)
+  - [Advanced functions](#advanced-functions)
+    - [$_root](#_root)
+    - [$_super](#_super)
+    - [$_temp](#_temp)
+    - [$_terms](#_terms)
+    - [$_addRule(options)](#_addruleoptions)
+    - [$_compile(schema, options)](#_compileschema-options)
+    - [$_createError(code, value, local, state, prefs, options)](#_createerrorcode-value-local-state-prefs-options)
+    - [$_getFlag(name)](#_getflagname)
+    - [$_getRule(name)](#_getrulename)
+    - [$_mapLabels(path)](#_maplabelspath)
+    - [$_match(value, state, prefs, overrides)](#_matchvalue-state-prefs-overrides)
+    - [$_modify(options)](#_modifyoptions)
+    - [$_mutateRebuild()](#_mutaterebuild)
+    - [$_mutateRegister(schema, options)](#_mutateregisterschema-options)
+    - [$_property(name)](#_propertyname)
+    - [$_reach(path)](#_reachpath)
+    - [$_rootReferences()](#_rootreferences)
+    - [$_setFlag(name, value, options)](#_setflagname-value-options)
+    - [$_validate(value, state, prefs)](#_validatevalue-state-prefs)
 - [Errors](#errors)
   - [`ValidationError`](#validationerror)
   - [List of errors](#list-of-errors)
@@ -3258,7 +3278,7 @@ const custom = Joi.extend((joi) => {
 
             // Only called when prefs.convert is true
 
-            if (schema.getRule('round')) {
+            if (schema.$_getRule('round')) {
                 return { value: Math.round(value) };
             }
         },
@@ -3272,7 +3292,7 @@ const custom = Joi.extend((joi) => {
 
             // Check flags for global state
 
-            if (schema.getFlag('big') &&
+            if (schema.$_getFlag('big') &&
                 value < 5000000) {
 
                 return { value, errors: helpers.error('million.big') };
@@ -3283,14 +3303,14 @@ const custom = Joi.extend((joi) => {
                 alias: 'large',
                 method() {
 
-                    return this.setFlag('big', true);
+                    return this.$_setFlag('big', true);
                 }
             },
             round: {
                 convert: true,              // Dual rule: converts or validates
                 method() {
 
-                    return this.addRule('round');
+                    return this.$_addRule('round');
                 },
                 validate(value, helpers, args, options) {
 
@@ -3305,7 +3325,7 @@ const custom = Joi.extend((joi) => {
                 multi: true,                // Rule supports multiple invocations
                 method(q) {
 
-                    return this.addRule({ name: 'dividable', args: { q } });
+                    return this.$_addRule({ name: 'dividable', args: { q } });
                 },
                 args: [
                     {
@@ -3344,6 +3364,85 @@ const schema = custom.object({
     e: custom.million().large()
 });
 ```
+
+### Advanced functions
+
+#### $_root
+
+TODO
+
+#### $_super
+
+TODO
+
+#### $_temp
+
+TODO
+
+#### $_terms
+
+TODO
+
+#### $_addRule(options)
+
+TODO
+
+#### $_compile(schema, options)
+
+TODO
+
+#### $_createError(code, value, local, state, prefs, options)
+
+TODO
+
+#### $_getFlag(name)
+
+TODO
+
+#### $_getRule(name)
+
+TODO
+
+#### $_mapLabels(path)
+
+TODO
+
+#### $_match(value, state, prefs, overrides)
+
+TODO
+
+#### $_modify(options)
+
+TODO
+
+#### $_mutateRebuild()
+
+TODO
+
+#### $_mutateRegister(schema, options)
+
+TODO
+
+#### $_property(name)
+
+TODO
+
+#### $_reach(path)
+
+TODO
+
+#### $_rootReferences()
+
+TODO
+
+#### $_setFlag(name, value, options)
+
+TODO
+
+#### $_validate(value, state, prefs)
+
+TODO
+
 
 ## Errors
 
