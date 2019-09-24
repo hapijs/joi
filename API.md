@@ -1456,7 +1456,6 @@ const schema = Joi.object({
     }
 );
 ```
-Try this out at [RunKit](https://runkit.com/embed/7sdrdza9hi86)
 
 Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so
 like this:
