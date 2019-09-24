@@ -1432,29 +1432,22 @@ validate this logic:
 
 ```js
 const schema = Joi.object({
-    capacity: Joi.string()
-        .valid(["A", "B", "C"])
-        .required(),
-    // required if capacity == "A"
-    foo: Joi.when("capacity", {
-        is: "A",
+    type: Joi.string()
+        .valid('A', 'B', 'C')
+        .required(),              // required if type == 'A'
+        
+    foo: Joi.when('type', {
+        is: 'A',
         then: Joi.string()
-        .valid(["X", "Y", "Z"])
+        .valid('X', 'Y', 'Z')
         .required()
-    }),
-    // required if capacity === "A" and foo !== "Z"
+    }),                           // required if type === 'A' and foo !== 'Z'
+    
     bar: Joi.string()
-}).when(
-    Joi.object({
-        capacity: Joi.string().valid("A").required(),
-        foo: Joi.not("Z")
-    }).unknown(),
-    {
-        then: Joi.object({
-            bar: Joi.required()
-        })
-    }
-);
+})
+    .when(Joi.object({ type: Joi.valid('A'), foo: Joi.not('Z') }).unknown(), {
+        then: Joi.object({ bar: Joi.required() })
+    });
 ```
 
 Alternatively, if you want to specify a specific type such as `string`, `array`, etc, you can do so
