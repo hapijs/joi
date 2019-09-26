@@ -2965,11 +2965,11 @@ const custom = Joi.extend((joi) => {
             'million.round': '"{{#label}}" must be a round number',
             'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
         },
-        coerce(schema, value, helpers) {
+        coerce(value, helpers) {
 
             // Only called when prefs.convert is true
 
-            if (schema.$_getRule('round')) {
+            if (helpers.schema.$_getRule('round')) {
                 return { value: Math.round(value) };
             }
         },
