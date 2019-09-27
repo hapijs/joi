@@ -1,3 +1,4 @@
+
 ### Introduction
 
 **joi** lets you describe your data using a simple, intuitive, and readable language. Like the rest of the [hapi ecosystem](https://hapi.dev) it fits in, **joi** allows you to describe your data for both input and output validation, as part of a hapi HTTP server or standalone.
