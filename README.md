@@ -11,6 +11,6 @@
 ## Useful resources
 
 - [Documentation and API](https://hapi.dev/family/joi/)
-- [Versions status](https://hapi.dev/resources/status/)
+- [Versions status](https://hapi.dev/resources/status/#joi)
 - [Project policies](https://hapi.dev/policies/)
 - [Free and commercial support options](https://hapi.dev/support/)
