@@ -722,9 +722,9 @@ describe('Modify', () => {
 
             const custom = Joi.extend({
                 type: 'special',
-                coerce(schema, value, helpers) {
+                coerce(value, helpers) {
 
-                    const swap = schema.$_getFlag('swap');
+                    const swap = helpers.schema.$_getFlag('swap');
                     if (swap &&
                         swap.$_match(value, helpers.state.nest(swap), helpers.prefs)) {
 
