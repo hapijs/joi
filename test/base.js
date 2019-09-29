@@ -1372,7 +1372,6 @@ describe('any', () => {
                     }
                 });
             }).to.throw('Must provide a valid Error object or a function');
-
         });
 
         it('errors on missing error option', () => {
@@ -1386,7 +1385,6 @@ describe('any', () => {
                     }
                 });
             }).to.throw('Missing error');
-
         });
 
         describe('with a function', () => {
@@ -1539,6 +1537,13 @@ describe('any', () => {
                 const result2 = schema.validate({ a: [' xx', 'yy?'], b: ' x' });
                 expect(result2.value).to.equal({ a: [' xx', 'yy?'], b: ' x' });
                 expect(result2.error).to.be.an.error('my new error message');
+            });
+
+            it('errors on invalid error function', () => {
+
+                const schema = Joi.number().error(() => 'not an Error');
+
+                expect(() => schema.validate('x')).to.throw('error() must return an Error object');
             });
         });
     });
