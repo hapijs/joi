@@ -93,7 +93,7 @@ Second, the value is validated against the defined schema:
 const { error, value } = schema.validate({ a: 'a string' });
 ```
 
-If the input is valid, then the `error` will be `null`. If the input is invalid, `error` is assigned
+If the input is valid, then the `error` will be `undefined`. If the input is invalid, `error` is assigned
 a [`ValidationError`](https://github.com/hapijs/joi/blob/master/API.md#validationerror) object
 providing more information.
 
