@@ -724,24 +724,22 @@ schema.validate(''); // returns { error: "value" is not allowed to be empty, val
 Overrides the default **joi** error with a custom error if the rule fails where:
 - `err` can be:
   - an instance of `Error` - the override error.
-  - a function with the signature `function(errors)`, where `errors` is an array of validation
-    reports and it returns either a single `Error` or an array of validation reports.
+  - a function with the signature `function(errors)`, where `errors` is an array of validation reports and it returns either a single `Error` or an array of validation reports.
 
-Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any
-of the normal error properties. If validation fails and another error is found before the error
-override, that error will be returned and the override will be ignored (unless the `abortEarly`
-option has been set to `false`).
+Do not use this method if you are simply trying to override the error message - use `any.message()` or `any.messages()` instead. This method is designed to override the **joi** validation error and return the exact override provided. It is useful when you want to return the result of validation directly (e.g. when using with a **hapi** server) and want to return a different HTTP error code than 400.
+
+Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the normal error properties. If validation fails and another error is found before the error override, that error will be returned and the override will be ignored (unless the `abortEarly` option has been set to `false`). If you set multiple errors on a single schema, only the last error is used.
 
 ```js
 const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
-schema.validate(3);     // returns error.message === 'Was REALLY expecting a string'
+schema.validate(3);     // returns Error('Was REALLY expecting a string')
 ```
 
 ```js
 const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => new Error('"foo" requires a positive number'))
 });
-schema.validate({ foo: -2 });    // returns error.message === '"foo" requires a positive number'
+schema.validate({ foo: -2 });    // returns new Error('"foo" requires a positive number')
 ```
 
 ```js
@@ -751,7 +749,7 @@ const schema = Joi.object({
         return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.local.limit}) with value ${err.local.value}`).join(' and '));
     })
 });
-schema.validate({ foo: -2 });    // returns error.message === 'child "foo" fails because [found errors with number.min(0) with value -2]'
+schema.validate({ foo: -2 });    // returns new Error('child "foo" fails because [found errors with number.min(0) with value -2]')
 ```
 
 #### `any.example(example, [options])`
