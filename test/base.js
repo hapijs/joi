@@ -2409,6 +2409,149 @@ describe('any', () => {
             const schema = Joi.any().strip().strip(false);
             expect(schema._flags.result).to.not.exist();
         });
+
+        it('strips item inside array item', () => {
+
+            const schema = Joi.array().items(
+                Joi.array().items(
+                    Joi.number(),
+                    Joi.any().strip()
+                ),
+                Joi.any().strip()
+            );
+
+            Helper.validate(schema, [
+                [['x', ['x']], true, [[]]],
+                [[1, 2, [1, 2, 'x']], true, [[1, 2]]]
+            ]);
+        });
+
+        it('strips nested keys', () => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    x: Joi.any(),
+                    y: Joi.any().strip()
+                })
+                    .strip(),
+
+                b: Joi.ref('a.y')
+            });
+
+            Helper.validate(schema, [
+                [{}, true, {}],
+                [{ a: { x: 1 } }, true, {}],
+                [{ a: { x: 1, y: 2 } }, true, {}],
+                [{ a: { x: 1, y: 2 }, b: 2 }, true, { b: 2 }],
+                [{ a: { x: 1, y: 2 }, b: 3 }, false, '"b" must be [ref:a.y]'],
+                [{ b: 1 }, false, '"b" must be [ref:a.y]']
+            ]);
+        });
+
+        it('references validated stripped value (after child already stripped)', () => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    x: Joi.any(),
+                    y: Joi.any().strip()
+                })
+                    .strip(),
+
+                b: Joi.ref('a')
+            });
+
+            Helper.validate(schema, [
+                [{}, true, {}],
+                [{ a: { x: 1, y: 2 } }, true, {}],
+                [{ a: { x: 1, y: 2 }, b: { x: 1 } }, true, { b: { x: 1 } }],
+                [{ a: { x: 1, y: 2 }, b: { x: 1, y: 2 } }, false, '"b" must be [ref:a]']
+            ]);
+        });
+
+        it('strips key nested in alternative', () => {
+
+            const schema = Joi.object({
+                a: Joi.alternatives([
+                    Joi.object({
+                        x: Joi.number().strip(),
+                        y: Joi.any()
+                    }),
+                    Joi.object({
+                        x: Joi.any(),
+                        z: Joi.any()
+                    })
+                ]),
+
+                b: Joi.ref('a.x')
+            });
+
+            Helper.validate(schema, [
+                [{}, true, {}],
+                [{ a: { x: 1, y: 1 } }, true, { a: { y: 1 } }],
+                [{ a: { x: 1, z: 1 } }, true],
+                [{ a: { x: 1, z: 1 }, b: 1 }, true],
+                [{ a: { x: 1, z: 1 }, b: 2 }, false, '"b" must be [ref:a.x]'],
+                [{ a: { x: '2', z: 1 }, b: 2 }, false, '"b" must be [ref:a.x]'],
+                [{ a: { x: '2', z: 1 }, b: '2' }, true]
+            ]);
+        });
+
+        it('strips key in array item', () => {
+
+            const schema = Joi.array()
+                .items(
+                    Joi.object({
+                        a: Joi.number().strip(),
+                        b: Joi.ref('a')
+                    }),
+                    Joi.object({
+                        a: Joi.string(),
+                        b: Joi.ref('a')
+                    })
+                );
+
+            Helper.validate(schema, [
+                [[], true],
+                [[{ a: 'x', b: 'x' }], true],
+                [[{ a: 1, b: 1 }], true, [{ b: 1 }]],
+                [[{ a: 'x', b: 'x' }, { a: 1, b: 1 }], true, [{ a: 'x', b: 'x' }, { b: 1 }]],
+                [[{ a: '1', b: '1' }], true, [{ a: '1', b: '1' }]]
+            ]);
+        });
+
+        it('ignored in matches', () => {
+
+            const schema = Joi.array()
+                .items(Joi.object({
+                    a: {
+                        b: Joi.number().strip(),
+                        c: Joi.number()
+                    }
+                }))
+                .has(Joi.object({
+                    a: {
+                        b: Joi.number().min(10),
+                        c: Joi.boolean().truthy(30).strip()         // Does not affect result
+                    }
+                }));
+
+            Helper.validate(schema, [
+                [[{ a: { b: '20', c: '30' } }], true, [{ a: { c: 30 } }]]
+            ]);
+        });
+
+        it('retains shadow after match', () => {
+
+            const schema = Joi.object({
+                a: Joi.number().strip()
+            })
+                .assert('.a', Joi.number().cast('string').strip().required(), 'error 1')
+                .assert('.a', Joi.number().strict().required(), 'error 2');
+
+            Helper.validate(schema, [
+                [{ a: '1' }, true, {}]
+            ]);
+        });
     });
 
     describe('tag()', () => {
