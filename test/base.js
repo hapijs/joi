@@ -2400,13 +2400,13 @@ describe('any', () => {
 
         it('avoids unnecessary cloning when called twice', () => {
 
-            const schema = Joi.any().strip();
+            const schema = Joi.strip();
             expect(schema.strip()).to.shallow.equal(schema);
         });
 
         it('cancels strip', () => {
 
-            const schema = Joi.any().strip().strip(false);
+            const schema = Joi.strip().strip(false);
             expect(schema._flags.result).to.not.exist();
         });
 
@@ -2415,9 +2415,9 @@ describe('any', () => {
             const schema = Joi.array().items(
                 Joi.array().items(
                     Joi.number(),
-                    Joi.any().strip()
+                    Joi.strip()
                 ),
-                Joi.any().strip()
+                Joi.strip()
             );
 
             Helper.validate(schema, [
@@ -2431,7 +2431,7 @@ describe('any', () => {
             const schema = Joi.object({
                 a: Joi.object({
                     x: Joi.any(),
-                    y: Joi.any().strip()
+                    y: Joi.strip()
                 })
                     .strip(),
 
@@ -2453,7 +2453,7 @@ describe('any', () => {
             const schema = Joi.object({
                 a: Joi.object({
                     x: Joi.any(),
-                    y: Joi.any().strip()
+                    y: Joi.strip()
                 })
                     .strip(),
 
@@ -2550,6 +2550,20 @@ describe('any', () => {
 
             Helper.validate(schema, [
                 [{ a: '1' }, true, {}]
+            ]);
+        });
+
+        it('revers match changes when shadow exists', () => {
+
+            const schema = Joi.object({
+                x: Joi.strip(),
+                y: Joi.object({
+                    z: Joi.when('$x', { otherwise: Joi.strip() })
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ x: 1, y: { z: 'x' } }, true, { y: {} }]
             ]);
         });
     });
