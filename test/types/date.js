@@ -200,7 +200,21 @@ describe('date', () => {
                 ['x', false, '"value" must be in unknown format'],
                 [now, true, new Date(now)]
             ]);
-            Helper.validate(custom.date().format(['unknown']), [['x', false, '"value" must be in [unknown] format']]);
+
+            Helper.validate(custom.date().format(['unknown']), [
+                ['x', false, '"value" must be in [unknown] format']
+            ]);
+        });
+
+        it('enforces format when value is a string', () => {
+
+            const schema = Joi.date().$_setFlag('format', 'MM-DD-YY');
+
+            // Cannot use Helper since format is set to unknown value
+
+            expect(schema.validate(new Date()).error).to.not.exist();
+            expect(schema.validate(Date.now()).error).to.not.exist();
+            expect(schema.validate('1').error).to.be.an.error('"value" must be in MM-DD-YY format');
         });
     });
 
