@@ -3923,7 +3923,7 @@ Additional local context properties:
     message: string, // The combined error messages
     matches: Array<string>  // The matching keys
 }
-``
+```
 
 #### `object.refType`
 
