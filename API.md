@@ -1837,6 +1837,7 @@ Specifies that the value must be less than `date` (or a reference).
 
 ```js
 const schema = Joi.date().less('12-31-2020');
+```
 
 Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
 
