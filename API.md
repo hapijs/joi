@@ -3103,7 +3103,7 @@ const custom = Joi.extend((joi) => {
                 return { value: Math.round(value) };
             }
         },
-        validate(schema, value, helpers) {
+        validate(value, helpers) {
 
             // Base validation regardless of the rules applied
 
