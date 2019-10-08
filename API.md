@@ -2417,8 +2417,7 @@ Possible validation errors: [`object.oxor`](#objectoxor)
 #### `object.pattern(pattern, schema, [options])`
 
 Specify validation rules for unknown keys matching a pattern where:
-- `pattern` - a pattern that can be either a regular expression or a **joi** schema that will be
-  tested against the unknown key names.
+- `pattern` - a pattern that can be either a regular expression or a **joi** schema that will be tested against the unknown key names. Note that if the pattern is a regular expression, for it to match the entire key name, it must begin with `^` and end with `$`.
 - `schema` - the schema object matching keys must validate against.
 - `options` - options settings:
     - `fallthrough` - if `true`, multiple matching patterns are tested against the key, otherwise once a pattern match is found, no other patterns are compared. Defaults to `false`.
@@ -2932,7 +2931,7 @@ Possible validation errors: [`string.normalize`](#stringnormalize)
 #### `string.pattern(regex, [name | options])` - aliases: `regex`
 
 Defines a pattern rule where:
-- `regex` - a regular expression object the string value must match against.
+- `regex` - a regular expression object the string value must match against. Note that if the pattern is a regular expression, for it to match the entire key name, it must begin with `^` and end with `$`.
 - `name` - optional name for patterns (useful with multiple patterns).
 - `options` - an optional configuration object with the following supported properties:
   - `name` - optional pattern name.
