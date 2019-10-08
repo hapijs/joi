@@ -169,7 +169,7 @@ describe('cast', () => {
         it('errors on legacy schema', () => {
 
             const schema = Legacy.number();
-            expect(() => Joi.compile(schema)).to.throw('Cannot mix different versions of joi schemas');
+            expect(() => Joi.compile(schema)).to.throw(`Cannot mix different versions of joi schemas: ${require('@hapi/joi-legacy-test/package.json').version} ${require('../package.json').version}`);
             expect(() => Joi.compile(schema, { legacy: true })).to.not.throw();
         });
 
