@@ -2220,8 +2220,7 @@ Possible validation errors: [`number.unsafe`](#numberunsafe)
 
 ### `object`
 
-Generates a schema object that matches an object data type (as well as JSON strings that parsed into objects). Defaults
-to allowing any child key.
+Generates a schema object that matches an object data type. Defaults to allowing any child key.
 
 Supports the same methods of the [`any()`](#any) type.
 
