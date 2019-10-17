@@ -9,47 +9,55 @@
 const Joi = require('@hapi/joi');
 
 const schema = Joi.object({
-    username: Joi.string()
-        .alphanum()
-        .min(3)
-        .max(30)
-        .required(),
+  username: Joi.string()
+    .alphanum()
+    .min(3)
+    .max(30)
+    .required(),
 
-    password: Joi.string()
-        .pattern(/^[a-zA-Z0-9]{3,30}$/),
+  password: Joi.string(),
 
-    repeat_password: Joi.ref('password'),
+  birth_year: Joi.number(),
 
-    access_token: [
-        Joi.string(),
-        Joi.number()
-    ],
+  repeat_password: Joi.ref('password'),
 
-    birth_year: Joi.number()
-        .integer()
-        .min(1900)
-        .max(2013),
+  access_token: [
+    Joi.string(),
+    Joi.number()
+  ],
 
-    email: Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
 })
-    .with('username', 'birth_year')
-    .xor('password', 'access_token')
-    .with('password', 'repeat_password');
+  .with('username', 'birth_year')
+  .xor('password', 'access_token')
+  .with('password', 'repeat_password');
 
-
-schema.validate({ username: 'abc', birth_year: 1994 });
-// -> { value: { username: 'abc', birth_year: 1994 } }
-
-schema.validate({});
-// -> { value: {}, error: '"username" is required' }
-
-// Also -
-
-try {
-    const value = await schema.validateAsync({ username: 'abc', birth_year: 1994 });
+// Valid data
+{
+  const { value, error } = schema.validate({ 
+    username: 'abc',
+    password: 'supersecure',
+    repeat_password: 'supersecure',
+    email: 'joi@example.com',
+    birth_year: 1997
+  });
+  console.log('Input value:', value)
+  // Input value: {
+  //   username: 'abc',
+  //   password: 'supersecure',
+  //   repeat_password: 'supersecure',
+  //   email: 'joi@example.com',
+  //   birth_year: 1997
+  // }
+  console.log('No error:', error) // undefined
 }
-catch (err) { }
+
+// Invalid data
+{
+  const { value, error } = schema.validate({ email: 'joi@example.com'  });
+  console.log('Error message:', error.message) // '"username" is required'
+}
 ```
 
 The above schema defines the following constraints:
@@ -60,15 +68,14 @@ The above schema defines the following constraints:
     * must be accompanied by `birth_year`
 * `password`
     * an optional string
-    * must satisfy the custom regex pattern
     * cannot appear together with `access_token`
     * must be accompanied by `repeat_password` and equal to it
 * `access_token`
     * an optional, unconstrained string or number
 * `birth_year`
-    * an integer between 1900 and 2013
+    * an optional integer
 * `email`
-    * a valid email address string
+    * an optional, well-formed email address string
     * must have two domain parts e.g. `example.com`
     * TLD must be `.com` or `.net`
 
