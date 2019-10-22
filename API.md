@@ -545,7 +545,7 @@ will be disabled.
 
 To disable caching for an entire schema in runtime, pass the `cache` preference set to `false`.
 
-Caching ignores changes to runtime preference. This means that if you run `schema.validatate()`
+Caching ignores changes to runtime preference. This means that if you run `schema.validate()`
 onces using one set of preferences, and then again using another set (for example, changing the
 language), the cached results will be based on the first set of preferences.
 
