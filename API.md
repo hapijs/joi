@@ -1030,7 +1030,6 @@ schema.validate({ username: 'test', password: 'hunter2' }); // result.value = { 
 const schema = Joi.array().items(Joi.string(), Joi.any().strip());
 
 schema.validate(['one', 'two', true, false, 1, 2]); // result.value = ['one', 'two']
-});
 ```
 
 #### `any.tag(...tags)`
