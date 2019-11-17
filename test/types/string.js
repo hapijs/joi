@@ -1262,7 +1262,8 @@ describe('string', () => {
                     path: [],
                     type: 'string.domain',
                     context: { value: '"example.com', label: 'value' }
-                }]
+                }],
+                ['mail@example.com', false, '"value" must contain a valid domain name']
             ]);
         });
 

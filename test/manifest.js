@@ -281,7 +281,6 @@ describe('Manifest', () => {
             });
         });
 
-
         it('describes null defaults', () => {
 
             const description = Joi.any().allow(null).default(null).describe();
