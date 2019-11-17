@@ -1301,7 +1301,7 @@ describe('string', () => {
             ]);
         });
 
-        it('validates domain with a friendly error message', () => {
+        it('validates domain', () => {
 
             const schema = { item: Joi.string().domain() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -1480,7 +1480,7 @@ describe('string', () => {
             ]);
         });
 
-        it('validates email with a friendly error message', () => {
+        it('validates email', () => {
 
             const schema = { item: Joi.string().email() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -2740,7 +2740,7 @@ describe('string', () => {
             ]);
         });
 
-        it('validates guid with a friendly error message', () => {
+        it('validates guid', () => {
 
             const schema = { item: Joi.string().guid() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -4567,7 +4567,7 @@ describe('string', () => {
             }).to.throw('version at position 0 must be one of ipv4, ipv6, ipvfuture');
         });
 
-        it('validates ip with a friendly error message', () => {
+        it('validates ip', () => {
 
             const schema = { item: Joi.string().ip() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -4583,7 +4583,7 @@ describe('string', () => {
             }]]);
         });
 
-        it('validates ip and cidr presence with a friendly error message', () => {
+        it('validates ip and cidr presence', () => {
 
             const schema = { item: Joi.string().ip({ cidr: 'required' }) };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -4599,7 +4599,7 @@ describe('string', () => {
             }]]);
         });
 
-        it('validates custom ip version and cidr presence with a friendly error message', () => {
+        it('validates custom ip version and cidr presence', () => {
 
             const schema = { item: Joi.string().ip({ version: 'ipv4', cidr: 'required' }) };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
@@ -5091,7 +5091,7 @@ describe('string', () => {
             ]);
         });
 
-        it('validates isoDate with a friendly error message', () => {
+        it('validates isoDate', () => {
 
             const schema = { item: Joi.string().isoDate() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, '"item" must be in iso format']]);
@@ -7353,14 +7353,14 @@ describe('string', () => {
             ]);
         });
 
-        it('validates uri with a friendly error message', () => {
+        it('validates uri', () => {
 
             const schema = { item: Joi.string().uri() };
 
             Helper.validate(Joi.compile(schema), [[{ item: 'something invalid' }, false, '"item" must be a valid uri']]);
         });
 
-        it('validates uri with a custom scheme with a friendly error message', () => {
+        it('validates uri with a custom scheme', () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -7371,7 +7371,7 @@ describe('string', () => {
             Helper.validate(Joi.compile(schema), [[{ item: 'something invalid' }, false, '"item" must be a valid uri with a scheme matching the http pattern']]);
         });
 
-        it('validates uri with a custom array of schemes with a friendly error message', () => {
+        it('validates uri with a custom array of schemes', () => {
 
             const schema = {
                 item: Joi.string().uri({
@@ -7390,7 +7390,7 @@ describe('string', () => {
             }).to.not.throw();
         });
 
-        it('validates uri requires uriOptions as an object with a friendly error message', () => {
+        it('validates uri requires uriOptions as an object', () => {
 
             expect(() => {
 
@@ -7398,7 +7398,7 @@ describe('string', () => {
             }).to.throw(Error, 'Options must be of type object');
         });
 
-        it('validates uri requires scheme to be a RegExp, String, or Array with a friendly error message', () => {
+        it('validates uri requires scheme to be a RegExp, String, or Array', () => {
 
             expect(() => {
 
@@ -7418,7 +7418,7 @@ describe('string', () => {
             }).to.throw(Error, 'scheme must have at least 1 scheme specified');
         });
 
-        it('validates uri requires scheme to be an Array of schemes to all be valid schemes with a friendly error message', () => {
+        it('validates uri requires scheme to be an Array of schemes to all be valid schemes', () => {
 
             expect(() => {
 
@@ -7444,7 +7444,7 @@ describe('string', () => {
             }).to.throw(Error, 'scheme at position 1 must be a RegExp or String');
         });
 
-        it('validates uri requires scheme to be a valid String scheme with a friendly error message', () => {
+        it('validates uri requires scheme to be a valid String scheme', () => {
 
             expect(() => {
 

@@ -1281,5 +1281,19 @@ describe('Joi', () => {
 
             Helper.validate(string, [[0, false, '"value" must be a string']]);
         });
+
+        it('returns alias shortcut methods', () => {
+
+            expect(() => {
+
+                const func = Joi.func;
+                func();
+            }).to.throw('Must be invoked on a Joi instance.');
+
+            const { func } = Joi.types();
+            expect(() => func.allow('x')).to.not.throw();
+
+            Helper.validate(func, [[0, false, '"value" must be of type function']]);
+        });
     });
 });
