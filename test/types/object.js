@@ -3181,7 +3181,8 @@ describe('object', () => {
                             }
                         ]
                     }
-                }]
+                }],
+                [{ a: 1 }, false, '"value" keys failed to match pattern requirements']
             ]);
 
             const description = schema.describe();
