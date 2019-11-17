@@ -280,6 +280,13 @@ describe('Manifest', () => {
                 keys: { foo: { type: 'string', flags: { default: 'bar' } } }
             });
         });
+
+
+        it('describes null defaults', () => {
+
+            const description = Joi.any().allow(null).default(null).describe();
+            expect(description.invalids).to.not.exist();
+        });
     });
 
     describe('build()', () => {
