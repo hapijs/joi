@@ -1446,7 +1446,7 @@ To accomplish the desired result above use:
 
 ```js
 const schema = {
-    a: Joi.conditional('b', { is: true, then: Joi.required() }),
+    a: Joi.when('b', { is: true, then: Joi.required() }),
     b: Joi.boolean()
 };
 ```
