@@ -349,7 +349,7 @@ References support the following arguments:
 - `options` - optional settings:
     - `adjust` - a function with the signature `function(value)` where `value` is the resolved reference value and the return value is the adjusted value to use. For example `(value) => value + 5` will add 5 to the resolved value. Note that the `adjust` feature will not perform any type validation on the adjusted value and it must match the value expected by the rule it is used in. Cannot be used with `map`.
     - `map` - an array of array pairs using the format `[[key, value], [key, value]]` used to maps the resolved reference value to another value. If the resolved value is not in the map, it is returned as-is. Cannot be used with `adjust`.
-    - `prefix` - overrides default prefix characters for:
+    - `prefix` - overrides default prefix characters key string prefix. Can be set to `false` to disable all prefix parsing (treat keys as literal strings), or an object with specific overrides for:
       - `global` - references to the globally provided `context` preference. Defaults to `'$'`.
       - `local` - references to error-specific or rule specific context. Defaults to `'#'`.
       - `root` - references to the root value being validated. Defaults to `'/'`.

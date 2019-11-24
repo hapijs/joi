@@ -659,7 +659,7 @@ describe('object', () => {
         Helper.validate(schema, [[input, false, '"unknown" is not allowed']]);
     });
 
-    it('should apply labels with nested objects', () => {
+    it('applies labels with nested objects', () => {
 
         const schema = Joi.object({
             a: Joi.number().label('first'),
@@ -923,7 +923,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels', () => {
+        it('applies labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -988,7 +988,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels with nested objects', () => {
+        it('applies labels with nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -1016,7 +1016,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should apply labels with invalid nested peers', () => {
+        it('applies labels with invalid nested peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2362,7 +2362,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels', () => {
+        it('applies labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2427,7 +2427,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels with nested objects', () => {
+        it('applies labels with nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2620,7 +2620,7 @@ describe('object', () => {
             }]]);
         });
 
-        it('should apply labels', () => {
+        it('applies labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2691,7 +2691,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels with nested objects', () => {
+        it('applies labels with nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -2752,7 +2752,7 @@ describe('object', () => {
             Helper.validate(schema, [[{}, true]]);
         });
 
-        it('should apply labels with too many peers', () => {
+        it('applies labels with too many peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -3668,7 +3668,7 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
-        it('validates correctly when key is an empty string', () => {
+        it('validates when key is an empty string', () => {
 
             const schema = Joi.object().with('', 'b');
             Helper.validate(schema, [
@@ -3676,7 +3676,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels', () => {
+        it('applies labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -3760,7 +3760,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels with nested objects', () => {
+        it('applies labels with nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -3905,7 +3905,7 @@ describe('object', () => {
             expect(error).to.equal(true);
         });
 
-        it('validates correctly when key is an empty string', () => {
+        it('validates when key is an empty string', () => {
 
             const schema = Joi.object().without('', 'b');
             Helper.validate(schema, [
@@ -3913,7 +3913,7 @@ describe('object', () => {
             ]);
         });
 
-        it('validates correctly when key is stripped', () => {
+        it('validates when key is stripped', () => {
 
             const schema = Joi.object({
                 a: Joi.any().strip(),
@@ -3925,7 +3925,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels', () => {
+        it('applies labels', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4006,7 +4006,7 @@ describe('object', () => {
             }]);
         });
 
-        it('should apply labels with nested objects', () => {
+        it('applies labels with nested objects', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4030,6 +4030,23 @@ describe('object', () => {
                     value: { a: 1, b: { c: 'c' } }
                 }
             }]]);
+        });
+
+        it('validates keys with prefix characters', () => {
+
+            const schema = Joi.object({
+                $a: Joi.number(),
+                '#b': Joi.number(),
+                '/c': Joi.number()
+            })
+                .without('$a', ['#b', '/c']);
+
+            Helper.validate(schema, [
+                [{ $a: 1 }, true],
+                [{ '#b': 1 }, true],
+                [{ '/c': 1 }, true],
+                [{ $a: 1, '/c': 1 }, false, '"$a" conflict with forbidden peer "/c"']
+            ]);
         });
     });
 
@@ -4233,7 +4250,7 @@ describe('object', () => {
             expect(() => Joi.object().xor(123)).to.throw();
         });
 
-        it('should apply labels without any peer', () => {
+        it('applies labels without any peer', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4254,7 +4271,7 @@ describe('object', () => {
             }]]);
         });
 
-        it('should apply labels with too many peers', () => {
+        it('applies labels with too many peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4277,7 +4294,7 @@ describe('object', () => {
             }]]);
         });
 
-        it('should apply labels with too many peers', () => {
+        it('applies labels with too many peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4332,7 +4349,7 @@ describe('object', () => {
             ]);
         });
 
-        it('should apply labels without any nested peers', () => {
+        it('applies labels without any nested peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
@@ -4356,7 +4373,7 @@ describe('object', () => {
             }]]);
         });
 
-        it('should apply labels with too many nested peers', () => {
+        it('applies labels with too many nested peers', () => {
 
             const schema = Joi.object({
                 a: Joi.number().label('first'),
