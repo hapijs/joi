@@ -1144,13 +1144,10 @@ const result = schema.validate(value);
 
 Validates a value asynchronously using the current schema and options where:
 - `value` - the value being validated.
-- `options` - an optional object as described in [`any.validate()`](#anyvalidatevalue-options),
-  with the following additional settings:
-    - `warnings` - when `true`, warnings are returned alongside the value (i.e. `{ value, warning }`).
-      Defaults to `false`.
+- `options` - an optional object as described in [`any.validate()`](#anyvalidatevalue-options), with the following additional settings:
+    - `warnings` - when `true`, warnings are returned alongside the value (i.e. `{ value, warning }`). Defaults to `false`.
 
-
-Returns a Promise.
+Returns a Promise that resolves into the validated value when the value is valid. If the value is valid and the `warnings` or `debug` options are set to `true`, returns an object `{ value, warning, debug }`. If validation fails, the promise rejects with the validation error.
 
 ```js
 const schema = Joi.object({
@@ -1173,21 +1170,15 @@ catch (err) {
 
 Same as [`rule({ warn: true })`](#anyruleoptions).
 
-Note that `warn()` will terminate the current ruleset and cannot be followed by another
-rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
+Note that `warn()` will terminate the current ruleset and cannot be followed by another rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
 
 #### `any.warning(code, [context])`
 
 Generates a warning where:
-- `code` - the warning code. Can be an existing error code or a custom code. If a custom code is
-  used, a matching error message definition must be configured via [`any.message()`](#anymessagemessage),
-  [`any.prefs()`](#anyprefsoptions--aliases-preferences-options), or validation `messages` option.
+- `code` - the warning code. Can be an existing error code or a custom code. If a custom code is used, a matching error message definition must be configured via [`any.message()`](#anymessagemessage), [`any.prefs()`](#anyprefsoptions--aliases-preferences-options), or validation `messages` option.
 - `context` - optional context object.
 
-When calling [`any.validateAsync()`](#anyvalidateasyncvalue-options), set the `warning` option to `true`
-to enable warnings. Warnings are reported separately from errors alongside the result value via the
-`warning` key (i.e. `{ value, warning }`). Warning are always included when calling
-[`any.validate()`](#anyvalidatevalue-options).
+When calling [`any.validateAsync()`](#anyvalidateasyncvalue-options), set the `warning` option to `true` to enable warnings. Warnings are reported separately from errors alongside the result value via the `warning` key (i.e. `{ value, warning }`). Warning are always included when calling [`any.validate()`](#anyvalidatevalue-options).
 
 ```js
 const schema = Joi.any()
