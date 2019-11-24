@@ -919,8 +919,8 @@ describe('number', () => {
 
         it('converts numbers', () => {
 
-            const rule = Joi.number().precision(4);
-            Helper.validate(rule, [
+            const schema = Joi.number().precision(4);
+            Helper.validate(schema, [
                 [1.5, true, 1.5],
                 [0.12345, true, 0.1235],
                 [123456, true, 123456],
@@ -938,6 +938,21 @@ describe('number', () => {
                     type: 'number.base',
                     context: { label: 'value', value: NaN }
                 }]
+            ]);
+        });
+
+        it('validates with min()', () => {
+
+            const schema = Joi.number()
+                .min(0)
+                .precision(2);
+
+            Helper.validate(schema, [
+                [-0.1, false, '"value" must be larger than or equal to 0'],
+                [-0.01, false, '"value" must be larger than or equal to 0'],
+                [-0.001, true, 0],
+                [-0.123, false, '"value" must be larger than or equal to 0'],
+                [-0.0456, false, '"value" must be larger than or equal to 0']
             ]);
         });
     });
