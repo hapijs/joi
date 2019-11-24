@@ -4530,42 +4530,27 @@ describe('string', () => {
 
         it('throws when options.cidr is not a string', () => {
 
-            expect(() => {
-
-                Joi.string().ip({ cidr: 42 });
-            }).to.throw('cidr must be a string');
+            expect(() => Joi.string().ip({ cidr: 42 })).to.throw('options.cidr must be a string');
         });
 
         it('throws when options.cidr is not a valid value', () => {
 
-            expect(() => {
-
-                Joi.string().ip({ cidr: '42' });
-            }).to.throw('cidr must be one of required, optional, forbidden');
+            expect(() => Joi.string().ip({ cidr: '42' })).to.throw('options.cidr must be one of required, optional, forbidden');
         });
 
         it('throws when options.version is an empty array', () => {
 
-            expect(() => {
-
-                Joi.string().ip({ version: [] });
-            }).to.throw('version must have at least 1 version specified');
+            expect(() => Joi.string().ip({ version: [] })).to.throw('options.version must have at least 1 version specified');
         });
 
         it('throws when options.version is not a string', () => {
 
-            expect(() => {
-
-                Joi.string().ip({ version: 42 });
-            }).to.throw('version at position 0 must be a string');
+            expect(() => Joi.string().ip({ version: 42 })).to.throw('options.version must be a string or an array of string');
         });
 
         it('throws when options.version is not a valid value', () => {
 
-            expect(() => {
-
-                Joi.string().ip({ version: '42' });
-            }).to.throw('version at position 0 must be one of ipv4, ipv6, ipvfuture');
+            expect(() => Joi.string().ip({ version: '42' })).to.throw('options.version contains unknown version 42 - must be one of ipv4, ipv6, ipvfuture');
         });
 
         it('validates ip', () => {
