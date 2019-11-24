@@ -1,7 +1,7 @@
 {
   "name": "@hapi/joi",
   "description": "Object schema validation",
-  "version": "16.1.7",
+  "version": "16.1.8",
   "repository": "git://github.com/hapijs/joi",
   "main": "lib/index.js",
   "browser": "dist/joi-browser.min.js",
