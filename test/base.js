@@ -897,12 +897,13 @@ describe('any', () => {
             expect(schema.validate(input)).to.equal({ value: { foo: 2 } });
         });
 
-        it('passes a clone of the context if the default method accepts an argument', () => {
+        it('passes a clone of the parent if the default method accepts an argument', () => {
 
             const schema = Joi.object({
-                foo: Joi.string().default((context) => {
+                foo: Joi.string().default((parent, { prefs }) => {
 
-                    return context.bar + 'ing';
+                    expect(prefs.abortEarly).to.be.true();
+                    return parent.bar + 'ing';
                 }),
                 bar: Joi.string()
             });
@@ -914,9 +915,9 @@ describe('any', () => {
 
         it('does not modify the original object when modifying the clone in a default method', () => {
 
-            const defaultFn = function (context) {
+            const defaultFn = function (parent) {
 
-                context.bar = 'broken';
+                parent.bar = 'broken';
                 return 'test';
             };
 
@@ -932,14 +933,14 @@ describe('any', () => {
             ]);
         });
 
-        it('passes undefined as the context if the default method has no parent', () => {
+        it('passes undefined as the parent if the default method has no parent', () => {
 
             let c;
             let methodCalled = false;
-            const schema = Joi.string().default((context) => {
+            const schema = Joi.string().default((parent) => {
 
                 methodCalled = true;
-                c = context;
+                c = parent;
                 return 'test';
             });
 
@@ -1101,7 +1102,7 @@ describe('any', () => {
 
         it('should not apply default values from functions if the noDefaults option is enquire', () => {
 
-            const func = function (context) {
+            const func = function () {
 
                 return 'foo';
             };

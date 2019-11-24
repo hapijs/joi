@@ -637,27 +637,24 @@ Possible validation errors: [`any.custom`](#anycustom)
 
 #### `any.default([value])`
 
-Sets a default value if the original value is undefined where:
-- `value` - the default value. `value` supports [references](#refkey-options). It may be assigned a
-  function which returns the default value. If `value` is specified as a function that accepts a
-  single parameter, that parameter will be a context object that can be used to derive the
-  resulting value.
+Sets a default value if the original value is `undefined` where:
+- `value` - the default value. One of:
+    - a literal value (string, number, object, etc.).
+    - a [references](#refkey-options).
+    - a function which returns the default value using the signature `function(parent, helpers)` where:
+        - `parent` - a clone of the object containing the value being validated. Note that since specifying a `parent` argument performs cloning, do not declare format arguments if you are not using them.
+        - `helpers` - same as those described in [`any.custom()`](#anycustommethod_description).
 
-When called without any `value` on an object schema type, a default value will be automatically
-generated based on the default values of the object keys.
+When called without any `value` on an object schema type, a default value will be automatically generated based on the default values of the object keys.
 
-Note that if `value` is an object, any changes to the object after `default()` is called will change
-the reference and any future assignment. Use a function when setting a dynamic value (e.g. the
-current time).
-
-Using a function with a single argument performs some internal cloning which has a performance
-impact. If you do not need access to the context, define the function without any arguments.
+Note that if `value` is an object, any changes to the object after `default()` is called will change the reference and any future assignment. Use a function when setting a dynamic value (e.g. the current time).
 
 ```js
-const generateUsername = (context) => {
+const generateUsername = (parent, helpers) => {
 
-  return context.firstname.toLowerCase() + '-' + context.lastname.toLowerCase();
+  return parent.firstname.toLowerCase() + '-' + parent.lastname.toLowerCase();
 };
+
 generateUsername.description = 'generated username';
 
 const schema = Joi.object({
