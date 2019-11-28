@@ -1595,7 +1595,7 @@ describe('alternatives', () => {
             ]);
         });
 
-        it('validates deep alternatives (with wrapArrays false)', () => {
+        it('validates deep alternatives (with wrap.array false)', () => {
 
             const schema = Joi.alternatives().try(
                 Joi.boolean(),
@@ -1605,7 +1605,7 @@ describe('alternatives', () => {
                         Joi.string().valid('foo', 'bar')
                     )
                 })
-            ).prefs({ errors: { wrapArrays: false } });
+            ).prefs({ errors: { wrap: { array: false } } });
 
             Helper.validate(schema, [
                 [{ p: 1 }, false, {
