@@ -70,15 +70,15 @@ describe('errors', () => {
         };
 
         const messages = {
-            'string.empty': '"{#label}" 3',
-            'date.base': '"{#label}" 18',
-            'string.base': '"{#label}" 13',
-            'string.min': '"{#label}" 14',
-            'string.max': '"{#label}" 15',
-            'string.alphanum': '"{#label}" 16',
-            'string.email': '"{#label}" 19',
-            'object.without': '"{#label}" 7',
-            'object.rename.override': '"{#label}" 11'
+            'string.empty': '{#label} 3',
+            'date.base': '{#label} 18',
+            'string.base': '{#label} 13',
+            'string.min': '{#label} 14',
+            'string.max': '{#label} 15',
+            'string.alphanum': '{#label} 16',
+            'string.email': '{#label} 19',
+            'object.without': '{#label} 7',
+            'object.rename.override': '{#label} 11'
         };
 
         const error = schema.validate(value, { abortEarly: false, messages }).error;
@@ -188,8 +188,8 @@ describe('errors', () => {
             empty: {}
         };
 
-        expect(schema.validate(1, { messages, errors: { language: 'english' } }).error).to.be.an.error('value too small');
-        expect(schema.validate(1, { messages, errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+        expect(schema.validate(1, { messages, errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
+        expect(schema.validate(1, { messages, errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
         expect(schema.validate(1, { messages, errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
         expect(schema.validate(1, { messages, errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
     });
@@ -207,8 +207,8 @@ describe('errors', () => {
 
         const schema = Joi.number().min(10).prefs({ messages });
 
-        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
-        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
+        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
 
         expect(schema.describe().preferences.messages).to.equal(messages);
     });
@@ -236,8 +236,8 @@ describe('errors', () => {
 
         const schema = Joi.number().min(10).prefs({ messages: code }).prefs({ messages: root });
 
-        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
-        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+        expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
+        expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
         expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
         expect(schema.validate(1, { errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
     });
@@ -260,13 +260,50 @@ describe('errors', () => {
         })
             .prefs({
                 messages,
-                errors: { language: Joi.ref('/lang') }
+                errors: {
+                    language: Joi.ref('/lang'),
+                    wrap: {
+                        label: false
+                    }
+                }
             });
 
         expect(schema.validate({ a: 1, lang: 'english' }).error).to.be.an.error('a too small');
         expect(schema.validate({ a: 1, lang: 'latin' }).error).to.be.an.error('a angustus');
-        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('"a" must be larger than or equal to 10');
-        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('"a" must be larger than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('a must be larger than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('a must be larger than or equal to 10');
+    });
+
+    it('supports custom wrap characters', () => {
+
+        const messages = {
+            english: {
+                'number.min': '{#label} too small'
+            },
+            latin: {
+                'number.min': Joi.x('{@label} angustus', { prefix: { local: '@' } })
+            },
+            empty: {}
+        };
+
+        const schema = Joi.object({
+            a: Joi.number().min(10),
+            lang: Joi.string().required()
+        })
+            .prefs({
+                messages,
+                errors: {
+                    language: Joi.ref('/lang'),
+                    wrap: {
+                        label: '{}'
+                    }
+                }
+            });
+
+        expect(schema.validate({ a: 1, lang: 'english' }).error).to.be.an.error('{a} too small');
+        expect(schema.validate({ a: 1, lang: 'latin' }).error).to.be.an.error('{a} angustus');
+        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('{a} must be larger than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('{a} must be larger than or equal to 10');
     });
 
     it('supports render preference', () => {
@@ -276,7 +313,7 @@ describe('errors', () => {
 
     it('does not prefix with key when messages uses context.key', () => {
 
-        const schema = Joi.valid('sad').prefs({ messages: { 'any.only': 'my hero "{{#label}}" is not {{#valids}}' } });
+        const schema = Joi.valid('sad').prefs({ messages: { 'any.only': 'my hero {{#label}} is not {{#valids}}' } });
         const err = schema.validate(5).error;
         expect(err).to.be.an.error('my hero "value" is not [sad]');
         expect(err.details).to.equal([{

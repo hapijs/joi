@@ -554,10 +554,10 @@ describe('Manifest', () => {
                     sizable: { setter: 'big' }
                 },
                 messages: {
-                    'million.base': '"{{#label}}" must be at least a million',
-                    'million.big': '"{{#label}}" must be at least five millions',
-                    'million.round': '"{{#label}}" must be a round number',
-                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
+                    'million.base': '{{#label}} must be at least a million',
+                    'million.big': '{{#label}} must be at least five millions',
+                    'million.round': '{{#label}} must be a round number',
+                    'million.dividable': '{{#label}} must be dividable by {{#q}}'
                 },
                 coerce(value, { schema }) {
 

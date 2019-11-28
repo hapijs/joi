@@ -3292,12 +3292,12 @@ describe('object', () => {
                         key: 'match',
                         label: 'a.match',
                         matches: ['b'],
-                        message: 'a.match[0] does not have a matching grandparent',
+                        message: '"a.match[0]" does not have a matching grandparent',
                         value: { b: true },
                         details: [
                             {
                                 context: { key: 0, label: 'a.match[0]', value: 'b' },
-                                message: 'a.match[0] does not have a matching grandparent',
+                                message: '"a.match[0]" does not have a matching grandparent',
                                 path: ['a', 'match', 0],
                                 type: 'custom'
                             }

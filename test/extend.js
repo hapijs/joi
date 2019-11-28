@@ -38,7 +38,7 @@ describe('extension', () => {
                 }
             },
             messages: {
-                'special.hello': '"{{#label}}" must say hello',
+                'special.hello': '{{#label}} must say hello',
                 'special.excited': 'You do not seem excited enough'
             }
         });
@@ -82,7 +82,7 @@ describe('extension', () => {
                 }
             },
             messages: {
-                'special.hello': '"{{#label}}" must say hello'
+                'special.hello': '{{#label}} must say hello'
             }
         });
 
@@ -322,7 +322,7 @@ describe('extension', () => {
                 }
             },
             messages: {
-                'special.bar': '"{#label}" oh no bar !'
+                'special.bar': '{#label} oh no bar !'
             }
         });
 
@@ -373,7 +373,7 @@ describe('extension', () => {
                 }
             },
             messages: {
-                'special.bar': '"{#label}" oh no bar !'
+                'special.bar': '{#label} oh no bar !'
             }
         });
 
@@ -577,7 +577,7 @@ describe('extension', () => {
         );
 
         const special = custom.special();
-        expect(special.validate(1, { errors: { language: 'en' } }).error).to.be.an.error('stuff bad shit happens');
+        expect(special.validate(1, { errors: { language: 'en' } }).error).to.be.an.error('"stuff" bad shit happens');
     });
 
     it('overrides specific error messages with template (language)', () => {
@@ -596,7 +596,7 @@ describe('extension', () => {
 
         const special = custom.special();
         expect(special.type).to.equal('special');
-        expect(special.validate(1, { errors: { language: 'en' } }).error).to.be.an.error('stuff shit happens');
+        expect(special.validate(1, { errors: { language: 'en' } }).error).to.be.an.error('"stuff" shit happens');
         expect(special.validate(1).error).to.be.an.error('"thing" must be a string');
     });
 
@@ -629,7 +629,7 @@ describe('extension', () => {
                 }
             },
             messages: {
-                'special.foo': '"{#label}" foo'
+                'special.foo': '{#label} foo'
             }
         });
 
@@ -900,7 +900,7 @@ describe('extension', () => {
             (joi) => ({
                 type: 'number',
                 base: joi.number(),
-                messages: { 'number.foo': '"{#label}" foo' },
+                messages: { 'number.foo': '{#label} foo' },
                 rules: {
                     foo: {
                         validate(value, { error }) {
@@ -913,7 +913,7 @@ describe('extension', () => {
             (joi) => ({
                 type: 'number',
                 base: joi.number(),
-                messages: { 'number.bar': '"{#label}" bar' },
+                messages: { 'number.bar': '{#label} bar' },
                 rules: {
                     bar: {
                         validate(value, { error }) {
@@ -932,7 +932,7 @@ describe('extension', () => {
             (joi) => ({
                 type: 'number',
                 base: joi.number(),
-                messages: { 'number.foo': '"{#label}" foo' },
+                messages: { 'number.foo': '{#label} foo' },
                 rules: {
                     foo: {
                         validate(value, { error }) {
@@ -975,7 +975,7 @@ describe('extension', () => {
             (joi) => ({
                 type: 'number',
                 base: joi.number(),
-                messages: { 'number.bar': '"{#label}" bar' },
+                messages: { 'number.bar': '{#label} bar' },
                 rules: {
                     bar: {
                         validate(value, { error }) {
@@ -1048,10 +1048,10 @@ describe('extension', () => {
                 type: 'million',
                 base: joi.number(),
                 messages: {
-                    'million.base': '"{{#label}}" must be at least a million',
-                    'million.big': '"{{#label}}" must be at least five millions',
-                    'million.round': '"{{#label}}" must be a round number',
-                    'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
+                    'million.base': '{{#label}} must be at least a million',
+                    'million.big': '{{#label}} must be at least five millions',
+                    'million.round': '{{#label}} must be a round number',
+                    'million.dividable': '{{#label}} must be dividable by {{#q}}'
                 },
                 coerce(value, { schema }) {
 
@@ -1183,7 +1183,7 @@ describe('extension', () => {
                 type: 'number',
                 base: joi.number(),
                 messages: {
-                    'number.dividable': '"{{#label}}" must be dividable by {{#q}}'
+                    'number.dividable': '{{#label}} must be dividable by {{#q}}'
                 },
                 rules: {
                     dividable: {

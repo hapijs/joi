@@ -1887,10 +1887,10 @@ describe('any', () => {
 
             const schema = Joi.number().min(10).message(messages);
 
-            expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('value too small');
-            expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('valorem angustus');
+            expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
+            expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
             expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
-            expect(schema.label('special').validate(1, { errors: { language: 'english' } }).error).to.be.an.error('special too small');
+            expect(schema.label('special').validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"special" too small');
         });
 
         it('overrides message in multiple language (nested)', () => {
@@ -1908,8 +1908,8 @@ describe('any', () => {
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
 
-            expect(schema.validate({ a: 1 }, { errors: { language: 'english' } }).error).to.be.an.error('a too small');
-            expect(schema.validate({ a: 1 }, { errors: { language: 'latin' } }).error).to.be.an.error('a angustus');
+            expect(schema.validate({ a: 1 }, { errors: { language: 'english' } }).error).to.be.an.error('"a" too small');
+            expect(schema.validate({ a: 1 }, { errors: { language: 'latin' } }).error).to.be.an.error('"a" angustus');
             expect(schema.validate({ a: 1 }, { errors: { language: 'unknown' } }).error).to.be.an.error('"a" must be larger than or equal to 10');
         });
 
@@ -1921,7 +1921,7 @@ describe('any', () => {
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
-            Helper.validate(schema, [[{ a: 1 }, false, 'a angustus']]);
+            Helper.validate(schema, [[{ a: 1 }, false, '"a" angustus']]);
         });
 
         it('overrides message in multiple language (flat template)', () => {
@@ -1932,7 +1932,7 @@ describe('any', () => {
             };
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
-            Helper.validate(schema, [[{ a: 1 }, false, 'a angustus']]);
+            Helper.validate(schema, [[{ a: 1 }, false, '"a" angustus']]);
         });
 
         it('errors on invalid message value', () => {
@@ -2273,8 +2273,8 @@ describe('any', () => {
 
             it('overrides template', () => {
 
-                expect(Joi.number().min(10).rule({ message: '{{#label}} way too small' }).validate(1).error).to.be.an.error('value way too small');
-                expect(Joi.number().min(10).rule({ message: { 'number.min': '{{#label}} way too small' } }).validate(1).error).to.be.an.error('value way too small');
+                expect(Joi.number().min(10).rule({ message: '{{#label}} way too small' }).validate(1).error).to.be.an.error('"value" way too small');
+                expect(Joi.number().min(10).rule({ message: { 'number.min': '{{#label}} way too small' } }).validate(1).error).to.be.an.error('"value" way too small');
                 expect(Joi.number().min(10).rule({ message: { 'number.max': '{{#label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
             });
 
@@ -2282,8 +2282,8 @@ describe('any', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: '{{#label}} number out of bound' });
                 Helper.validate(schema, [
-                    [1, false, 'value number out of bound'],
-                    [101, false, 'value number out of bound']
+                    [1, false, '"value" number out of bound'],
+                    [101, false, '"value" number out of bound']
                 ]);
             });
 
@@ -2291,8 +2291,8 @@ describe('any', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': '{{#label}} way too big', 'number.min': '{{#label}} way too small' } });
                 Helper.validate(schema, [
-                    [1, false, 'value way too small'],
-                    [101, false, 'value way too big']
+                    [1, false, '"value" way too small'],
+                    [101, false, '"value" way too big']
                 ]);
             });
 
@@ -2300,7 +2300,7 @@ describe('any', () => {
 
                 const schema = Joi.number().$.max(100).min(10).rule({ message: { 'number.max': 'way too big', 'number.min': '{{#label}} way too small' } });
                 Helper.validate(schema, [
-                    [1, false, 'value way too small'],
+                    [1, false, '"value" way too small'],
                     [101, false, 'way too big']
                 ]);
             });
