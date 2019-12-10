@@ -319,6 +319,12 @@ describe('extension', () => {
 
                         return helpers.error('special.bar');
                     }
+                },
+                foo_bar: {
+                    validate(value, helpers, args, options) {
+
+                        return null;
+                    }
                 }
             },
             messages: {
@@ -329,10 +335,12 @@ describe('extension', () => {
         const original = Joi.any();
         expect(original.foo).to.not.exist();
         expect(original.bar).to.not.exist();
+        expect(original.foo_bar).to.not.exist();
 
         const schema = custom.special();
         expect(schema.foo().validate({})).to.equal({ value: null });
         expect(schema.bar().validate({}).error).to.be.an.error('"value" oh no bar !');
+        expect(schema.foo_bar().validate({})).to.equal({ value: null });
     });
 
     it('concats custom type', () => {
