@@ -14,14 +14,14 @@
     "validation"
   ],
   "dependencies": {
-    "@hapi/address": "^3.2.2",
-    "@hapi/formula": "^1.2.0",
+    "@hapi/address": "^4.0.0",
+    "@hapi/formula": "^2.0.0",
     "@hapi/hoek": "^9.0.0",
-    "@hapi/pinpoint": "^1.0.2",
-    "@hapi/topo": "^3.1.3"
+    "@hapi/pinpoint": "^2.0.0",
+    "@hapi/topo": "^5.0.0"
   },
   "devDependencies": {
-    "@hapi/bourne": "1.x.x",
+    "@hapi/bourne": "2.x.x",
     "@hapi/code": "8.x.x",
     "@hapi/lab": "22.x.x",
     "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x"
