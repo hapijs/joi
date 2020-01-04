@@ -92,6 +92,31 @@ describe('extension', () => {
         expect(special.lowercase().hello().validate('HELLO').error).to.not.exist();
     });
 
+    it('extends multiple types', () => {
+
+        const custom = Joi.extend({
+            type: /^s/,
+            rules: {
+                hello: {
+                    validate(value, helpers, args, options) {
+
+                        return 'hello';
+                    }
+                }
+            }
+        });
+
+        const string = custom.string().hello();
+        expect(string.type).to.equal('string');
+        expect(string.hello().validate('goodbye').value).to.equal('hello');
+
+        const symbol = custom.symbol().hello();
+        expect(symbol.type).to.equal('symbol');
+        expect(symbol.hello().validate(Symbol('x')).value).to.equal('hello');
+
+        expect(() => custom.number().hello()).to.throw('custom.number(...).hello is not a function');
+    });
+
     it('aliases a type', () => {
 
         const custom = Joi.extend({
