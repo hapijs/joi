@@ -1,7 +1,9 @@
 'use strict';
 
 const Path = require('path');
+
 const Webpack = require('webpack');
+
 
 module.exports = {
     entry: '../lib/index.js',
@@ -27,6 +29,7 @@ module.exports = {
             {
                 use: 'null-loader',
                 include: [
+                    Path.join(__dirname, '../lib/annotate.js'),
                     Path.join(__dirname, '../lib/manifest.js'),
                     Path.join(__dirname, '../lib/trace.js'),
                     Path.join(__dirname, '../lib/types/binary.js'),
@@ -38,13 +41,16 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        'presets': [
+                        presets: [
                             [
                                 '@babel/preset-env',
                                 {
                                     'targets': '> 1%, not IE 11, not dead'
                                 }
                             ]
+                        ],
+                        plugins: [
+                            '@babel/plugin-proposal-class-properties'
                         ]
                     }
                 }
