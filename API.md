@@ -1773,8 +1773,7 @@ await boolean.validateAsync('Y'); // Valid
 
 ### `date`
 
-Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If
-the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified.
+Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified. Note that some invalid date strings will be accepted if they can be adjusted to valid dates (e.g. `'2/31/2019'` will be converted to `'3/3/2019'`) by the internal JS `Date.parse()` implementation.
 
 Supports the same methods of the [`any()`](#any) type.
 
