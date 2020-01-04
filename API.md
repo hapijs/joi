@@ -16,7 +16,7 @@ const schema = Joi.object({
         .required(),
 
     password: Joi.string()
-        .pattern(/^[a-zA-Z0-9]{3,30}$/),
+        .pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
 
     repeat_password: Joi.ref('password'),
 
@@ -1106,6 +1106,9 @@ Validates a value using the current schema and options where:
     - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global  context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api).
+    - `wrap` - overrides the way values are wrapped (e.g. `[]` around arrays, `""` around labels). Each key can be set to a string with one (same character before and after the value) or two characters (first character before and second character after), or `false` to disable wrapping:
+        - `label` - the characters used around `{#label}` references. Defaults to `'"'`.
+        - `array` - the characters used around array values. Defaults to `'[]'`.
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.

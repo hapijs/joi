@@ -481,17 +481,26 @@ describe('errors', () => {
         }]);
     });
 
-    it('overrides wrapArrays', () => {
+    it('disables wrap.array', () => {
 
-        const schema = Joi.array().items(Joi.boolean()).prefs({ errors: { wrapArrays: false } });
-        const err = schema.validate([4]).error;
-        expect(err).to.be.an.error('"[0]" must be a boolean');
-        expect(err.details).to.equal([{
-            message: '"[0]" must be a boolean',
-            path: [0],
-            type: 'boolean.base',
-            context: { label: '[0]', key: 0, value: 4 }
-        }]);
+        const schema = Joi.alternatives(Joi.number(), Joi.string()).prefs({ errors: { wrap: { array: false } } });
+
+        Helper.validate(schema, [
+            [1, true],
+            ['x', true],
+            [true, false, '"value" must be one of number, string']
+        ]);
+    });
+
+    it('overrides wrap.array', () => {
+
+        const schema = Joi.alternatives(Joi.number(), Joi.string()).prefs({ errors: { wrap: { array: '{}' } } });
+
+        Helper.validate(schema, [
+            [1, true],
+            ['x', true],
+            [true, false, '"value" must be one of {number, string}']
+        ]);
     });
 
     it('allows html escaping', () => {
