@@ -2451,19 +2451,14 @@ Possible validation errors: [`object.regex`](#objectregex)
 
 Renames a key to another name (deletes the renamed key) where:
 - `from` - the original key name or a regular expression matching keys.
-- `to` - the new key name. `to` can be set to a [`template`](#templatetemplate-options) which is
-  rendered at runtime using the current value, global context, and local context if `from` is a
-  regular expression (e.g. the expression `/^(\d+)$/` will match any all-digits keys with a capture
-  group that is accessible in the template via `{#1}`).
+- `to` - the new key name. `to` can be set to a [`template`](#templatetemplate-options) which is rendered at runtime using the current value, global context, and local context if `from` is a regular expression (e.g. the expression `/^(\d+)$/` will match any all-digits keys with a capture group that is accessible in the template via `{#1}`).
 - `options` - an optional object with the following optional keys:
     - `alias` - if `true`, does not delete the old key name, keeping both the new and old keys in place. Defaults to `false`.
     - `multiple` - if `true`, allows renaming multiple keys to the same destination where the last rename wins. Defaults to `false`.
     - `override` - if `true`, allows renaming a key over an existing key. Defaults to `false`.
     - `ignoreUndefined` - if `true`, skip renaming of a key if it's undefined. Defaults to `false`.
 
-Keys are renamed before any other validation rules are applied. If `to` is a template that
-references the object own keys (e.g. `'{.prefix}-{#1}'`), the value of these keys is the raw
-input value, not the value generated after validation.
+Keys are renamed before any other validation rules are applied. If `to` is a template that references the object own keys (e.g. `'{.prefix}-{#1}'`), the value of these keys is the raw input value, not the value generated after validation. If a key is renamed and then its value fails to pass a validation rule, the error message will use the renamed key, not the original key which may be confusing for users (labels can help in some cases).
 
 ```js
 const object = Joi.object({
