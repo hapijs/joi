@@ -51,21 +51,6 @@ describe('object', () => {
         Helper.validate(schema, [[obj, true]]);
     });
 
-    it('validates references', () => {
-
-        const schema = Joi.object().ref();
-
-        Helper.validate(schema, [
-            [{}, false, {
-                message: '"value" must be a Joi reference',
-                path: [],
-                type: 'object.refType',
-                context: { label: 'value', value: {} }
-            }],
-            [Joi.ref('a.b'), true]
-        ]);
-    });
-
     it('returns object reference when no rules specified', () => {
 
         const schema = Joi.object({
@@ -1586,678 +1571,6 @@ describe('object', () => {
         });
     });
 
-    describe('rename()', () => {
-
-        it('allows renaming multiple times with multiple enabled', () => {
-
-            const schema = Joi.object({
-                test: Joi.string()
-            }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
-
-            expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' }).error).to.not.exist();
-        });
-
-        it('errors renaming multiple times with multiple disabled', () => {
-
-            const schema = Joi.object({
-                test: Joi.string()
-            }).rename('test1', 'test').rename('test2', 'test');
-
-            Helper.validate(Joi.compile(schema), [[{ test1: 'a', test2: 'b' }, false, {
-                message: '"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"',
-                path: [],
-                type: 'object.rename.multiple',
-                context: { from: 'test2', to: 'test', label: 'value', pattern: false, value: { test: 'a', test2: 'b' } }
-            }]]);
-        });
-
-        it('errors multiple times when abortEarly is false', () => {
-
-            const schema = Joi.object()
-                .rename('a', 'b')
-                .rename('c', 'b')
-                .rename('d', 'b')
-                .prefs({ abortEarly: false });
-
-            Helper.validate(schema, [[{ a: 1, c: 1, d: 1 }, false, {
-                message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
-                details: [
-                    {
-                        message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [],
-                        type: 'object.rename.multiple',
-                        context: { from: 'c', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
-                    },
-                    {
-                        message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
-                        path: [],
-                        type: 'object.rename.multiple',
-                        context: { from: 'd', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
-                    }
-                ]
-            }]]);
-        });
-
-        it('aliases a key', () => {
-
-            const schema = Joi.object({
-                a: Joi.number(),
-                b: Joi.number()
-            }).rename('a', 'b', { alias: true });
-
-            const obj = { a: 10 };
-            Helper.validate(Joi.compile(schema), [[obj, true, { a: 10, b: 10 }]]);
-        });
-
-        it('with override disabled should not allow overwriting existing value', () => {
-
-            const schema = Joi.object({
-                test1: Joi.string()
-            }).rename('test', 'test1');
-
-            Helper.validate(schema, [[{ test: 'b', test1: 'a' }, false, {
-                message: '"value" cannot rename "test" because override is disabled and target "test1" exists',
-                path: [],
-                type: 'object.rename.override',
-                context: { from: 'test', to: 'test1', label: 'value', pattern: false, value: { test: 'b', test1: 'a' } }
-            }]]);
-        });
-
-        it('with override enabled should allow overwriting existing value', () => {
-
-            const schema = Joi.object({
-                test1: Joi.string()
-            }).rename('test', 'test1', { override: true });
-
-            Helper.validate(schema, [
-                [{ test: 'b', test1: 'a' }, true, { test1: 'b' }]
-            ]);
-        });
-
-        it('renames when data is nested in an array via items', () => {
-
-            const schema = {
-                arr: Joi.array().items(Joi.object({
-                    one: Joi.string(),
-                    two: Joi.string()
-                }).rename('uno', 'one').rename('dos', 'two'))
-            };
-
-            const data = { arr: [{ uno: '1', dos: '2' }] };
-            Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
-        });
-
-        it('applies rename and validation in the correct order regardless of key order', () => {
-
-            const schema1 = Joi.object({
-                a: Joi.number()
-            }).rename('b', 'a');
-
-            const input1 = { b: '5' };
-            Helper.validate(schema1, [[input1, true, { a: 5 }]]);
-
-            const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
-            const input2 = { b: '5' };
-            Helper.validate(schema2, [[input2, true, { a: 5 }]]);
-        });
-
-        it('sets the default value after key is renamed', () => {
-
-            const schema = Joi.object({
-                foo2: Joi.string().default('test')
-            }).rename('foo', 'foo2');
-
-            const input = {};
-            Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
-        });
-
-        it('renames keys that are empty strings', () => {
-
-            const schema = Joi.object().rename('', 'notEmpty');
-            const input = {
-                '': 'something'
-            };
-
-            Helper.validate(schema, [[input, true, { notEmpty: 'something' }]]);
-        });
-
-        it('should not create new keys when the key in question does not exist', () => {
-
-            const schema = Joi.object()
-                .rename('b', '_b');
-
-            const input = {
-                a: 'something'
-            };
-
-            Helper.validate(schema, [[input, true, input]]);
-        });
-
-        it('ignores a key with ignoredUndefined if from does not exist', () => {
-
-            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            Helper.validate(schema, [[input, true, { a: 'something' }]]);
-        });
-
-        it('deletes a key with override and ignoredUndefined if from exists', () => {
-
-            const schema = Joi.object()
-                .rename('b', 'a', { ignoreUndefined: true, override: true });
-
-            const input = {
-                a: 'something',
-                b: 'something else'
-            };
-
-            Helper.validate(schema, [[input, true, { a: 'something else' }]]);
-        });
-
-        it('deletes a key with override if present and undefined', () => {
-
-            const schema = Joi.object()
-                .rename('b', 'a', { override: true });
-
-            const input = {
-                a: 'something',
-                b: undefined
-            };
-
-            Helper.validate(schema, [[input, true, {}]]);
-        });
-
-        it('leaves target if source is present and undefined and ignoreUndefined is set', () => {
-
-            const schema = Joi.object()
-                .rename('b', 'a', { override: true, ignoreUndefined: true });
-
-            const input = {
-                a: 'something',
-                b: undefined
-            };
-
-            Helper.validate(schema, [[input, true, input]]);
-        });
-
-        it('should fulfill describe() with defaults', () => {
-
-            const schema = Joi.object().rename('b', 'a');
-            const desc = schema.describe();
-
-            expect(desc).to.equal({
-                type: 'object',
-                renames: [{
-                    from: 'b',
-                    to: 'a',
-                    options: {
-                        alias: false,
-                        multiple: false,
-                        override: false
-                    }
-                }]
-            });
-        });
-
-        it('should fulfill describe() with non-defaults', () => {
-
-            const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
-            const desc = schema.describe();
-
-            expect(desc).to.equal({
-                type: 'object',
-                renames: [{
-                    from: 'b',
-                    to: 'a',
-                    options: {
-                        alias: true,
-                        multiple: true,
-                        override: true
-                    }
-                }]
-            });
-        });
-
-        it('should leave key if from does not exist regardless of override', () => {
-
-            const schema = Joi.object()
-                .rename('b', 'a', { override: true });
-
-            const input = {
-                a: 'something'
-            };
-
-            Helper.validate(schema, [[input, true, input]]);
-        });
-
-        describe('using regex', () => {
-
-            it('renames using a regular expression', () => {
-
-                const regex = /foobar/i;
-
-                const schema = Joi.object({
-                    fooBar: Joi.string()
-                }).rename(regex, 'fooBar');
-
-                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a' }, true, { fooBar: 'a' }]]);
-            });
-
-            it('aliases a key', () => {
-
-                const regex = /^a$/i;
-
-                const schema = Joi.object({
-                    other: Joi.any(),
-                    A: Joi.number(),
-                    b: Joi.number(),
-                    c: Joi.number()
-                }).rename(regex, 'b', { alias: true });
-
-                Helper.validate(Joi.compile(schema), [[{ other: 'here', A: 100, c: 50 }, true, { other: 'here', A: 100, b: 100, c: 50 }]]);
-            });
-
-            it('uses template', () => {
-
-                const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.x('x{#1}x'))
-                    .pattern(/^x\d+x$/, Joi.any());
-
-                const input = {
-                    123: 'x',
-                    1: 'y',
-                    0: 'z',
-                    x4x: 'test'
-                };
-
-                Helper.validate(Joi.compile(schema), [[input, true, {
-                    x123x: 'x',
-                    x1x: 'y',
-                    x0x: 'z',
-                    x4x: 'test'
-                }]]);
-
-                expect(schema.describe()).to.equal({
-                    type: 'object',
-                    patterns: [{
-                        regex: '/^x\\d+x$/',
-                        rule: { type: 'any' }
-                    }],
-                    renames: [{
-                        from: { regex: '/^(\\d+)$/' },
-                        to: {
-                            template: 'x{#1}x'
-                        },
-                        options: {
-                            alias: false,
-                            multiple: false,
-                            override: false
-                        }
-                    }]
-                });
-            });
-
-            it('uses template with prefix override', () => {
-
-                const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.x('x{@1}x', { prefix: { local: '@' } }))
-                    .pattern(/^x\d+x$/, Joi.any());
-
-                const input = {
-                    123: 'x',
-                    1: 'y',
-                    0: 'z',
-                    x4x: 'test'
-                };
-
-                Helper.validate(Joi.compile(schema), [[input, true, {
-                    x123x: 'x',
-                    x1x: 'y',
-                    x0x: 'z',
-                    x4x: 'test'
-                }]]);
-
-                expect(schema.describe()).to.equal({
-                    type: 'object',
-                    patterns: [{
-                        regex: '/^x\\d+x$/',
-                        rule: { type: 'any' }
-                    }],
-                    renames: [{
-                        from: { regex: '/^(\\d+)$/' },
-                        to: {
-                            template: 'x{@1}x',
-                            options: { prefix: { local: '@' } }
-                        },
-                        options: {
-                            alias: false,
-                            multiple: false,
-                            override: false
-                        }
-                    }]
-                });
-            });
-
-            it('uses template that references another sibling key', () => {
-
-                const schema = Joi.object({
-                    prefix: Joi.string().lowercase().required()
-                })
-                    .rename(/^(\d+)$/, Joi.x('{.prefix}{#1}'))
-                    .unknown();
-
-                const input = {
-                    123: 'x',
-                    1: 'y',
-                    0: 'z',
-                    prefix: 'TEST'
-                };
-
-                Helper.validate(Joi.compile(schema), [[input, true, {
-                    TEST123: 'x',
-                    TEST1: 'y',
-                    TEST0: 'z',
-                    prefix: 'test'
-                }]]);
-            });
-
-            it('uses template that references peer key', () => {
-
-                const schema = Joi.object({
-                    a: Joi.object()
-                        .rename(/^(\d+)$/, Joi.x('{b.prefix}{#1}'))
-                        .unknown(),
-                    b: {
-                        prefix: Joi.string().lowercase()
-                    }
-                });
-
-                Helper.validate(schema, [
-                    [{ a: { 5: 'x' }, b: { prefix: 'p' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ a: { 5: 'x' }, b: { prefix: 'P' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ b: { prefix: 'P' }, a: { 5: 'x' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
-                    [{ b: {}, a: { 5: 'x' } }, true, { a: { 5: 'x' }, b: {} }],
-                    [{ a: { 5: 'x' } }, true, { a: { 5: 'x' } }]
-                ]);
-            });
-
-            it('uses template without refs', () => {
-
-                const schema = Joi.object()
-                    .rename(/^(\d+)$/, Joi.x('x'))
-                    .unknown();
-
-                Helper.validate(Joi.compile(schema), [[{ 1: 'x' }, true, { x: 'x' }]]);
-            });
-
-            it('deletes a key with override if present and undefined', () => {
-
-                const schema = Joi.object()
-                    .rename(/b/, 'a', { override: true });
-
-                const input = {
-                    a: 'something',
-                    b: undefined
-                };
-
-                Helper.validate(schema, [[input, true, {}]]);
-            });
-
-            it('with override disabled it should not allow overwriting existing value', () => {
-
-                const schema = Joi.object({
-                    test1: Joi.string()
-                })
-                    .rename(/^test1$/i, 'test');
-
-                const item = {
-                    test: 'b',
-                    test1: 'a'
-                };
-
-                Helper.validate(Joi.compile(schema), [[item, false, {
-                    message: '"value" cannot rename "test1" because override is disabled and target "test" exists',
-                    path: [],
-                    type: 'object.rename.override',
-                    context: { from: 'test1', to: 'test', label: 'value', pattern: true, value: item }
-                }]]);
-            });
-
-            it('with override enabled should allow overwriting existing value', () => {
-
-                const regex = /^test$/i;
-
-                const schema = Joi.object({
-                    test1: Joi.string()
-                }).rename(regex, 'test1', { override: true });
-
-                Helper.validate(schema, [[{ test: 'b', test1: 'a' }, true, { test1: 'b' }]]);
-            });
-
-            it('renames when data is nested in an array via items', () => {
-
-                const regex1 = /^uno$/i;
-                const regex2 = /^dos$/i;
-
-                const schema = {
-                    arr: Joi.array().items(Joi.object({
-                        one: Joi.string(),
-                        two: Joi.string()
-                    }).rename(regex1, 'one').rename(regex2, 'two'))
-                };
-
-                const data = { arr: [{ uno: '1', dos: '2' }] };
-                Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
-            });
-
-            it('skips when existing name matches', () => {
-
-                const regex = /^abc$/i;
-
-                const schema = Joi.object({ abc: Joi.string() }).rename(regex, 'abc', { override: true });
-
-                Helper.validate(schema, [
-                    [{ ABC: 'x' }, true, { abc: 'x' }],
-                    [{ abc: 'x' }, true, { abc: 'x' }]
-                ]);
-            });
-
-            it('applies rename and validation in the correct order regardless of key order', () => {
-
-                const regex = /^b$/i;
-
-                const schema1 = Joi.object({
-                    a: Joi.number()
-                }).rename(regex, 'a');
-
-                const input1 = { b: '5' };
-                Helper.validate(schema1, [[input1, true, { a: 5 }]]);
-
-                const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
-                const input2 = { b: '5' };
-                Helper.validate(schema2, [[input2, true, { a: 5 }]]);
-            });
-
-            it('sets the default value after key is renamed', () => {
-
-                const regex = /^foo$/i;
-
-                const schema = Joi.object({
-                    foo2: Joi.string().default('test')
-                }).rename(regex, 'foo2');
-
-                const input = {};
-                Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
-            });
-
-            it('should not create new keys when the key in question does not exist', () => {
-
-                const schema = Joi.object()
-                    .rename(/^b$/i, '_b');
-
-                const input = {
-                    a: 'something'
-                };
-
-                Helper.validate(schema, [[input, true, { a: 'something' }]]);
-            });
-
-            it('should leave key if from does not exist regardless of override', () => {
-
-                const schema = Joi.object()
-                    .rename(/^b$/i, 'a', { override: true });
-
-                const input = {
-                    a: 'something'
-                };
-
-                Helper.validate(schema, [[input, true, input]]);
-            });
-
-            it('skips when all matches are undefined and ignoredUndefined is true', () => {
-
-                const schema = Joi.object().keys({
-                    a: Joi.any(),
-                    b: Joi.any()
-                })
-                    .rename(/^b$/i, 'a', { ignoreUndefined: true });
-
-                const input = {
-                    b: undefined
-                };
-
-                Helper.validate(schema, [[input, true, { b: undefined }]]);
-            });
-
-            it('deletes a key with override and ignoredUndefined if from exists', () => {
-
-                const schema = Joi.object().keys({
-                    c: Joi.any(),
-                    a: Joi.any()
-                })
-                    .rename(/^b$/, 'a', { ignoreUndefined: true, override: true });
-
-                const input = {
-                    a: 'something',
-                    b: 'something else'
-                };
-
-                Helper.validate(schema, [[input, true, { a: 'something else' }]]);
-            });
-
-            it('should fulfill describe() with non-defaults', () => {
-
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, 'a', { alias: true, multiple: true, override: true });
-                const desc = schema.describe();
-
-                expect(desc).to.equal({
-                    type: 'object',
-                    renames: [{
-                        from: { regex: regex.toString() },
-                        to: 'a',
-                        options: {
-                            alias: true,
-                            multiple: true,
-                            override: true
-                        }
-                    }]
-                });
-            });
-
-            it('should fulfill describe() with defaults', () => {
-
-                const regex = /^b$/i;
-
-                const schema = Joi.object().rename(regex, 'a');
-                const desc = schema.describe();
-
-                expect(desc).to.equal({
-                    type: 'object',
-                    renames: [{
-                        from: { regex: regex.toString() },
-                        to: 'a',
-                        options: {
-                            alias: false,
-                            multiple: false,
-                            override: false
-                        }
-                    }]
-                });
-            });
-
-            it('allows renaming multiple times with multiple enabled', () => {
-
-                const schema = Joi.object({
-                    fooBar: Joi.string()
-                }).rename(/foobar/i, 'fooBar', { multiple: true });
-
-                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, true, { fooBar: 'b' }]]);
-            });
-
-            it('errors renaming multiple times with multiple disabled', () => {
-
-                const schema = Joi.object({
-                    fooBar: Joi.string()
-                })
-                    .rename(/foobar/i, 'fooBar')
-                    .rename(/foobar/i, 'fooBar');
-
-                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, false, {
-                    message: '"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"',
-                    path: [],
-                    type: 'object.rename.multiple',
-                    context: { from: 'FooBar', to: 'fooBar', label: 'value', pattern: true, value: { FooBar: 'b', fooBar: 'a' } }
-                }]]);
-            });
-
-            it('errors multiple times when abortEarly is false', () => {
-
-                const schema = Joi.object({
-                    z: Joi.string()
-                })
-                    .rename(/a/i, 'b')
-                    .rename(/c/i, 'b')
-                    .rename(/z/i, 'z')
-                    .prefs({ abortEarly: false });
-
-                Helper.validate(schema, [[{ a: 1, c: 1, d: 1, z: 1 }, false, {
-                    message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed',
-                    details: [
-                        {
-                            message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
-                            path: [],
-                            type: 'object.rename.multiple',
-                            context: { from: 'c', to: 'b', label: 'value', pattern: true, value: { b: 1, d: 1, z: 1 } }
-                        },
-                        {
-                            message: '"z" must be a string',
-                            path: ['z'],
-                            type: 'string.base',
-                            context: { value: 1, key: 'z', label: 'z' }
-                        },
-                        {
-                            message: '"d" is not allowed',
-                            path: ['d'],
-                            type: 'object.unknown',
-                            context: { child: 'd', key: 'd', label: 'd', value: 1 }
-                        },
-                        {
-                            message: '"b" is not allowed',
-                            path: ['b'],
-                            type: 'object.unknown',
-                            context: { child: 'b', key: 'b', label: 'b', value: 1 }
-                        }
-                    ]
-                }]]);
-            });
-        });
-    });
-
     describe('length()', () => {
 
         it('throws when length is not a number', () => {
@@ -3343,6 +2656,714 @@ describe('object', () => {
                 [{ x1: 1, x2: 2 }, true],
                 [{ x1: 11 }, true]
             ]);
+        });
+    });
+
+    describe('ref()', () => {
+
+        it('validates references', () => {
+
+            const schema = Joi.object().ref();
+
+            Helper.validate(schema, [
+                [{}, false, {
+                    message: '"value" must be a Joi reference',
+                    path: [],
+                    type: 'object.refType',
+                    context: { label: 'value', value: {} }
+                }],
+                [Joi.ref('a.b'), true]
+            ]);
+        });
+    });
+
+    describe('regex()', () => {
+
+        it('validates regular expressions', () => {
+
+            const schema = Joi.object().regex();
+
+            Helper.validate(schema, [
+                [{}, false, {
+                    message: '"value" must be a RegExp object',
+                    path: [],
+                    type: 'object.regex',
+                    context: { label: 'value', value: {} }
+                }],
+                [/a/, true]
+            ]);
+        });
+    });
+
+    describe('rename()', () => {
+
+        it('allows renaming multiple times with multiple enabled', () => {
+
+            const schema = Joi.object({
+                test: Joi.string()
+            }).rename('test1', 'test').rename('test2', 'test', { multiple: true });
+
+            expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' }).error).to.not.exist();
+        });
+
+        it('errors renaming multiple times with multiple disabled', () => {
+
+            const schema = Joi.object({
+                test: Joi.string()
+            }).rename('test1', 'test').rename('test2', 'test');
+
+            Helper.validate(Joi.compile(schema), [[{ test1: 'a', test2: 'b' }, false, {
+                message: '"value" cannot rename "test2" because multiple renames are disabled and another key was already renamed to "test"',
+                path: [],
+                type: 'object.rename.multiple',
+                context: { from: 'test2', to: 'test', label: 'value', pattern: false, value: { test: 'a', test2: 'b' } }
+            }]]);
+        });
+
+        it('errors multiple times when abortEarly is false', () => {
+
+            const schema = Joi.object()
+                .rename('a', 'b')
+                .rename('c', 'b')
+                .rename('d', 'b')
+                .prefs({ abortEarly: false });
+
+            Helper.validate(schema, [[{ a: 1, c: 1, d: 1 }, false, {
+                message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
+                details: [
+                    {
+                        message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
+                        path: [],
+                        type: 'object.rename.multiple',
+                        context: { from: 'c', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
+                    },
+                    {
+                        message: '"value" cannot rename "d" because multiple renames are disabled and another key was already renamed to "b"',
+                        path: [],
+                        type: 'object.rename.multiple',
+                        context: { from: 'd', to: 'b', label: 'value', pattern: false, value: { b: 1 } }
+                    }
+                ]
+            }]]);
+        });
+
+        it('aliases a key', () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.number()
+            }).rename('a', 'b', { alias: true });
+
+            const obj = { a: 10 };
+            Helper.validate(Joi.compile(schema), [[obj, true, { a: 10, b: 10 }]]);
+        });
+
+        it('with override disabled should not allow overwriting existing value', () => {
+
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename('test', 'test1');
+
+            Helper.validate(schema, [[{ test: 'b', test1: 'a' }, false, {
+                message: '"value" cannot rename "test" because override is disabled and target "test1" exists',
+                path: [],
+                type: 'object.rename.override',
+                context: { from: 'test', to: 'test1', label: 'value', pattern: false, value: { test: 'b', test1: 'a' } }
+            }]]);
+        });
+
+        it('with override enabled should allow overwriting existing value', () => {
+
+            const schema = Joi.object({
+                test1: Joi.string()
+            }).rename('test', 'test1', { override: true });
+
+            Helper.validate(schema, [
+                [{ test: 'b', test1: 'a' }, true, { test1: 'b' }]
+            ]);
+        });
+
+        it('renames when data is nested in an array via items', () => {
+
+            const schema = {
+                arr: Joi.array().items(Joi.object({
+                    one: Joi.string(),
+                    two: Joi.string()
+                }).rename('uno', 'one').rename('dos', 'two'))
+            };
+
+            const data = { arr: [{ uno: '1', dos: '2' }] };
+            Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
+        });
+
+        it('applies rename and validation in the correct order regardless of key order', () => {
+
+            const schema1 = Joi.object({
+                a: Joi.number()
+            }).rename('b', 'a');
+
+            const input1 = { b: '5' };
+            Helper.validate(schema1, [[input1, true, { a: 5 }]]);
+
+            const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+            const input2 = { b: '5' };
+            Helper.validate(schema2, [[input2, true, { a: 5 }]]);
+        });
+
+        it('sets the default value after key is renamed', () => {
+
+            const schema = Joi.object({
+                foo2: Joi.string().default('test')
+            }).rename('foo', 'foo2');
+
+            const input = {};
+            Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
+        });
+
+        it('renames keys that are empty strings', () => {
+
+            const schema = Joi.object().rename('', 'notEmpty');
+            const input = {
+                '': 'something'
+            };
+
+            Helper.validate(schema, [[input, true, { notEmpty: 'something' }]]);
+        });
+
+        it('should not create new keys when the key in question does not exist', () => {
+
+            const schema = Joi.object()
+                .rename('b', '_b');
+
+            const input = {
+                a: 'something'
+            };
+
+            Helper.validate(schema, [[input, true, input]]);
+        });
+
+        it('ignores a key with ignoredUndefined if from does not exist', () => {
+
+            const schema = Joi.object().rename('b', 'a', { ignoreUndefined: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            Helper.validate(schema, [[input, true, { a: 'something' }]]);
+        });
+
+        it('deletes a key with override and ignoredUndefined if from exists', () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { ignoreUndefined: true, override: true });
+
+            const input = {
+                a: 'something',
+                b: 'something else'
+            };
+
+            Helper.validate(schema, [[input, true, { a: 'something else' }]]);
+        });
+
+        it('deletes a key with override if present and undefined', () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true });
+
+            const input = {
+                a: 'something',
+                b: undefined
+            };
+
+            Helper.validate(schema, [[input, true, {}]]);
+        });
+
+        it('leaves target if source is present and undefined and ignoreUndefined is set', () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true, ignoreUndefined: true });
+
+            const input = {
+                a: 'something',
+                b: undefined
+            };
+
+            Helper.validate(schema, [[input, true, input]]);
+        });
+
+        it('should fulfill describe() with defaults', () => {
+
+            const schema = Joi.object().rename('b', 'a');
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: false,
+                        multiple: false,
+                        override: false
+                    }
+                }]
+            });
+        });
+
+        it('should fulfill describe() with non-defaults', () => {
+
+            const schema = Joi.object().rename('b', 'a', { alias: true, multiple: true, override: true });
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'object',
+                renames: [{
+                    from: 'b',
+                    to: 'a',
+                    options: {
+                        alias: true,
+                        multiple: true,
+                        override: true
+                    }
+                }]
+            });
+        });
+
+        it('should leave key if from does not exist regardless of override', () => {
+
+            const schema = Joi.object()
+                .rename('b', 'a', { override: true });
+
+            const input = {
+                a: 'something'
+            };
+
+            Helper.validate(schema, [[input, true, input]]);
+        });
+
+        describe('using regex', () => {
+
+            it('renames using a regular expression', () => {
+
+                const regex = /foobar/i;
+
+                const schema = Joi.object({
+                    fooBar: Joi.string()
+                }).rename(regex, 'fooBar');
+
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a' }, true, { fooBar: 'a' }]]);
+            });
+
+            it('aliases a key', () => {
+
+                const regex = /^a$/i;
+
+                const schema = Joi.object({
+                    other: Joi.any(),
+                    A: Joi.number(),
+                    b: Joi.number(),
+                    c: Joi.number()
+                }).rename(regex, 'b', { alias: true });
+
+                Helper.validate(Joi.compile(schema), [[{ other: 'here', A: 100, c: 50 }, true, { other: 'here', A: 100, b: 100, c: 50 }]]);
+            });
+
+            it('uses template', () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.x('x{#1}x'))
+                    .pattern(/^x\d+x$/, Joi.any());
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    x4x: 'test'
+                };
+
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                }]]);
+
+                expect(schema.describe()).to.equal({
+                    type: 'object',
+                    patterns: [{
+                        regex: '/^x\\d+x$/',
+                        rule: { type: 'any' }
+                    }],
+                    renames: [{
+                        from: { regex: '/^(\\d+)$/' },
+                        to: {
+                            template: 'x{#1}x'
+                        },
+                        options: {
+                            alias: false,
+                            multiple: false,
+                            override: false
+                        }
+                    }]
+                });
+            });
+
+            it('uses template with prefix override', () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.x('x{@1}x', { prefix: { local: '@' } }))
+                    .pattern(/^x\d+x$/, Joi.any());
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    x4x: 'test'
+                };
+
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    x123x: 'x',
+                    x1x: 'y',
+                    x0x: 'z',
+                    x4x: 'test'
+                }]]);
+
+                expect(schema.describe()).to.equal({
+                    type: 'object',
+                    patterns: [{
+                        regex: '/^x\\d+x$/',
+                        rule: { type: 'any' }
+                    }],
+                    renames: [{
+                        from: { regex: '/^(\\d+)$/' },
+                        to: {
+                            template: 'x{@1}x',
+                            options: { prefix: { local: '@' } }
+                        },
+                        options: {
+                            alias: false,
+                            multiple: false,
+                            override: false
+                        }
+                    }]
+                });
+            });
+
+            it('uses template that references another sibling key', () => {
+
+                const schema = Joi.object({
+                    prefix: Joi.string().lowercase().required()
+                })
+                    .rename(/^(\d+)$/, Joi.x('{.prefix}{#1}'))
+                    .unknown();
+
+                const input = {
+                    123: 'x',
+                    1: 'y',
+                    0: 'z',
+                    prefix: 'TEST'
+                };
+
+                Helper.validate(Joi.compile(schema), [[input, true, {
+                    TEST123: 'x',
+                    TEST1: 'y',
+                    TEST0: 'z',
+                    prefix: 'test'
+                }]]);
+            });
+
+            it('uses template that references peer key', () => {
+
+                const schema = Joi.object({
+                    a: Joi.object()
+                        .rename(/^(\d+)$/, Joi.x('{b.prefix}{#1}'))
+                        .unknown(),
+                    b: {
+                        prefix: Joi.string().lowercase()
+                    }
+                });
+
+                Helper.validate(schema, [
+                    [{ a: { 5: 'x' }, b: { prefix: 'p' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ a: { 5: 'x' }, b: { prefix: 'P' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: { prefix: 'P' }, a: { 5: 'x' } }, true, { a: { p5: 'x' }, b: { prefix: 'p' } }],
+                    [{ b: {}, a: { 5: 'x' } }, true, { a: { 5: 'x' }, b: {} }],
+                    [{ a: { 5: 'x' } }, true, { a: { 5: 'x' } }]
+                ]);
+            });
+
+            it('uses template without refs', () => {
+
+                const schema = Joi.object()
+                    .rename(/^(\d+)$/, Joi.x('x'))
+                    .unknown();
+
+                Helper.validate(Joi.compile(schema), [[{ 1: 'x' }, true, { x: 'x' }]]);
+            });
+
+            it('deletes a key with override if present and undefined', () => {
+
+                const schema = Joi.object()
+                    .rename(/b/, 'a', { override: true });
+
+                const input = {
+                    a: 'something',
+                    b: undefined
+                };
+
+                Helper.validate(schema, [[input, true, {}]]);
+            });
+
+            it('with override disabled it should not allow overwriting existing value', () => {
+
+                const schema = Joi.object({
+                    test1: Joi.string()
+                })
+                    .rename(/^test1$/i, 'test');
+
+                const item = {
+                    test: 'b',
+                    test1: 'a'
+                };
+
+                Helper.validate(Joi.compile(schema), [[item, false, {
+                    message: '"value" cannot rename "test1" because override is disabled and target "test" exists',
+                    path: [],
+                    type: 'object.rename.override',
+                    context: { from: 'test1', to: 'test', label: 'value', pattern: true, value: item }
+                }]]);
+            });
+
+            it('with override enabled should allow overwriting existing value', () => {
+
+                const regex = /^test$/i;
+
+                const schema = Joi.object({
+                    test1: Joi.string()
+                }).rename(regex, 'test1', { override: true });
+
+                Helper.validate(schema, [[{ test: 'b', test1: 'a' }, true, { test1: 'b' }]]);
+            });
+
+            it('renames when data is nested in an array via items', () => {
+
+                const regex1 = /^uno$/i;
+                const regex2 = /^dos$/i;
+
+                const schema = {
+                    arr: Joi.array().items(Joi.object({
+                        one: Joi.string(),
+                        two: Joi.string()
+                    }).rename(regex1, 'one').rename(regex2, 'two'))
+                };
+
+                const data = { arr: [{ uno: '1', dos: '2' }] };
+                Helper.validate(Joi.object(schema), [[data, true, { arr: [{ one: '1', two: '2' }] }]]);
+            });
+
+            it('skips when existing name matches', () => {
+
+                const regex = /^abc$/i;
+
+                const schema = Joi.object({ abc: Joi.string() }).rename(regex, 'abc', { override: true });
+
+                Helper.validate(schema, [
+                    [{ ABC: 'x' }, true, { abc: 'x' }],
+                    [{ abc: 'x' }, true, { abc: 'x' }]
+                ]);
+            });
+
+            it('applies rename and validation in the correct order regardless of key order', () => {
+
+                const regex = /^b$/i;
+
+                const schema1 = Joi.object({
+                    a: Joi.number()
+                }).rename(regex, 'a');
+
+                const input1 = { b: '5' };
+                Helper.validate(schema1, [[input1, true, { a: 5 }]]);
+
+                const schema2 = Joi.object({ a: Joi.number(), b: Joi.any() }).rename('b', 'a');
+                const input2 = { b: '5' };
+                Helper.validate(schema2, [[input2, true, { a: 5 }]]);
+            });
+
+            it('sets the default value after key is renamed', () => {
+
+                const regex = /^foo$/i;
+
+                const schema = Joi.object({
+                    foo2: Joi.string().default('test')
+                }).rename(regex, 'foo2');
+
+                const input = {};
+                Helper.validate(schema, [[input, true, { foo2: 'test' }]]);
+            });
+
+            it('should not create new keys when the key in question does not exist', () => {
+
+                const schema = Joi.object()
+                    .rename(/^b$/i, '_b');
+
+                const input = {
+                    a: 'something'
+                };
+
+                Helper.validate(schema, [[input, true, { a: 'something' }]]);
+            });
+
+            it('should leave key if from does not exist regardless of override', () => {
+
+                const schema = Joi.object()
+                    .rename(/^b$/i, 'a', { override: true });
+
+                const input = {
+                    a: 'something'
+                };
+
+                Helper.validate(schema, [[input, true, input]]);
+            });
+
+            it('skips when all matches are undefined and ignoredUndefined is true', () => {
+
+                const schema = Joi.object().keys({
+                    a: Joi.any(),
+                    b: Joi.any()
+                })
+                    .rename(/^b$/i, 'a', { ignoreUndefined: true });
+
+                const input = {
+                    b: undefined
+                };
+
+                Helper.validate(schema, [[input, true, { b: undefined }]]);
+            });
+
+            it('deletes a key with override and ignoredUndefined if from exists', () => {
+
+                const schema = Joi.object().keys({
+                    c: Joi.any(),
+                    a: Joi.any()
+                })
+                    .rename(/^b$/, 'a', { ignoreUndefined: true, override: true });
+
+                const input = {
+                    a: 'something',
+                    b: 'something else'
+                };
+
+                Helper.validate(schema, [[input, true, { a: 'something else' }]]);
+            });
+
+            it('should fulfill describe() with non-defaults', () => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().rename(regex, 'a', { alias: true, multiple: true, override: true });
+                const desc = schema.describe();
+
+                expect(desc).to.equal({
+                    type: 'object',
+                    renames: [{
+                        from: { regex: regex.toString() },
+                        to: 'a',
+                        options: {
+                            alias: true,
+                            multiple: true,
+                            override: true
+                        }
+                    }]
+                });
+            });
+
+            it('should fulfill describe() with defaults', () => {
+
+                const regex = /^b$/i;
+
+                const schema = Joi.object().rename(regex, 'a');
+                const desc = schema.describe();
+
+                expect(desc).to.equal({
+                    type: 'object',
+                    renames: [{
+                        from: { regex: regex.toString() },
+                        to: 'a',
+                        options: {
+                            alias: false,
+                            multiple: false,
+                            override: false
+                        }
+                    }]
+                });
+            });
+
+            it('allows renaming multiple times with multiple enabled', () => {
+
+                const schema = Joi.object({
+                    fooBar: Joi.string()
+                }).rename(/foobar/i, 'fooBar', { multiple: true });
+
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, true, { fooBar: 'b' }]]);
+            });
+
+            it('errors renaming multiple times with multiple disabled', () => {
+
+                const schema = Joi.object({
+                    fooBar: Joi.string()
+                })
+                    .rename(/foobar/i, 'fooBar')
+                    .rename(/foobar/i, 'fooBar');
+
+                Helper.validate(Joi.compile(schema), [[{ FOOBAR: 'a', FooBar: 'b' }, false, {
+                    message: '"value" cannot rename "FooBar" because multiple renames are disabled and another key was already renamed to "fooBar"',
+                    path: [],
+                    type: 'object.rename.multiple',
+                    context: { from: 'FooBar', to: 'fooBar', label: 'value', pattern: true, value: { FooBar: 'b', fooBar: 'a' } }
+                }]]);
+            });
+
+            it('errors multiple times when abortEarly is false', () => {
+
+                const schema = Joi.object({
+                    z: Joi.string()
+                })
+                    .rename(/a/i, 'b')
+                    .rename(/c/i, 'b')
+                    .rename(/z/i, 'z')
+                    .prefs({ abortEarly: false });
+
+                Helper.validate(schema, [[{ a: 1, c: 1, d: 1, z: 1 }, false, {
+                    message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b". "z" must be a string. "d" is not allowed. "b" is not allowed',
+                    details: [
+                        {
+                            message: '"value" cannot rename "c" because multiple renames are disabled and another key was already renamed to "b"',
+                            path: [],
+                            type: 'object.rename.multiple',
+                            context: { from: 'c', to: 'b', label: 'value', pattern: true, value: { b: 1, d: 1, z: 1 } }
+                        },
+                        {
+                            message: '"z" must be a string',
+                            path: ['z'],
+                            type: 'string.base',
+                            context: { value: 1, key: 'z', label: 'z' }
+                        },
+                        {
+                            message: '"d" is not allowed',
+                            path: ['d'],
+                            type: 'object.unknown',
+                            context: { child: 'd', key: 'd', label: 'd', value: 1 }
+                        },
+                        {
+                            message: '"b" is not allowed',
+                            path: ['b'],
+                            type: 'object.unknown',
+                            context: { child: 'b', key: 'b', label: 'b', value: 1 }
+                        }
+                    ]
+                }]]);
+            });
         });
     });
 

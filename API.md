@@ -2437,6 +2437,16 @@ const schema = Joi.object().ref();
 
 Possible validation errors: [`object.refType`](#objectreftype)
 
+#### `object.regex()`
+
+Requires the object to be a `RegExp` object.
+
+```js
+const schema = Joi.object().regex();
+```
+
+Possible validation errors: [`object.regex`](#objectregex)
+
 #### `object.rename(from, to, [options])`
 
 Renames a key to another name (deletes the renamed key) where:
@@ -3915,6 +3925,10 @@ Additional local context properties:
 #### `object.refType`
 
 The object is not a [`Joi.ref()`](#refkey-options).
+
+#### `object.regex`
+
+The object is not a `RegExp` object.
 
 #### `object.rename.multiple`
 
