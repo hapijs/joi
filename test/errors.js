@@ -21,6 +21,7 @@ describe('errors', () => {
         const err = Joi.valid('foo').validate('bar').error;
         expect(err).to.be.an.error();
         expect(err.isJoi).to.be.true();
+        expect(Joi.isError(err)).to.be.true();
     });
 
 

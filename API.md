@@ -275,15 +275,6 @@ Creates a new customized instance of the **joi** module where:
 
 Note that the original **joi** module is not modified by this.
 
-### `isExpression(expression)`
-
-Checks whether or not the provided argument is an expression.
-
-```js
-const expression = Joi.x('{a}');
-Joi.isExpression(expression); // returns true
-```
-
 ### `in(ref, [options])`
 
 Creates a [reference](#refkey-options) that when resolved, is used as an array of values to match against the rule, where:
@@ -297,6 +288,23 @@ const schema = Joi.object({
     a: Joi.array().items(Joi.number()),
     b: Joi.number().valid(Joi.in('a'))
 });
+```
+
+### `isError(err)`
+
+Checks whether or not the provided argument is a validation error.
+
+```js
+Joi.isError(new Error()); // returns false
+```
+
+### `isExpression(expression)`
+
+Checks whether or not the provided argument is an expression.
+
+```js
+const expression = Joi.x('{a}');
+Joi.isExpression(expression); // returns true
 ```
 
 ### `isRef(ref)`
