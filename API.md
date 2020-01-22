@@ -3114,7 +3114,7 @@ const custom = Joi.extend((joi) => {
 
             // Check flags for global state
 
-            if (schema.$_getFlag('big') &&
+            if (helpers.schema.$_getFlag('big') &&
                 value < 5000000) {
 
                 return { value, errors: helpers.error('million.big') };
