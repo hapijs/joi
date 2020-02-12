@@ -163,6 +163,14 @@ describe('Modify', () => {
             Helper.equal(before.fork('x', (schema) => schema.min(10)), after);
         });
 
+        it('preserves unchanged schemas', () => {
+
+            const before = Joi.object({ x: Joi.string().optional() });
+            const after = Joi.object({ x: Joi.string().optional() });
+
+            Helper.equal(before.fork('x', (schema) => schema.optional()), after);
+        });
+
         it('adjusts reused schema in multiple places', () => {
 
             const shared = Joi.number().id('x');
