@@ -691,7 +691,7 @@ Returns an object that represents the internal configuration of the schema. Usef
 and exposing a schema's configuration to other systems, like valid values in a user interface.
 
 ```js
-const schema = Joi.any().valid([ 'foo', 'bar' ]);
+const schema = Joi.any().valid('foo', 'bar');
 console.log(schema.describe());
 ```
 
