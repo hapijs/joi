@@ -751,10 +751,10 @@ schema.validate({ foo: -2 });    // returns new Error('"foo" requires a positive
 const schema = Joi.object({
     foo: Joi.number().min(0).error((errors) => {
 
-        return new Error('found errors with ' + errors.map((err) => `${err.type}(${err.local.limit}) with value ${err.local.value}`).join(' and '));
+        return new Error('found errors with ' + errors.map((err) => `${err.local.key}(${err.local.limit}) with value ${err.local.value}`).join(' and '));
     })
 });
-schema.validate({ foo: -2 });    // returns new Error('child "foo" fails because [found errors with number.min(0) with value -2]')
+schema.validate({ foo: -2 });    // returns new Error('found errors with foo(0) with value -2')
 ```
 
 #### `any.example(example, [options])`
