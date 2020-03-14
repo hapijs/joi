@@ -8464,6 +8464,25 @@ describe('string', () => {
             ]);
         });
 
+        it('validates relative only uri with domain', () => {
+
+            const schema = Joi.string().uri({ relativeOnly: true, domain: { minDomainSegments: 3, tlds: { allow: ['com'] } } });
+            Helper.validate(schema, [
+                ['foo://example.com:8042/over/there?name=ferret#nose', false, '"value" must be a valid relative uri'],
+                ['//test.example.com:8042/over/there?name=ferret#nose', true],
+                ['//example.com:8042/over/there?name=ferret#nose', false, '"value" must contain a valid domain name']
+            ]);
+        });
+
+        it('validates allowed relative uri with domain', () => {
+
+            const schema = Joi.string().uri({ allowRelative: true, domain: { minDomainSegments: 3, tlds: { allow: ['com'] } } });
+            Helper.validate(schema, [
+                ['//test.example.com:8042/over/there?name=ferret#nose', true],
+                ['//example.com:8042/over/there?name=ferret#nose', false, '"value" must contain a valid domain name']
+            ]);
+        });
+
         it('validates uri with square brackets allowed', () => {
 
             const schema = Joi.string().uri({ allowQuerySquareBrackets: true });
