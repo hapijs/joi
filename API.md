@@ -4137,7 +4137,7 @@ The string isn't all lower-cased.
 
 #### `string.max`
 
-The string is larger than expected.
+The string is longer than expected.
 
 Additional local context properties:
 ```ts
@@ -4149,7 +4149,7 @@ Additional local context properties:
 
 #### `string.min`
 
-The string is smaller than expected.
+The string is shorter than expected.
 
 Additional local context properties:
 ```ts
