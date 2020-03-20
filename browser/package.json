@@ -1,6 +1,7 @@
 {
     "scripts": {
         "build": "webpack --mode production",
+        "build-compat": "webpack --config webpack.config.compat.js --mode production",
         "build-dev": "webpack --mode development",
         "build-analyze": "webpack --mode production --profile --json > stats.json",
         "postbuild-analyze": "webpack-bundle-analyzer stats.json",
