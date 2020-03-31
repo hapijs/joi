@@ -598,7 +598,7 @@ const ab = a.concat(b);
 #### `any.custom(method, [description])`
 
 Adds a custom validation function to execute arbitrary code where:
-- `method` - the custom validation function using signature `function(value, helpers)` where:
+- `method` - the custom (synchronous only) validation function using signature `function(value, helpers)` where:
     - `value` - the value being validated.
     - `helpers` - an object with the following helpers:
         - `schema` - the current schema.
