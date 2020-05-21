@@ -2740,6 +2740,8 @@ Requires the string value to be a valid email address.
 const schema = Joi.string().email();
 ```
 
+Note that quoted email addresses (e.g. `"test"@example.com`) are not supported and will fail validation.
+
 Possible validation errors: [`string.email`](#stringemail)
 
 #### `string.guid()` - aliases: `uuid`
