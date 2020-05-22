@@ -1803,7 +1803,7 @@ Specifies that the value must be greater than `date` (or a reference).
 const schema = Joi.date().greater('1-1-1974');
 ```
 
-Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
+Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future. When using `'now'` note that is includes the current time and the two values are compared based on their UTC milliseconds timestamp.
 
 ```js
 const schema = Joi.date().greater('now');
