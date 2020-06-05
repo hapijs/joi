@@ -171,7 +171,7 @@ Checks if the provided preferences are valid where:
 
 Throws an exception if the `prefs` object is invalid.
 
-The method is provided to perform inputs validation for the [`any.validate(])`](#anyvalidatevalue-options)
+The method is provided to perform inputs validation for the [`any.validate()`](#anyvalidatevalue-options)
 and [`any.validateAsync()`](#anyvalidateasyncvalue-options) methods. Validation is not performed
 automatically for performance reasons. Instead, manually validate the preferences passed once and
 reuse.
