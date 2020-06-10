@@ -1377,6 +1377,8 @@ const alt = Joi.alternatives().try(Joi.number(), Joi.string());
 // Same as [Joi.number(), Joi.string()]
 ```
 
+Note that numeric strings would be casted to numbers in the example above (see [any.strict()](#anystrictisstrict)).
+
 Possible validation errors: [`alternatives.any`](#alternativesany), [`alternatives.all`](#alternativesall), [`alternatives.one`](#alternativesone), [`alternatives.types`](#alternativestypes), [`alternatives.match`](#alternativesmatch)
 
 #### `alternatives.conditional(condition, options)`
