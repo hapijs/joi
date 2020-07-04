@@ -1,6 +1,6 @@
 'use strict';
 
-const Bourne = require('@hapi/bourne');
+const Bourne = require('@commercial/bourne');
 const Code = require('@hapi/code');
 const Joi = require('..');
 const Lab = require('@hapi/lab');

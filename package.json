@@ -1,8 +1,11 @@
 {
-  "name": "@hapi/joi",
+  "name": "@commercial/joi",
   "description": "Object schema validation",
   "version": "16.1.8",
   "repository": "git://github.com/hapijs/joi",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "main": "lib/index.js",
   "browser": "dist/joi-browser.min.js",
   "keywords": [
@@ -10,14 +13,14 @@
     "validation"
   ],
   "dependencies": {
-    "@hapi/address": "^2.1.2",
-    "@hapi/formula": "^1.2.0",
-    "@hapi/hoek": "^8.2.4",
-    "@hapi/pinpoint": "^1.0.2",
-    "@hapi/topo": "^3.1.3"
+    "@commercial/address": "^2.1.4",
+    "@commercial/formula": "^1.2.0",
+    "@commercial/hoek": "^8.5.1",
+    "@commercial/pinpoint": "^1.0.2",
+    "@commercial/topo": "^3.1.6"
   },
   "devDependencies": {
-    "@hapi/bourne": "1.x.x",
+    "@commercial/bourne": "1.x.x",
     "@hapi/code": "6.x.x",
     "@hapi/lab": "20.x.x",
     "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x"
@@ -31,5 +34,5 @@
     "lib/**/*",
     "dist/*"
   ],
-  "license": "BSD-3-Clause"
+  "license": "SEE LICENSE IN LICENSE.md"
 }
