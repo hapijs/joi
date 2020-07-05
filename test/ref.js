@@ -652,7 +652,7 @@ describe('ref', () => {
             [[1, 2], true],
             [[10, 20], true],
             [[10, 5], false, {
-                message: '"[1]" must be larger than or equal to ref:0',
+                message: '"[1]" must be greater than or equal to ref:0',
                 path: [1],
                 type: 'number.min',
                 context: { limit: ref, value: 5, key: 1, label: '[1]' }

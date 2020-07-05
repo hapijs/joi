@@ -100,7 +100,7 @@ describe('alternatives', () => {
         );
 
         Helper.validate(schema, [
-            [0, false, '"value" must be larger than or equal to 1']
+            [0, false, '"value" must be greater than or equal to 1']
         ]);
     });
 
@@ -488,7 +488,7 @@ describe('alternatives', () => {
 
                 Helper.validate(schema, [
                     [{ a: 1, b: 1, c: 0 }, false, {
-                        message: '"c" must be larger than or equal to 1',
+                        message: '"c" must be greater than or equal to 1',
                         path: ['c'],
                         type: 'number.min',
                         context: { limit: 1, value: 0, label: 'c', key: 'c' }
@@ -789,7 +789,7 @@ describe('alternatives', () => {
                 Helper.validate(schema, [
                     [-1, true, -1],
                     [1, false, {
-                        message: '"value" must be larger than or equal to 10',
+                        message: '"value" must be greater than or equal to 10',
                         path: [],
                         type: 'number.min',
                         context: { limit: 10, value: 1, label: 'value' }

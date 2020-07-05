@@ -191,8 +191,8 @@ describe('errors', () => {
 
         expect(schema.validate(1, { messages, errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
         expect(schema.validate(1, { messages, errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
-        expect(schema.validate(1, { messages, errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
-        expect(schema.validate(1, { messages, errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+        expect(schema.validate(1, { messages, errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be greater than or equal to 10');
+        expect(schema.validate(1, { messages, errors: { language: 'empty' } }).error).to.be.an.error('"value" must be greater than or equal to 10');
     });
 
     it('supports language preference (fallthrough)', () => {
@@ -239,8 +239,8 @@ describe('errors', () => {
 
         expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
         expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
-        expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
-        expect(schema.validate(1, { errors: { language: 'empty' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+        expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be greater than or equal to 10');
+        expect(schema.validate(1, { errors: { language: 'empty' } }).error).to.be.an.error('"value" must be greater than or equal to 10');
     });
 
     it('supports language ref preference', () => {
@@ -271,8 +271,8 @@ describe('errors', () => {
 
         expect(schema.validate({ a: 1, lang: 'english' }).error).to.be.an.error('a too small');
         expect(schema.validate({ a: 1, lang: 'latin' }).error).to.be.an.error('a angustus');
-        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('a must be larger than or equal to 10');
-        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('a must be larger than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('a must be greater than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('a must be greater than or equal to 10');
     });
 
     it('supports custom wrap characters', () => {
@@ -303,8 +303,8 @@ describe('errors', () => {
 
         expect(schema.validate({ a: 1, lang: 'english' }).error).to.be.an.error('{a} too small');
         expect(schema.validate({ a: 1, lang: 'latin' }).error).to.be.an.error('{a} angustus');
-        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('{a} must be larger than or equal to 10');
-        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('{a} must be larger than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'unknown' }).error).to.be.an.error('{a} must be greater than or equal to 10');
+        expect(schema.validate({ a: 1, lang: 'empty' }).error).to.be.an.error('{a} must be greater than or equal to 10');
     });
 
     it('supports render preference', () => {
@@ -522,7 +522,7 @@ describe('errors', () => {
         const schema = Joi.object({ length: Joi.number().min(3).required() });
         const err = schema.validate({ length: 1 }).error;
         expect(err.details).to.equal([{
-            message: '"length" must be larger than or equal to 3',
+            message: '"length" must be greater than or equal to 3',
             path: ['length'],
             type: 'number.min',
             context: {
@@ -707,16 +707,16 @@ describe('errors', () => {
             });
 
             const err = schema.validate(object, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"a[0]" must be larger than or equal to 4. "a[1]" must be larger than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2');
+            expect(err).to.be.an.error('"a[0]" must be greater than or equal to 4. "a[1]" must be greater than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2');
             expect(err.details).to.equal([
                 {
-                    message: '"a[0]" must be larger than or equal to 4',
+                    message: '"a[0]" must be greater than or equal to 4',
                     path: ['a', 0],
                     type: 'number.min',
                     context: { limit: 4, value: 2, label: 'a[0]', key: 0 }
                 },
                 {
-                    message: '"a[1]" must be larger than or equal to 4',
+                    message: '"a[1]" must be greater than or equal to 4',
                     path: ['a', 1],
                     type: 'number.min',
                     context: { limit: 4, value: 3, label: 'a[1]', key: 1 }
@@ -735,7 +735,7 @@ describe('errors', () => {
                 }
             ]);
 
-            expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be larger than or equal to 4\n[2] "a[1]" must be larger than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be greater than or equal to 4\n[2] "a[1]" must be greater than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\u001b[0m');
         });
 
         it('annotates error within array when it is an object', () => {
@@ -772,16 +772,16 @@ describe('errors', () => {
             });
 
             const err = schema.validate(object, { abortEarly: false }).error;
-            expect(err).to.be.an.error('"a[0]" must be larger than or equal to 4. "a[1]" must be larger than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2. "b[0]" must be larger than or equal to 4. "b[1]" must be larger than or equal to 4. "b[1]" must be less than or equal to 2. "b[2]" must be less than or equal to 2');
+            expect(err).to.be.an.error('"a[0]" must be greater than or equal to 4. "a[1]" must be greater than or equal to 4. "a[1]" must be less than or equal to 2. "a[2]" must be less than or equal to 2. "b[0]" must be greater than or equal to 4. "b[1]" must be greater than or equal to 4. "b[1]" must be less than or equal to 2. "b[2]" must be less than or equal to 2');
             expect(err.details).to.equal([
                 {
-                    message: '"a[0]" must be larger than or equal to 4',
+                    message: '"a[0]" must be greater than or equal to 4',
                     path: ['a', 0],
                     type: 'number.min',
                     context: { limit: 4, value: 2, label: 'a[0]', key: 0 }
                 },
                 {
-                    message: '"a[1]" must be larger than or equal to 4',
+                    message: '"a[1]" must be greater than or equal to 4',
                     path: ['a', 1],
                     type: 'number.min',
                     context: { limit: 4, value: 3, label: 'a[1]', key: 1 }
@@ -799,13 +799,13 @@ describe('errors', () => {
                     context: { limit: 2, value: 4, label: 'a[2]', key: 2 }
                 },
                 {
-                    message: '"b[0]" must be larger than or equal to 4',
+                    message: '"b[0]" must be greater than or equal to 4',
                     path: ['b', 0],
                     type: 'number.min',
                     context: { limit: 4, value: 2, label: 'b[0]', key: 0 }
                 },
                 {
-                    message: '"b[1]" must be larger than or equal to 4',
+                    message: '"b[1]" must be greater than or equal to 4',
                     path: ['b', 1],
                     type: 'number.min',
                     context: { limit: 4, value: 3, label: 'b[1]', key: 1 }
@@ -823,7 +823,7 @@ describe('errors', () => {
                     context: { limit: 2, value: 4, label: 'b[2]', key: 2 }
                 }
             ]);
-            expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  "b": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[6, 7]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be larger than or equal to 4\n[2] "a[1]" must be larger than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\n[5] "b[0]" must be larger than or equal to 4\n[6] "b[1]" must be larger than or equal to 4\n[7] "b[1]" must be less than or equal to 2\n[8] "b[2]" must be less than or equal to 2\u001b[0m');
+            expect(err.annotate()).to.equal('{\n  "a": [\n    2, \u001b[31m[1]\u001b[0m\n    3, \u001b[31m[2, 3]\u001b[0m\n    4 \u001b[31m[4]\u001b[0m\n  ],\n  "b": [\n    2, \u001b[31m[5]\u001b[0m\n    3, \u001b[31m[6, 7]\u001b[0m\n    4 \u001b[31m[8]\u001b[0m\n  ]\n}\n\u001b[31m\n[1] "a[0]" must be greater than or equal to 4\n[2] "a[1]" must be greater than or equal to 4\n[3] "a[1]" must be less than or equal to 2\n[4] "a[2]" must be less than or equal to 2\n[5] "b[0]" must be greater than or equal to 4\n[6] "b[1]" must be greater than or equal to 4\n[7] "b[1]" must be less than or equal to 2\n[8] "b[2]" must be less than or equal to 2\u001b[0m');
         });
 
         it('displays alternatives fail as a single line', () => {

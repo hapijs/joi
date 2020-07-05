@@ -246,7 +246,7 @@ describe('any', () => {
 
             Helper.validate(a, [
                 [4, false, {
-                    message: '"value" must be larger than or equal to 5',
+                    message: '"value" must be greater than or equal to 5',
                     path: [],
                     type: 'number.min',
                     context: { limit: 5, value: 4, label: 'value' }
@@ -266,7 +266,7 @@ describe('any', () => {
 
             Helper.validate(a.concat(b), [
                 [4, false, {
-                    message: '"value" must be larger than or equal to 5',
+                    message: '"value" must be greater than or equal to 5',
                     path: [],
                     type: 'number.min',
                     context: { limit: 5, value: 4, label: 'value' }
@@ -289,13 +289,13 @@ describe('any', () => {
             Helper.validate(a.concat(b), [
                 [11, true],
                 [4, false, {
-                    message: '"value" must be larger than or equal to 10',
+                    message: '"value" must be greater than or equal to 10',
                     path: [],
                     type: 'number.min',
                     context: { limit: 10, value: 4, label: 'value' }
                 }],
                 [6, false, {
-                    message: '"value" must be larger than or equal to 10',
+                    message: '"value" must be greater than or equal to 10',
                     path: [],
                     type: 'number.min',
                     context: { limit: 10, value: 6, label: 'value' }
@@ -1418,7 +1418,7 @@ describe('any', () => {
 
                 const err = schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false }).error;
                 expect(err.isJoi).to.not.exist();
-                expect(err.message).to.equal('"b.c" must be larger than or equal to 0 and "b.c" must be an integer');
+                expect(err.message).to.equal('"b.c" must be greater than or equal to 0 and "b.c" must be an integer');
             });
 
             it('caches report message string', () => {
@@ -1440,7 +1440,7 @@ describe('any', () => {
 
                 const err = schema.validate({ a: 'abc', b: { c: -1.5 } }, { abortEarly: false }).error;
                 expect(err.isJoi).to.not.exist();
-                expect(err.message).to.equal('"b.c" must be larger than or equal to 0! and "b.c" must be an integer!');
+                expect(err.message).to.equal('"b.c" must be greater than or equal to 0! and "b.c" must be an integer!');
             });
 
             it('uses selected date format', () => {
@@ -1456,7 +1456,7 @@ describe('any', () => {
 
                 const err = schema.validate({ a: new Date('1973-01-01') }, { dateFormat: 'date', abortEarly: false }).error;
                 expect(err.isJoi).to.not.exist();
-                expect(err.message).to.equal(`"a" must be larger than or equal to "${min.toDateString()}" and "a" must be greater than "${min.toDateString()}"`);
+                expect(err.message).to.equal(`"a" must be greater than or equal to "${min.toDateString()}" and "a" must be greater than "${min.toDateString()}"`);
             });
 
             it('should be able to combine several error messages using context', () => {
@@ -1754,7 +1754,7 @@ describe('any', () => {
                 .min(10).keep()
                 .min(100);
 
-            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be larger than or equal to 10. "value" must be larger than or equal to 100']]);
+            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be greater than or equal to 10. "value" must be greater than or equal to 100']]);
         });
 
         it('retains both unique rule instances in concat', () => {
@@ -1763,7 +1763,7 @@ describe('any', () => {
                 .min(10).keep()
                 .concat(Joi.number().min(100));
 
-            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be larger than or equal to 10. "value" must be larger than or equal to 100']]);
+            Helper.validate(schema, { abortEarly: false }, [[1, false, '"value" must be greater than or equal to 10. "value" must be greater than or equal to 100']]);
         });
     });
 
@@ -1889,7 +1889,7 @@ describe('any', () => {
 
             expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
             expect(schema.validate(1, { errors: { language: 'latin' } }).error).to.be.an.error('"valorem" angustus');
-            expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be larger than or equal to 10');
+            expect(schema.validate(1, { errors: { language: 'unknown' } }).error).to.be.an.error('"value" must be greater than or equal to 10');
             expect(schema.label('special').validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"special" too small');
         });
 
@@ -1910,7 +1910,7 @@ describe('any', () => {
 
             expect(schema.validate({ a: 1 }, { errors: { language: 'english' } }).error).to.be.an.error('"a" too small');
             expect(schema.validate({ a: 1 }, { errors: { language: 'latin' } }).error).to.be.an.error('"a" angustus');
-            expect(schema.validate({ a: 1 }, { errors: { language: 'unknown' } }).error).to.be.an.error('"a" must be larger than or equal to 10');
+            expect(schema.validate({ a: 1 }, { errors: { language: 'unknown' } }).error).to.be.an.error('"a" must be greater than or equal to 10');
         });
 
         it('overrides message in multiple language (flat)', () => {
@@ -2250,7 +2250,7 @@ describe('any', () => {
 
                 expect(Joi.number().min(10).rule({ message: 'way too small' }).validate(1).error).to.be.an.error('way too small');
                 expect(Joi.number().min(10).rule({ message: { 'number.min': 'way too small' } }).validate(1).error).to.be.an.error('way too small');
-                expect(Joi.number().min(10).rule({ message: { 'number.max': 'way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
+                expect(Joi.number().min(10).rule({ message: { 'number.max': 'way too big' } }).validate(1).error).to.be.an.error('"value" must be greater than or equal to 10');
             });
 
             it('overrides ruleset with single message', () => {
@@ -2275,7 +2275,7 @@ describe('any', () => {
 
                 expect(Joi.number().min(10).rule({ message: '{{#label}} way too small' }).validate(1).error).to.be.an.error('"value" way too small');
                 expect(Joi.number().min(10).rule({ message: { 'number.min': '{{#label}} way too small' } }).validate(1).error).to.be.an.error('"value" way too small');
-                expect(Joi.number().min(10).rule({ message: { 'number.max': '{{#label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be larger than or equal to 10');
+                expect(Joi.number().min(10).rule({ message: { 'number.max': '{{#label}} way too big' } }).validate(1).error).to.be.an.error('"value" must be greater than or equal to 10');
             });
 
             it('overrides ruleset with single template', () => {
@@ -2984,7 +2984,7 @@ describe('any', () => {
                 [{ b: true, c: 50 }, true],
                 [{ b: true, c: 101 }, true],
                 [{ b: true, c: 0 }, false, {
-                    message: '"c" must be larger than or equal to 10',
+                    message: '"c" must be greater than or equal to 10',
                     path: ['c'],
                     type: 'number.min',
                     context: { value: 0, label: 'c', key: 'c', limit: 10 }
@@ -2993,7 +2993,7 @@ describe('any', () => {
                 [{ a: true, b: true, c: 100 }, true],
                 [{ a: true, b: true, c: 50 }, true],
                 [{ a: true, b: true, c: 0 }, false, {
-                    message: '"c" must be larger than or equal to 10',
+                    message: '"c" must be greater than or equal to 10',
                     path: ['c'],
                     type: 'number.min',
                     context: { value: 0, label: 'c', key: 'c', limit: 10 }
@@ -3429,7 +3429,7 @@ describe('any', () => {
 
             Helper.validate(schema, { context: { x: true } }, [
                 [1, true],
-                [0, false, '"value" must be larger than or equal to 1']
+                [0, false, '"value" must be greater than or equal to 1']
             ]);
         });
 
@@ -3882,7 +3882,7 @@ describe('any', () => {
                 Helper.validate(schema, [
                     [-1, true, -1],
                     [1, false, {
-                        message: '"value" must be larger than or equal to 10',
+                        message: '"value" must be greater than or equal to 10',
                         path: [],
                         type: 'number.min',
                         context: { limit: 10, value: 1, label: 'value' }

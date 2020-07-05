@@ -530,13 +530,13 @@ describe('number', () => {
             Helper.validate(schema, [
                 [{ a: 42, b: 1337 }, true],
                 [{ a: 1337, b: 42 }, false, {
-                    message: '"b" must be larger than or equal to ref:a',
+                    message: '"b" must be greater than or equal to ref:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 42, label: 'b', key: 'b' }
                 }],
                 [{ a: '1337', b: 42 }, false, {
-                    message: '"b" must be larger than or equal to ref:a',
+                    message: '"b" must be greater than or equal to ref:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 42, label: 'b', key: 'b' }
@@ -544,13 +544,13 @@ describe('number', () => {
                 [{ a: 2.4, b: 4.2 }, true],
                 [{ a: 4.2, b: 4.20000001 }, true],
                 [{ a: 4.20000001, b: 4.2 }, false, {
-                    message: '"b" must be larger than or equal to ref:a',
+                    message: '"b" must be greater than or equal to ref:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
                 }],
                 [{ a: 4.2, b: 2.4 }, false, {
-                    message: '"b" must be larger than or equal to ref:a',
+                    message: '"b" must be greater than or equal to ref:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
@@ -599,7 +599,7 @@ describe('number', () => {
 
             Helper.validate(schema, { context: { a: 1337 } }, [
                 [{ b: 42 }, false, {
-                    message: '"b" must be larger than or equal to ref:global:a',
+                    message: '"b" must be greater than or equal to ref:global:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 42, label: 'b', key: 'b' }
@@ -616,7 +616,7 @@ describe('number', () => {
 
             Helper.validate(schema, { context: { a: 4.20000001 } }, [
                 [{ b: 4.2 }, false, {
-                    message: '"b" must be larger than or equal to ref:global:a',
+                    message: '"b" must be greater than or equal to ref:global:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 4.2, label: 'b', key: 'b' }
@@ -625,7 +625,7 @@ describe('number', () => {
 
             Helper.validate(schema, { context: { a: 4.2 } }, [
                 [{ b: 2.4 }, false, {
-                    message: '"b" must be larger than or equal to ref:global:a',
+                    message: '"b" must be greater than or equal to ref:global:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 2.4, label: 'b', key: 'b' }
@@ -948,11 +948,11 @@ describe('number', () => {
                 .precision(2);
 
             Helper.validate(schema, [
-                [-0.1, false, '"value" must be larger than or equal to 0'],
-                [-0.01, false, '"value" must be larger than or equal to 0'],
+                [-0.1, false, '"value" must be greater than or equal to 0'],
+                [-0.01, false, '"value" must be greater than or equal to 0'],
                 [-0.001, true, 0],
-                [-0.123, false, '"value" must be larger than or equal to 0'],
-                [-0.0456, false, '"value" must be larger than or equal to 0']
+                [-0.123, false, '"value" must be greater than or equal to 0'],
+                [-0.0456, false, '"value" must be greater than or equal to 0']
             ]);
         });
     });
@@ -1179,7 +1179,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10);
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1206,7 +1206,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).allow(null);
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1282,7 +1282,7 @@ describe('number', () => {
                 }],
                 [-2, true],
                 [-4, false, {
-                    message: '"value" must be larger than or equal to -3',
+                    message: '"value" must be greater than or equal to -3',
                     path: [],
                     type: 'number.min',
                     context: { limit: -3, value: -4, label: 'value' }
@@ -1527,7 +1527,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer();
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1560,7 +1560,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1);
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1594,7 +1594,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8);
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1633,7 +1633,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null);
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }
@@ -1701,7 +1701,7 @@ describe('number', () => {
             const rule = Joi.number().min(8).max(10).integer().allow(9.1).invalid(8).allow(null).precision(1).prefs({ convert: false });
             Helper.validate(rule, [
                 [1, false, {
-                    message: '"value" must be larger than or equal to 8',
+                    message: '"value" must be greater than or equal to 8',
                     path: [],
                     type: 'number.min',
                     context: { limit: 8, value: 1, label: 'value' }

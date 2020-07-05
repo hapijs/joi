@@ -847,7 +847,7 @@ describe('date', () => {
         it('validates min', () => {
 
             const d = new Date('1-1-2000 UTC');
-            const message = `"value" must be larger than or equal to "${d.toISOString()}"`;
+            const message = `"value" must be greater than or equal to "${d.toISOString()}"`;
             Helper.validate(Joi.date().min('1-1-2000 UTC'), [
                 ['1-1-2001 UTC', true, new Date('1-1-2001 UTC')],
                 ['1-1-2000 UTC', true, d],
@@ -890,7 +890,7 @@ describe('date', () => {
             const past = new Date(now - 1000000);
 
             Helper.validate(Joi.date().min('now'), [[past, false, {
-                message: '"value" must be larger than or equal to "now"',
+                message: '"value" must be greater than or equal to "now"',
                 path: [],
                 type: 'date.min',
                 context: { limit: 'now', label: 'value', value: past }
@@ -907,7 +907,7 @@ describe('date', () => {
                 [{ a: now, b: now }, true, { a: new Date(now), b: new Date(now) }],
                 [{ a: now, b: now + 1e3 }, true, { a: new Date(now), b: new Date(now + 1000) }],
                 [{ a: now, b: now - 1e3 }, false, {
-                    message: '"b" must be larger than or equal to "ref:a"',
+                    message: '"b" must be greater than or equal to "ref:a"',
                     path: ['b'],
                     type: 'date.min',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
@@ -956,7 +956,7 @@ describe('date', () => {
                 [{ b: now }, true, { b: new Date(now) }],
                 [{ b: now + 1e3 }, true, { b: new Date(now + 1000) }],
                 [{ b: now - 1e3 }, false, {
-                    message: '"b" must be larger than or equal to "ref:global:a"',
+                    message: '"b" must be greater than or equal to "ref:global:a"',
                     path: ['b'],
                     type: 'date.min',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now - 1e3) }
@@ -979,7 +979,7 @@ describe('date', () => {
                 }],
                 [{ a: '123', b: now }, true, { a: '123', b: new Date(now) }],
                 [{ a: (now + 1e3).toString(), b: now }, false, {
-                    message: '"b" must be larger than or equal to "ref:a"',
+                    message: '"b" must be greater than or equal to "ref:a"',
                     path: ['b'],
                     type: 'date.min',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }
@@ -1004,7 +1004,7 @@ describe('date', () => {
 
             Helper.validate(schema, { context: { a: (now + 1e3).toString() } }, [
                 [{ b: now }, false, {
-                    message: '"b" must be larger than or equal to "ref:global:a"',
+                    message: '"b" must be greater than or equal to "ref:global:a"',
                     path: ['b'],
                     type: 'date.min',
                     context: { limit: ref, label: 'b', key: 'b', value: new Date(now) }

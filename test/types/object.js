@@ -1514,7 +1514,7 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ a: '1', b: '2' }, true, { b: 2 }],
                 [{ a: '1', b: '0' }, false, {
-                    message: '"b" must be larger than or equal to ref:a',
+                    message: '"b" must be greater than or equal to ref:a',
                     path: ['b'],
                     type: 'number.min',
                     context: { limit: ref, value: 0, label: 'b', key: 'b' }

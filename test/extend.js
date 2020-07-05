@@ -667,7 +667,7 @@ describe('extension', () => {
         });
 
         const schema = custom.special().min(10).max(0).foo();
-        expect(schema.validate(5).error).to.be.an.error('"value" must be larger than or equal to 10. "value" must be less than or equal to 0. "value" foo');
+        expect(schema.validate(5).error).to.be.an.error('"value" must be greater than or equal to 10. "value" must be less than or equal to 0. "value" foo');
     });
 
     it('extends coerce', () => {
@@ -1386,7 +1386,7 @@ describe('extension', () => {
 
         const schema = custom.special().min(1).keep().min(10).factor(2);
         expect(schema.validate(20)).to.equal({ value: 20 });
-        expect(schema.validate(19).error).to.be.an.error('"value" must be larger than or equal to 20');
+        expect(schema.validate(19).error).to.be.an.error('"value" must be greater than or equal to 20');
     });
 
     it('validates rule arguments', () => {
