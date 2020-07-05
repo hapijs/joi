@@ -1607,6 +1607,24 @@ describe('extension', () => {
         }]);
     });
 
+    it('extends with a cast', () => {
+
+        const custom = Joi.extend({
+            type: 'special',
+            base: Joi.string(),
+            cast: {
+                object: {
+                    from: (value) => !!value,
+                    to: (value) => ({ value })
+                }
+            }
+        });
+
+        const special = custom.special().cast('object');
+        expect(special.type).to.equal('special');
+        expect(special.validate('abc').value).to.equal({ value: 'abc' });
+    });
+
     it('errors on non-type override', () => {
 
         expect(() => Joi.extend({ type: 'x' })).to.throw('Cannot override name x');
