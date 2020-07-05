@@ -1,19 +1,22 @@
 {
-  "name": "@hapi/joi",
+  "name": "@commercial/joi",
   "description": "Object schema validation",
   "version": "15.1.1",
   "homepage": "https://github.com/hapijs/joi",
   "repository": "git://github.com/hapijs/joi",
+  "engines": {
+    "node": ">=8.0.0"
+  },
   "main": "lib/index.js",
   "keywords": [
     "schema",
     "validation"
   ],
   "dependencies": {
-    "@hapi/address": "2.x.x",
-    "@hapi/bourne": "1.x.x",
-    "@hapi/hoek": "8.x.x",
-    "@hapi/topo": "3.x.x"
+    "@commercial/address": "^2.1.4",
+    "@commercial/bourne": "^1.3.2",
+    "@commercial/hoek": "^8.5.1",
+    "@commercial/topo": "^3.1.6"
   },
   "devDependencies": {
     "@hapi/code": "6.x.x",
@@ -23,5 +26,5 @@
     "test": "lab -t 100 -a @hapi/code -L",
     "test-cov-html": "lab -r html -o coverage.html -a @hapi/code"
   },
-  "license": "BSD-3-Clause"
+  "license": "SEE LICENSE IN LICENSE.md"
 }
