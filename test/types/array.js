@@ -333,6 +333,15 @@ describe('array', () => {
             ]);
         });
 
+        it('allows Error items', () => {
+
+            const schema = Joi.array().items(Joi.object());
+            const error = new Error();
+            Helper.validate(schema, [
+                [[error], true, [error]]
+            ]);
+        });
+
         it('returns the first error when only one inclusion', () => {
 
             const schema = Joi.object({
