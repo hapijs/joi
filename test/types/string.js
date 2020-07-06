@@ -1237,6 +1237,7 @@ describe('string', () => {
             expect(() => Joi.string().domain({ tlds: { allow: new Set(['com']) } })).to.not.throw();
             expect(() => Joi.string().domain({ tlds: { allow: 'com' } })).to.throw('tlds.allow must be an array, Set, or boolean');
             expect(() => Joi.string().domain({ tlds: { allow: { com: true } } })).to.throw('tlds.allow must be an array, Set, or boolean');
+            expect(() => Joi.string().domain({ tlds: { allow: ['co.uk'] } })).to.throw('tlds.allow must contain valid top level domain names');
 
             expect(() => Joi.string().domain({ tlds: { deny: ['com'] } })).to.not.throw();
             expect(() => Joi.string().domain({ tlds: { deny: false } })).to.not.throw();
@@ -1244,6 +1245,7 @@ describe('string', () => {
             expect(() => Joi.string().domain({ tlds: { deny: true } })).to.throw('tlds.deny must be an array, Set, or boolean');
             expect(() => Joi.string().domain({ tlds: { deny: 'com' } })).to.throw('tlds.deny must be an array, Set, or boolean');
             expect(() => Joi.string().domain({ tlds: { deny: { com: true } } })).to.throw('tlds.deny must be an array, Set, or boolean');
+            expect(() => Joi.string().domain({ tlds: { deny: ['co.uk'] } })).to.throw('tlds.deny must contain valid top level domain names');
         });
 
         it('validates domain', () => {

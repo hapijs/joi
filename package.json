@@ -14,7 +14,7 @@
     "validation"
   ],
   "dependencies": {
-    "@hapi/address": "^4.0.1",
+    "@hapi/address": "^4.1.0",
     "@hapi/formula": "^2.0.0",
     "@hapi/hoek": "^9.0.0",
     "@hapi/pinpoint": "^2.0.0",
