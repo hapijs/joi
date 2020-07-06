@@ -2693,7 +2693,8 @@ Requires the string value to be a valid domain name.
 
 - `options` - optional settings:
     - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
-    - `minDomainSegments` - Number of segments required for the domain. Defaults to `2`.
+    - `minDomainSegments` - number of segments required for the domain. Defaults to `2`.
+    - `maxDomainSegments` - maximum number of allowed domain segments. Default to no limit.
     - `tlds` - options for TLD (top level domain) validation. By default, the TLD must be a valid
       name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt). To
       disable validation, set `tlds` to `false`. To customize how TLDs are validated, set one of
@@ -2719,9 +2720,10 @@ Requires the string value to be a valid email address.
 - `options` - optional settings:
     - `allowUnicode` - if `true`, Unicode characters are permitted. Defaults to `true`.
     - `ignoreLength` - if `true`, ignore invalid email length errors. Defaults to `false`.
-    - `minDomainSegments` - Number of segments required for the domain. The default setting excludes
+    - `minDomainSegments` - number of segments required for the domain. The default setting excludes
       single segment domains such as `example@io` which is a valid email but very uncommon. Defaults
       to `2`.
+    - `maxDomainSegments` - maximum number of allowed domain segments. Default to no limit.
     - `multiple` - if `true`, allows multiple email addresses in a single string, separated by `,`
       or the `separator` characters. Defaults to `false`.
     - `separator` - when `multiple` is `true`, overrides the default `,` separator. String can be

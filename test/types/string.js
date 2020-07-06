@@ -1227,6 +1227,12 @@ describe('string', () => {
             expect(() => Joi.string().domain({ minDomainSegments: -1 })).to.throw('minDomainSegments must be a positive integer');
             expect(() => Joi.string().domain({ minDomainSegments: 2.3 })).to.throw('minDomainSegments must be a positive integer');
 
+            expect(() => Joi.string().domain({ maxDomainSegments: 4 })).to.not.throw();
+            expect(() => Joi.string().domain({ maxDomainSegments: '1' })).to.throw('maxDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ maxDomainSegments: 0 })).to.throw('maxDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ maxDomainSegments: -1 })).to.throw('maxDomainSegments must be a positive integer');
+            expect(() => Joi.string().domain({ maxDomainSegments: 2.3 })).to.throw('maxDomainSegments must be a positive integer');
+
             expect(() => Joi.string().domain({ tlds: false })).to.not.throw();
             expect(() => Joi.string().domain({ tlds: true })).to.not.throw();
             expect(() => Joi.string().domain({ tlds: {} })).to.not.throw();
@@ -1299,6 +1305,20 @@ describe('string', () => {
                     path: [],
                     type: 'string.domain',
                     context: { value: 'www.example.com', label: 'value' }
+                }],
+                ['sub.www.example.com', true]
+            ]);
+        });
+
+        it('validates domain with maxDomainSegments', () => {
+
+            const schema = Joi.string().domain({ maxDomainSegments: 4 });
+            Helper.validate(schema, [
+                ['x.y.z.example.com', false, {
+                    message: '"value" must contain a valid domain name',
+                    path: [],
+                    type: 'string.domain',
+                    context: { value: 'x.y.z.example.com', label: 'value' }
                 }],
                 ['sub.www.example.com', true]
             ]);
