@@ -2034,20 +2034,15 @@ describe('string', () => {
 
     describe('guid()', () => {
 
-        it('throws when options.version is not a string', () => {
+        it('throws when options.version is invalid', () => {
 
-            expect(() => {
-
-                Joi.string().guid({ version: 42 });
-            }).to.throw('version at position 0 must be a string');
+            expect(() => Joi.string().guid({ version: 42 })).to.throw('version at position 0 must be a string');
+            expect(() => Joi.string().guid({ version: '42' })).to.throw('version at position 0 must be one of uuidv1, uuidv2, uuidv3, uuidv4, uuidv5');
         });
 
-        it('throws when options.version is not a valid value', () => {
+        it('throws when options.separator is invalid', () => {
 
-            expect(() => {
-
-                Joi.string().guid({ version: '42' });
-            }).to.throw('version at position 0 must be one of uuidv1, uuidv2, uuidv3, uuidv4, uuidv5');
+            expect(() => Joi.string().guid({ separator: 42 })).to.throw('separator must be one of true, false, "-", or ":"');
         });
 
         it('validates guid', () => {
@@ -2056,6 +2051,7 @@ describe('string', () => {
                 ['{D1A5279D-B27D-4CD4-A05E-EFDD53D08E8D}', true],
                 ['{B59511BD6A5F4DF09ECF562A108D8A2E}', true],
                 ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['69593D62:71EA:4548:85E4:04FC71357423', true],
                 ['677E2553DD4D43B09DA77414DB1EB8EA', true],
                 ['{5ba3bba3-729a-4717-88c1-b7c4b7ba80db}', true],
                 ['{7e9081b59a6d4cc1a8c347f69fb4198d}', true],
@@ -2772,6 +2768,33 @@ describe('string', () => {
                 type: 'string.guid',
                 context: { value: 'something', label: 'item', key: 'item' }
             }]]);
+        });
+
+        it('validates separator', () => {
+
+            Helper.validate(Joi.string().guid({ separator: '-' }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['69593D62:71EA:4548:85E4:04FC71357423', false, '"value" must be a valid GUID'],
+                ['b4b2fb69c6241e5eb0698e0c6ec66618', false, '"value" must be a valid GUID']
+            ]);
+
+            Helper.validate(Joi.string().guid({ separator: ':' }), [
+                ['69593D62:71EA:4548:85E4:04FC71357423', true],
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['b4b2fb69c6241e5eb0698e0c6ec66618', false, '"value" must be a valid GUID']
+            ]);
+
+            Helper.validate(Joi.string().guid({ separator: true }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['69593D62:71EA:4548:85E4:04FC71357423', true],
+                ['b4b2fb69c6241e5eb0698e0c6ec66618', false, '"value" must be a valid GUID']
+            ]);
+
+            Helper.validate(Joi.string().guid({ separator: false }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['69593D62:71EA:4548:85E4:04FC71357423', false, '"value" must be a valid GUID'],
+                ['b4b2fb69c6241e5eb0698e0c6ec66618', true]
+            ]);
         });
 
         it('validates combination of guid and min', () => {

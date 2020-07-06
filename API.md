@@ -2753,9 +2753,15 @@ Possible validation errors: [`string.email`](#stringemail)
 Requires the string value to be a valid GUID.
 
 - `options` - optional settings:
-    - `version` - Specifies one or more acceptable versions. Can be an Array or String with the following values:
-    `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, or `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`
-    which will not validate the version or variant of the guid and just check for general structure format.
+    - `version` - specifies one or more acceptable versions. Can be an Array or String with the following values:
+      `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, or `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`
+      which will not validate the version or variant of the guid and just check for general structure format.
+    - `separator` - defines the allowed or required GUID separator where:
+        - `true` - a separator is required, can be either `:` or `-`.
+        - `false` - separator is not allowed.
+        - `'-'` - a dash separator is required.
+        - `':'` - a colon separator is required.
+        - defaults to optional `:` or `-` separator.
 
 ```js
 const schema = Joi.string().guid({
