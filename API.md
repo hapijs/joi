@@ -237,25 +237,17 @@ Generates a dynamic expression using a template string where:
 
 #### Template syntax
 
-The template syntax uses `{}` and `{{}}` enclosed formulas to reference values as well as perform
-number and string operations. Single braces `{}` leave the formula result as-is, while double
-braces `{{}}` HTML-escape the formula result (unless the template is used for error messages
-and the `errors.escapeHtml` preference flag is set to `false`).
+The template syntax uses `{}` and `{{}}` enclosed formulas to reference values as well as perform number and string operations. Single braces `{}` leave the formula result as-is, while double braces `{{}}` HTML-escape the formula result (unless the template is used for error messages and the `errors.escapeHtml` preference flag is set to `false`).
 
-The formula uses a simple mathematical syntax such as `a + b * 2` where the named formula variables
-are references. Most references can be used as-is but some can create ambiguity with the formula
-syntax and must be enclosed in `[]` braces (e.g. `[.]`).
+If the formula is a single reference prefixed with `:` (e.g. `{:#ref}` or `{{:#ref}}`), its values will be wrapped according to the [`wrap`](#anyvalidatevalue-options) validation setting. The `#label` variable is always wrapped according to the `wrap` setting.
 
-The formulas can only operate on `null`, booleans, numbers, and strings. If any operation involves
-a string, all other numbers will be casted to strings (as the internal implementation uses simple
-JavaScript operators). The supported operators are: `^`, `*`, `/`, `%`, `+`, `-`, `<`, `<=`, `>`,
-`>=`, `==`, `!=`, `&&`, `||`, and `??` (in this order of precedence).
+The formula uses a simple mathematical syntax such as `a + b * 2` where the named formula variables are references. Most references can be used as-is but some can create ambiguity with the formula syntax and must be enclosed in `[]` braces (e.g. `[.]`).
+
+The formulas can only operate on `null`, booleans, numbers, and strings. If any operation involves a string, all other numbers will be casted to strings (as the internal implementation uses simple JavaScript operators). The supported operators are: `^`, `*`, `/`, `%`, `+`, `-`, `<`, `<=`, `>`, `>=`, `==`, `!=`, `&&`, `||`, and `??` (in this order of precedence).
 
 The reference names can have one of the following prefixes:
-- `#` - indicates the variable references a local context value. For example, in errors this is the
-  error context, while in rename operations, it is the regular expression matching groups.
-- `$` - indicates the variable references a global context value from the `context` preference object
-  provided as an option to the validation function or set using [`any.prefs()`](#anyprefsoptions--aliases-preferences-options).
+- `#` - indicates the variable references a local context value. For example, in errors this is the error context, while in rename operations, it is the regular expression matching groups.
+- `$` - indicates the variable references a global context value from the `context` preference object provided as an option to the validation function or set using [`any.prefs()`](#anyprefsoptions--aliases-preferences-options).
 - any other variable references a key within the current value being validated.
 
 The formula syntax also supports built-in functions:
@@ -1114,7 +1106,7 @@ Validates a value using the current schema and options where:
     - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global  context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performances reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api).
-    - `wrap` - overrides the way values are wrapped (e.g. `[]` around arrays, `""` around labels). Each key can be set to a string with one (same character before and after the value) or two characters (first character before and second character after), or `false` to disable wrapping:
+    - `wrap` - overrides the way values are wrapped (e.g. `[]` around arrays, `""` around labels and variables prefixed with `:`). Each key can be set to a string with one (same character before and after the value) or two characters (first character before and second character after), or `false` to disable wrapping:
         - `label` - the characters used around `{#label}` references. Defaults to `'"'`.
         - `array` - the characters used around array values. Defaults to `'[]'`.
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
@@ -3103,10 +3095,10 @@ const custom = Joi.extend((joi) => {
         type: 'million',
         base: joi.number(),
         messages: {
-            'million.base': '"{{#label}}" must be at least a million',
-            'million.big': '"{{#label}}" must be at least five millions',
-            'million.round': '"{{#label}}" must be a round number',
-            'million.dividable': '"{{#label}}" must be dividable by {{#q}}'
+            'million.base': '{{#label}} must be at least a million',
+            'million.big': '{{#label}} must be at least five millions',
+            'million.round': '{{#label}} must be a round number',
+            'million.dividable': '{{#label}} must be dividable by {{#q}}'
         },
         coerce(value, helpers) {
 
