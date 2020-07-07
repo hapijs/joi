@@ -1625,6 +1625,27 @@ describe('extension', () => {
         expect(special.validate('abc').value).to.equal({ value: 'abc' });
     });
 
+    it('retains base overrides', () => {
+
+        const custom = Joi.extend({
+            type: 'test',
+            base: Joi.object(),
+            overrides: {
+                label(...args) {
+
+                    this.$_parent('label', ...args);
+                }
+            }
+        });
+
+        const schema = custom.test({
+            a: custom.number().default(1)
+        })
+            .default();
+
+        expect(schema.validate({}).value).to.equal({ a: 1 });
+    });
+
     it('errors on non-type override', () => {
 
         expect(() => Joi.extend({ type: 'x' })).to.throw('Cannot override name x');

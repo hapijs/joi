@@ -3197,7 +3197,7 @@ const schema = custom.object({
 
 TODO
 
-#### $_super
+#### $_parent(method, ...args)
 
 TODO
 
