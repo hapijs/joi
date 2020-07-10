@@ -7069,7 +7069,8 @@ describe('string', () => {
         it('validates uri', () => {
 
             // Handful of tests taken from Node: https://github.com/joyent/node/blob/cfcb1de130867197cbc9c6012b7e84e08e53d032/test/simple/test-url.js
-            // Also includes examples from RFC 8936: http://tools.ietf.org/html/rfc3986#page-7
+            // Also includes examples from RFC 3986: http://tools.ietf.org/html/rfc3986#page-7
+
             const schema = Joi.string().uri();
 
             Helper.validate(schema, [
@@ -7509,6 +7510,16 @@ describe('string', () => {
                         label: 'value'
                     }
                 }]
+            ]);
+        });
+
+        it('validates uri and domain (true)', () => {
+
+            const schema = Joi.string().uri({ domain: {} });
+
+            Helper.validate(schema, [
+                ['http://test.google.com', true],
+                ['http://google.com%F', false, '"value" must contain a valid domain name']
             ]);
         });
 
