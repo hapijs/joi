@@ -529,6 +529,20 @@ const getSchema = schema.tailor('get');
 const postSchema = schema.tailor('post');
 ```
 
+#### `any.artifact(id)`
+
+Assigns the schema an artifact id which is included in the validation result if the rule passed validation where:
+- `id` - any value other than `undefined` which will be returned as-is in the result `artifacts` set.
+
+```js
+const schema = {
+    a: [
+        Joi.number().max(10).artifact('under'),
+        Joi.number().min(11).artifact('over')
+    ]
+};
+```
+
 #### `any.cache([cache])`
 
 Adds caching to the schema which will attempt to cache the validation results (success and
@@ -1126,6 +1140,7 @@ Returns an object with the following keys:
 - `value` - the validated and normalized value.
 - `error` - the validation errors if found.
 - `warning` - the generated warnings if any.
+- `artifacts` - a `Set` containing any passing rules' artifacts.
 
 ```js
 const schema = Joi.object({
@@ -1145,6 +1160,7 @@ const result = schema.validate(value);
 Validates a value asynchronously using the current schema and options where:
 - `value` - the value being validated.
 - `options` - an optional object as described in [`any.validate()`](#anyvalidatevalue-options), with the following additional settings:
+    - `artifacts` - when `true`, artifacts are returned alongside the value (i.e. `{ value, artifacts }`). Defaults to `false`.
     - `warnings` - when `true`, warnings are returned alongside the value (i.e. `{ value, warning }`). Defaults to `false`.
 
 Returns a Promise that resolves into the validated value when the value is valid. If the value is valid and the `warnings` or `debug` options are set to `true`, returns an object `{ value, warning, debug }`. If validation fails, the promise rejects with the validation error.
