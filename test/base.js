@@ -86,28 +86,31 @@ describe('any', () => {
 
         it('returns matching artifacts', async () => {
 
+            const sym = Symbol('3');
             const schema = Joi.object({
                 a: [
                     Joi.string().artifact(1),
                     Joi.number().artifact('2')
                 ],
-                b: Joi.boolean().artifact({ x: 3 }),
+                b: Joi.boolean().artifact(sym),
                 c: {
                     d: {
-                        e: Joi.any().artifact([4])
+                        e: Joi.any().artifact(4)
                     }
-                }
+                },
+                f: Joi.array().items(Joi.string(), Joi.number().artifact(0))
             });
 
             Helper.validate(schema, [
                 [{ a: '5', b: true, c: { d: { e: {} } } }, true, { a: '5', b: true, c: { d: { e: {} } } }]
             ]);
 
-            expect(schema.validate({ a: '5', b: true, c: { d: { e: {} } } }).artifacts).to.equal(new Set([1, { x: 3 }, [4]]));
-            expect(schema.validate({ a: 5, c: { d: { e: {} } } }).artifacts).to.equal(new Set(['2', [4]]));
+            expect(schema.validate({ a: '5', b: true, c: { d: { e: {} } } }).artifacts).to.equal(new Map([[1, [['a']]], [sym, [['b']]], [4, [['c', 'd', 'e']]]]));
+            expect(schema.validate({ a: 5, c: { d: { e: {} } } }).artifacts).to.equal(new Map([['2', [['a']]], [4, [['c', 'd', 'e']]]]));
 
             expect((await schema.validateAsync({ a: 5 })).artifacts).to.not.exist();
-            expect((await schema.validateAsync({ a: 5 }, { artifacts: true })).artifacts).to.equal(new Set(['2']));
+            expect((await schema.validateAsync({ a: 5 }, { artifacts: true })).artifacts).to.equal(new Map([['2', [['a']]]]));
+            expect((await schema.validateAsync({ f: [5, 'x', 6] }, { artifacts: true })).artifacts).to.equal(new Map([[0, [['f', 0], ['f', 2]]]]));
         });
     });
 

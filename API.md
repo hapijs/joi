@@ -532,7 +532,7 @@ const postSchema = schema.tailor('post');
 #### `any.artifact(id)`
 
 Assigns the schema an artifact id which is included in the validation result if the rule passed validation where:
-- `id` - any value other than `undefined` which will be returned as-is in the result `artifacts` set.
+- `id` - any value other than `undefined` which will be returned as-is in the result `artifacts` map.
 
 ```js
 const schema = {
@@ -1140,7 +1140,7 @@ Returns an object with the following keys:
 - `value` - the validated and normalized value.
 - `error` - the validation errors if found.
 - `warning` - the generated warnings if any.
-- `artifacts` - a `Set` containing any passing rules' artifacts.
+- `artifacts` - a `Map` containing any passing rules' artifacts and their corresponding array of paths.
 
 ```js
 const schema = Joi.object({
