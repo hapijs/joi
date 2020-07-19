@@ -2245,7 +2245,7 @@ describe('any', () => {
             expect(() => Joi.number().concat(Joi.number().$.min(10))).to.throw('Cannot concatenate a schema with open ruleset');
 
             expect(() => Joi.any().ruleset.rule({})).to.throw('Cannot apply rules to empty ruleset');
-            expect(() => Joi.any().rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
+            expect(() => Joi.any().rule({})).to.throw('Cannot apply rules to empty ruleset');
             expect(() => Joi.number().min(10).rule({}).rule({})).to.throw('Cannot apply rules to empty ruleset or the last rule added does not support rule properties');
             expect(() => Joi.string().ruleset.trim()._ruleRemove('trim').rule({})).to.throw('Cannot apply rules to empty ruleset');
             expect(() => Joi.string().trim()._ruleRemove('trim').rule({})).to.throw('Cannot apply rules to empty ruleset');

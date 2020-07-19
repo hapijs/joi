@@ -693,6 +693,35 @@ describe('Manifest', () => {
             const built = custom.build(desc);
             Helper.equal(built, schema);
         });
+
+        it('builds extended schema (base with terms)', () => {
+
+            const custom = Joi.extend({
+                type: 'fancy',
+                base: Joi.array().items(Joi.string().required())
+            });
+
+            const schema = custom.fancy();
+            const desc = schema.describe();
+
+            expect(desc).to.equal({
+                type: 'fancy',
+                items: [
+                    {
+                        flags: { presence: 'required' },
+                        type: 'string'
+                    }
+                ]
+            });
+
+            const built = custom.build(desc);
+            Helper.equal(built, schema);
+
+            Helper.validate(built, [
+                [[1], false, '"[0]" must be a string'],
+                [['x'], true]
+            ]);
+        });
     });
 });
 

@@ -15,7 +15,7 @@ exports.skip = Symbol('skip');
 exports.equal = function (a, b) {
 
     try {
-        expect(a).to.equal(b, { deepFunction: true, skip: ['$_temp'] });
+        expect(a).to.equal(b, { deepFunction: true, skip: ['$_temp', '$_root'] });
     }
     catch (err) {
         console.error(err.stack);
