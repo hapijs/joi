@@ -58,7 +58,8 @@ describe('Manifest', () => {
                 .rename('renamed', 'required')
                 .without('required', 'xor')
                 .without('xor', 'required')
-                .allow({ a: 'x' });
+                .allow({ a: 'x' })
+                .meta({ x: 1 });
 
             const result = {
                 type: 'object',
@@ -204,7 +205,8 @@ describe('Manifest', () => {
                 preferences: {
                     abortEarly: false,
                     convert: false
-                }
+                },
+                metas: [{ x: 1 }]
             };
 
             const description = schema.describe();
