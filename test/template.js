@@ -138,6 +138,31 @@ describe('Template', () => {
         });
     });
 
+    describe('stringify()', () => {
+
+        it('resolves ref', () => {
+
+            const ref = Joi.ref('a', { render: 'true' });
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.number().min(ref)
+            });
+
+            expect(schema.validate({ a: 10, b: 5 }).error).to.be.an.error('"b" must be greater than or equal to 10');
+        });
+
+        it('resolves ref (in)', () => {
+
+            const ref = Joi.in('a', { render: 'true' });
+            const schema = Joi.object({
+                a: Joi.array().items(Joi.number()),
+                b: Joi.number().valid(ref)
+            });
+
+            expect(schema.validate({ a: [1, 2, 3], b: 5 }).error).to.be.an.error('"b" must be [1, 2, 3]');
+        });
+    });
+
     describe('functions', () => {
 
         describe('msg()', () => {

@@ -357,6 +357,7 @@ References support the following arguments:
     - `ancestor` - if set to a number, sets the reference [relative starting point](#Relative-references). Cannot be combined with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
     - `in` - creates an [in-reference](#inref-options).
     - `iterables` - when `true`, the reference resolves by reaching into maps and sets.
+    - `render` - when `true`, the value of the reference is used instead of its name in error messages and template rendering. Defaults to `false`.
 
 Note that references can only be used where explicitly supported such as in `valid()` or `invalid()` rules. If upwards (parents) references are needed, use [`object.assert()`](#objectassertref-schema-message).
 

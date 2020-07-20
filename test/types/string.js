@@ -4128,7 +4128,8 @@ describe('string', () => {
                     path: [],
                     type: 'string.hex',
                     context: { value: '123afg', label: 'value' }
-                }]
+                }],
+                ['0x123456789AbCdEf', false, '"value" must only contain hexadecimal characters']
             ]);
         });
 

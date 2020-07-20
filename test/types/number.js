@@ -500,18 +500,12 @@ describe('number', () => {
 
         it('throws when limit is not a number', () => {
 
-            expect(() => {
-
-                Joi.number().min('a');
-            }).to.throw('limit must be a number or reference');
+            expect(() => Joi.number().min('a')).to.throw('limit must be a number or reference');
         });
 
         it('throws when limit is null', () => {
 
-            expect(() => {
-
-                Joi.number().min(null);
-            }).to.throw('limit must be a number or reference');
+            expect(() => Joi.number().min(null)).to.throw('limit must be a number or reference');
         });
 
         it('supports 64bit numbers', () => {
