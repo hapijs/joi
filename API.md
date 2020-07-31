@@ -848,7 +848,7 @@ Sets a schema id for reaching into the schema via [`any.extract()`](#anyextractp
 - `id` - an alphanumeric string (plus `_`) used to identify the schema.
 
 If no id is set, the schema id defaults to the object key it is associated with. If the schema is
-used in an array or alternatives type and no id is set, the schema in unreachable.
+used in an array or alternatives type and no id is set, the schema is unreachable.
 
 #### `any.invalid(...values)` - aliases: `disallow`, `not`
 
