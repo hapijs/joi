@@ -891,7 +891,7 @@ rule option. Use [`rule()`](#anyruleoptions) to apply multiple rule options.
 
 #### `any.messages(messages)`
 
-Same as [`any.prefs({ messages })`](#anyprefsoptions--aliases-preferences-options).
+Same as [`any.prefs({ messages })`](#anyprefsoptions---aliases-preferences-options).
 
 Note that while [`any.message()`](#anymessagemessage) applies only to the last rule or ruleset, `any.messages()` applies to the entire schema.
 
