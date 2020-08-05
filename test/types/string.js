@@ -4978,6 +4978,7 @@ describe('string', () => {
                     context: { value: '2013-06-07T14:21:46.295Z0', label: 'value' }
                 }],
                 ['2013-06-07T14:21:46.295+07:00', true],
+                ['2013-06-07T14:21:46.295+07', true],
                 ['2013-06-07T14:21:46.295+07:000', false, {
                     message: '"value" must be in iso format',
                     path: [],
