@@ -623,7 +623,7 @@ declare namespace Joi {
          */
         annotate(stripColors?: boolean): string;
 
-        _object: any;
+        _original: any;
     }
 
     interface ValidationErrorItem {
