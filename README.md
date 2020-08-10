@@ -6,7 +6,7 @@
 
 ## Useful resources
 
-- [Documentation and API](https://hapi.dev/family/joi/)
+- [Documentation and API](https://github.com/sideway/joi/blob/master/API.md)
 - [Versions status](https://hapi.dev/resources/status/#joi)
 - [Changelog](https://hapi.dev/family/joi/changelog/)
 - [Project policies](https://hapi.dev/policies/)
