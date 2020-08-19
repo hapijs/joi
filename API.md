@@ -1,12 +1,12 @@
 
 ### Introduction
 
-**joi** lets you describe your data using a simple, intuitive, and readable language. Like the rest of the [hapi ecosystem](https://hapi.dev) it fits in, **joi** allows you to describe your data for both input and output validation, as part of a hapi HTTP server or standalone.
+**joi** lets you describe your data using a simple, intuitive, and readable language.
 
 #### Example
 
 ```js
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 const schema = Joi.object({
     username: Joi.string()
@@ -94,7 +94,7 @@ const { error, value } = schema.validate({ a: 'a string' });
 ```
 
 If the input is valid, then the `error` will be `undefined`. If the input is invalid, `error` is assigned
-a [`ValidationError`](https://github.com/hapijs/joi/blob/master/API.md#validationerror) object
+a [`ValidationError`](https://github.com/sideway/joi/blob/master/API.md#validationerror) object
 providing more information.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
@@ -468,7 +468,7 @@ using deconstruction. Note that the types are already formed and do not need to 
 functions (e.g. `string`, not `string()`).
 
 ```js
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const { object, string } = Joi.types();
 
 const schema = object.keys({
@@ -3104,7 +3104,7 @@ The [`extend()`](#extendextensions) method adds custom types to **joi**. Extensi
 Full documentation is upcoming.
 
 ```js
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 const custom = Joi.extend((joi) => {
 
