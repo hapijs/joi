@@ -2,12 +2,11 @@
 
 #### The most powerful schema description language and data validator for JavaScript.
 
-### Visit the [hapi.dev](https://hapi.dev) Developer Portal for tutorials, documentation, and support
+### Visit the [joi.dev](https://joi.dev) Developer Portal for tutorials, documentation, and support
 
 ## Useful resources
 
-- [Documentation and API](https://github.com/sideway/joi/blob/master/API.md)
-- [Versions status](https://hapi.dev/resources/status/#joi)
-- [Changelog](https://hapi.dev/family/joi/changelog/)
-- [Project policies](https://hapi.dev/policies/)
-- [Free and commercial support options](https://hapi.dev/support/)
+- [Documentation and API](https://joi.dev/api/)
+- [Versions status](https://joi.dev/resources/status/#joi)
+- [Changelog](https://joi.dev/resources/changelog/)
+- [Project policies](https://joi.dev/policies/)
