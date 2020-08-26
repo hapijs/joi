@@ -778,8 +778,11 @@ const schema = Joi.string().min(4).example('abcd');
 #### `any.external(method, [description])`
 
 Adds an external validation rule where:
-- `method` - an async or sync function with signature `function(value)` which can either return
-  a replacement value, `undefined` to indicate no change, or throw an error.
+- `method` - an async or sync function with signature `function(value, helpers)` which can either
+  return a replacement value, `undefined` to indicate no change, or throw an error, where:
+    - `value` - a clone of the object containing the value being validated.
+    - `helpers` - an object with the following helpers:
+        - `prefs` - the current preferences.
 - `description` - optional string used to document the purpose of the method.
 
 Note that external validation rules are only called after the all other validation rules for the
