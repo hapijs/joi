@@ -1876,7 +1876,7 @@ declare namespace Joi {
     }
 
     interface Extension {
-        type: string;
+        type: string | RegExp;
         args?(...args: SchemaLike[]): Schema;
         base?: Schema;
         coerce?: CoerceFunction | CoerceObject;
