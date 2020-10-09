@@ -1531,7 +1531,7 @@ const schema = Joi.array().items(Joi.string().valid('not allowed').forbidden(), 
 const schema = Joi.array().items(Joi.string().label('My string').required(), Joi.number().required()); // If this fails it can result in `[ValidationError: "value" does not contain [My string] and 1 other required value(s)]`
 ```
 
-Possible validation errors: [`array.excludes`](#arrayexcludes), [[`array.includesRequiredBoth`](#arrayincludesrequiredboth)], [[`array.includesRequiredKnowns`](#arrayincludesrequiredknowns)], [[`array.includesRequiredUnknowns`](#arrayincludesrequiredunknowns)], [`array.includes`](#arrayincludes)
+Possible validation errors: [`array.excludes`](#arrayexcludes), [`array.includesRequiredBoth`](#arrayincludesrequiredboth), [`array.includesRequiredKnowns`](#arrayincludesrequiredknowns), [`array.includesRequiredUnknowns`](#arrayincludesrequiredunknowns), [`array.includes`](#arrayincludes)
 
 #### `array.length(limit)`
 
