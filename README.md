@@ -2,6 +2,9 @@
 
 #### The most powerful schema description language and data validator for JavaScript.
 
+## Installation
+`npm install joi`
+
 ### Visit the [joi.dev](https://joi.dev) Developer Portal for tutorials, documentation, and support
 
 ## Useful resources
