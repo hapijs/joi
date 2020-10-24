@@ -3183,7 +3183,7 @@ Where:
         - `helpers`: [Validation helpers](#validation-helpers)
         - `args`: Resolved and validated arguments mapped by their names.
         - `rule`: The rule definitions passed to `$_addRule` left untouched. Useful if you need access to the raw arguments before validation. 
-
+- `overrides`: A hash of method names and their overridden implementation. To refer to the parent method, use [`$_parent()`](#_parentmethod-args)
 
 ```js
 const Joi = require('joi');
