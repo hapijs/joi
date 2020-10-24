@@ -36,6 +36,21 @@ describe('link', () => {
         ]);
     });
 
+    it('links named schema (by ref)', () => {
+
+        const schema = Joi.object({
+            a: [Joi.string(), Joi.number()],
+            b: Joi.link().ref('#type.a')
+        })
+            .id('type');
+
+        Helper.validate(schema, [
+            [{ a: 1, b: 2 }, true],
+            [{ a: '1', b: '2' }, true],
+            [{ a: [1], b: '2' }, false, '"a" must be one of [string, number]']
+        ]);
+    });
+
     it('links named schema (implicit)', () => {
 
         const schema = Joi.object({

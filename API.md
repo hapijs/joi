@@ -2044,6 +2044,14 @@ then initialized. If `ref` was not passed to the constructor, `link.ref()` must 
 
 Will throw an error during validation if left uninitialized (e.g. `Joi.link()` called without a link and `link.ref()` not called).
 
+```js
+const schema = Joi.object({
+    a: [Joi.string(), Joi.number()],
+    b: Joi.link().ref('#type.a')
+})
+    .id('type');
+```
+
 #### `link.concat(schema)`
 
 Same as [`any.concat()`](#anyconcatschema) but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link. Will throw an exception during validation if the merged types are not compatible.
