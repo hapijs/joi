@@ -3121,7 +3121,7 @@ Before writing your own extensions, it is useful to understand how input values 
 - Runs base validation using the `validate` method defined below. If a validation error is returned, the process will be aborted regardless of `abortEarly`.
 - Runs validation rules.
 
-**Note that extended schemas do not change the order in which Joi performs the above steps**
+**Note that extending schemas do not change the order in which Joi performs the above steps**
 
 The [`extend()`](#extendextensions) method adds custom types to **joi**. Extensions can be:
 - a single extension object.
@@ -3292,7 +3292,7 @@ const schema = custom.object({
 
 ### Validation helpers
 
-- `original`: The original value untouched passed to `validate()`.
+- `original`: The original value passed untouched to `validate()`.
 - `prefs`: The prepared validation options.
 - `schema`: The reference to the current schema. Useful if you need to use any of the [Advanced functions](#advanced-functions).
 - `state`: The current validation state. See [Validation state](#state)
