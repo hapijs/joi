@@ -3405,11 +3405,20 @@ TODO
 
 #### $_setFlag(name, value, options)
 
-TODO
+Sets a flag where:
+- `name`: The flag name to set.
+- `value`: The value to set the flag to.
+- `options`: Optional options where:
+    - `clone`: Whether to clone the schema. Defaults to `true`. Only set to `false` if the schema has already been cloned before. 
 
 #### $_validate(value, state, prefs)
 
-TODO
+Performs validation against the current schema without the extra overhead of merging validation options to a default set of values where:
+- `value`: The input value to validate.
+- `state`: [Validation state](#validation-state)
+- `prefs`: The prepared validation options.
+
+**Use this method to perform validation against nested schemas instead of `validate()`**
 
 
 ## Errors
