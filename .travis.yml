@@ -6,18 +6,6 @@ node_js:
 
 sudo: false
 
-cache:
-    npm: false
-    directories:
-        - $HOME/.npm
-
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then npm update -g npm; fi
-  - if [[ "$TRAVIS_OS_NAME" = "windows" ]]; then node `npm prefix -g`/node_modules/npm/bin/npm-cli.js i -g npm@latest; fi
-
-install:
-  - "npm install"
-
 os:
   - "linux"
   - "osx"
