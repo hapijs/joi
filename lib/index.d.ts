@@ -554,6 +554,12 @@ declare namespace Joi {
          * when true, the reference resolves by reaching into maps and sets.
          */
         iterables?: boolean;
+
+        /**
+         * when true, the value of the reference is used instead of its name in error messages 
+         * and template rendering. Defaults to false.
+         */
+        render?: boolean;
     }
 
     interface StringRegexOptions {
