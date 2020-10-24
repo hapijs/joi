@@ -3348,14 +3348,12 @@ Adds a rule to the rules queue where:
 #### $_compile(schema, options)
 
 Compiles a literal schema definition to a Joi schema object where:
-
 - `schema`: The schema to compile.
 - `options`: TODO
 
 #### $_createError(code, value, local, state, prefs, options)
 
 Creates a Joi validation error where:
-
 - `code`: The error code.
 - `value`: The current value being validated.
 - `local`: Local context used to interpolate the message.
