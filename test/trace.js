@@ -3,7 +3,7 @@
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Joi = require('..');
-const Pinpoint = require('@hapi/pinpoint');
+const Pinpoint = require('@sideway/pinpoint');
 
 
 const internals = {};
