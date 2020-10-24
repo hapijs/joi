@@ -389,6 +389,22 @@ describe('Validator', () => {
             expect(result).to.equal([[1, 'x']]);
             expect(input).to.equal([[1]]);
         });
+
+        it('has access to prefs', async () => {
+
+            const context = { foo: 'bar' };
+
+            const tag = (value, { prefs }) => {
+
+                return prefs.context.foo;
+            };
+
+            const schema = Joi.string().external(tag);
+            const input = 'my string';
+
+            const result = await schema.validateAsync(input, { context });
+            expect(result).to.equal('bar');
+        });
     });
 
     describe('finalize()', () => {
