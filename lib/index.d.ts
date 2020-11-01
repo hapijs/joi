@@ -1560,6 +1560,7 @@ declare namespace Joi {
          * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
          */
         append(schema?: SchemaMap<TSchema>): this;
+        append<TSchemaExtended = any, T = TSchemaExtended>(schema?: SchemaMap<T>): ObjectSchema<T>
 
         /**
          * Verifies an assertion where.
