@@ -316,6 +316,45 @@ describe('object', () => {
         ]);
     });
 
+    it('should strip unknown values when stripUnknown === true', () => {
+
+        const schema = Joi.object({
+            itemName: Joi.string().required(),
+            nestedItem: Joi.object({
+                nestedItemName: Joi.string().required()
+            }).required()
+        }).required();
+        const prefs = { abortEarly: false, stripUnknown: true };
+
+        // test for valid objects
+        Helper.validate(schema, prefs, [
+            [
+                { itemName: 'John', toStrip: true, nestedItem: { nestedItemName: 'Doe' } },
+                true,
+                { itemName: 'John', nestedItem: { nestedItemName: 'Doe' } }
+            ],
+            [
+                { itemName: 'John', nestedItem: { nestedItemName: 'Doe', toStrip: true } },
+                true,
+                { itemName: 'John', nestedItem: { nestedItemName: 'Doe' } }
+            ]
+        ]);
+
+        // test for invalid object, value to strip in root object
+        let { value } = schema.validate(
+            { itemName: 1, toStrip: true, nestedItem: { nestedItemName: 'Doe' } },
+            prefs
+        );
+        expect(value).to.equal({ itemName: 1, nestedItem: { nestedItemName: 'Doe' } });
+
+        // test for invalid object, value to strip in nested object
+        value = schema.validate(
+            { itemName: 'John', nestedItem: { nestedItemName: 1, toStripNested: true } },
+            prefs
+        ).value;
+        expect(value).to.equal({ itemName: 'John', nestedItem: { nestedItemName: 1 } });
+    });
+
     it('traverses an object and validate all properties in the top level', () => {
 
         const schema = Joi.object({
