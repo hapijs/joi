@@ -332,7 +332,8 @@ declare namespace Joi {
     type GuidVersions = 'uuidv1' | 'uuidv2' | 'uuidv3' | 'uuidv4' | 'uuidv5';
 
     interface GuidOptions {
-        version: GuidVersions[] | GuidVersions;
+        version?: GuidVersions[] | GuidVersions;
+        separator?: boolean | '-' | ':';
     }
 
     interface UriOptions {
