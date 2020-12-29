@@ -833,7 +833,7 @@ declare namespace Joi {
          * Assign target alteration options to a schema that are applied when `any.tailor()` is called.
          * @param targets - an object where each key is a target name, and each value is a function that takes an schema and returns an schema.
          */
-        alter(targets: Record<string, SchemaFunction>): this;
+        alter(targets: Record<string, (schema: this) => Schema>): this;
 
         /**
          * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
