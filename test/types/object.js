@@ -684,6 +684,14 @@ describe('object', () => {
         ]);
     });
 
+    describe('dependency()', () => {
+
+        it('throws when references are passed', () => {
+
+            expect(() => Joi.object().and(Joi.ref('test'))).to.throw('and peers must be strings');
+        });
+    });
+
     describe('and()', () => {
 
         it('validates and()', () => {
