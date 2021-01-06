@@ -644,7 +644,6 @@ declare namespace Joi {
 
     interface ValidationResult {
         error?: ValidationError;
-        errors?: ValidationError;
         warning?: ValidationError;
         value: any;
     }
