@@ -870,7 +870,7 @@ declare namespace Joi {
          *    - a [references](#refkey-options)
          *    - a function which returns the default value using the signature `function(parent, helpers)` where:
          *        - `parent` - a clone of the object containing the value being validated. Note that since specifying a
-         *          `parent` ragument performs cloning, do not declare format arguments if you are not using them.
+         *          `parent` argument performs cloning, do not declare format arguments if you are not using them.
          *        - `helpers` - same as thsoe described in [`any.custom()`](anycustomermethod_description)
          *
          * When called without any `value` on an object schema type, a default value will be automatically generated
