@@ -576,6 +576,15 @@ describe('array', () => {
             ]);
         });
 
+        it('can fill the default values into the value array', () => {
+
+            const schema = Joi.array().ordered( Joi.string().required(), Joi.number().default(0), Joi.number().default(6)).required();
+
+            Helper.validate(schema, [
+                [['a'], true, ['a', 0, 6]]
+            ]);
+        });
+
         it('can strip matching items', () => {
 
             const schema = Joi.array().items(Joi.string(), Joi.any().strip());
