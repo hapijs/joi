@@ -603,15 +603,15 @@ describe('array', () => {
             ]);
         });
 
-        it('fill the defaults correctly when dynamic schema is used', () => {
+        it('fills defaults correctly when nested items contain references', () => {
 
             const schema = Joi.object({
                 info: Joi.object(),
                 values: Joi.array().ordered(
                     Joi.string().required(),
-                    Joi.string().default(Joi.ref('info.firstname')),
+                    Joi.string().default(Joi.ref('...info.firstname')),
                     Joi.string(),
-                    Joi.string().default(Joi.ref('info.lastname')),
+                    Joi.string().default(Joi.ref('...info.lastname')),
                     Joi.string()
                 ).required()
             });
@@ -622,7 +622,7 @@ describe('array', () => {
             ]);
         });
 
-        it('fill the defaults correctly when dynamic schema is used', () => {
+        it('fills defaults correctly when nested items contain references', () => {
 
             const schema = Joi.object({
                 info: Joi.object().required(),
@@ -635,7 +635,7 @@ describe('array', () => {
                         Joi.number().default(Joi.x('{number("202099")}'))
                     ),
                     Joi.string(),
-                    Joi.string().default(Joi.ref('info.firstname')),
+                    Joi.string().default(Joi.ref('...info.firstname')),
                     Joi.string()
                 ).required()
             });
