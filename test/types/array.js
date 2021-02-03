@@ -578,10 +578,70 @@ describe('array', () => {
 
         it('can fill the default values into the value array', () => {
 
-            const schema = Joi.array().ordered( Joi.string().required(), Joi.number().default(0), Joi.number().default(6)).required();
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().default(0), Joi.number().default(6)).required();
 
             Helper.validate(schema, [
                 [['a'], true, ['a', 0, 6]]
+            ]);
+        });
+
+        it('ignore trailing undefined', () => {
+
+            const schema = Joi.array().ordered(Joi.string().required(), Joi.string(), Joi.number().default(5), Joi.string(), Joi.string());
+
+            Helper.validate(schema, [
+                [['a'], true, ['a', undefined, 5]]
+            ]);
+        });
+
+        it('generate sparse array', () => {
+
+            const schema = Joi.array().ordered(Joi.string(), Joi.number().default(5), Joi.string(), Joi.string().default('f'));
+
+            Helper.validate(schema, [
+                [[], true, [undefined, 5, undefined, 'f']]
+            ]);
+        });
+
+        it('fill the defaults correctly when dynamic schema is used', () => {
+
+            const schema = Joi.object({
+                info: Joi.object(),
+                values: Joi.array().ordered(
+                    Joi.string().required(),
+                    Joi.string().default(Joi.ref('info.firstname')),
+                    Joi.string(),
+                    Joi.string().default(Joi.ref('info.lastname')),
+                    Joi.string()
+                ).required()
+            });
+
+            Helper.validate(schema, [
+                [{ info: { firstname: 'f', lastname: 'e' }, values: ['h'] }, true, { info: { firstname: 'f', lastname: 'e' }, values: ['h', 'f', undefined, 'e'] }],
+                [{ info: { firstname: 'f', lastname: 'e' }, values: ['h', 'test'] }, true, { info: { firstname: 'f', lastname: 'e' }, values: ['h', 'test', undefined, 'e'] }]
+            ]);
+        });
+
+        it('fill the defaults correctly when dynamic schema is used', () => {
+
+            const schema = Joi.object({
+                info: Joi.object().required(),
+                values: Joi.array().ordered(
+                    Joi.string().required(),
+                    Joi.array().ordered(
+                        Joi.string(),
+                        Joi.string().default('normal value'),
+                        Joi.string(),
+                        Joi.number().default(Joi.x('{number("202099")}'))
+                    ),
+                    Joi.string(),
+                    Joi.string().default(Joi.ref('info.firstname')),
+                    Joi.string()
+                ).required()
+            });
+
+            Helper.validate(schema, [
+                [{ info: { firstname: 'f' }, values: ['h', []] }, true, { info: { firstname: 'f' }, values: ['h', [undefined, 'normal value', undefined, 202099], undefined, 'f'] }]
             ]);
         });
 
