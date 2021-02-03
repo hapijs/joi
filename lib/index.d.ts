@@ -1153,7 +1153,7 @@ declare namespace Joi {
         /**
          * Converts the type into an alternatives type where the conditions are merged into the type definition where:
          */
-        when(ref: string | Reference, options: WhenOptions): this;
+        when(ref: string | Reference, options: WhenOptions | WhenOptions[]): this;
 
         /**
          * Converts the type into an alternatives type where the conditions are merged into the type definition where:
@@ -2181,7 +2181,7 @@ declare namespace Joi {
         /**
          * Converts the type into an alternatives type where the conditions are merged into the type definition where:
          */
-        when(ref: string | Reference, options: WhenOptions): AlternativesSchema;
+        when(ref: string | Reference, options: WhenOptions | WhenOptions[]): AlternativesSchema;
         when(ref: Schema, options: WhenSchemaOptions): AlternativesSchema;
 
         /**
