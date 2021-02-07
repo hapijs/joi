@@ -690,7 +690,7 @@ declare namespace Joi {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
     };
 
-    type Schema =
+    type Schema<P = any> =
         | AnySchema
         | ArraySchema
         | AlternativesSchema
@@ -699,7 +699,7 @@ declare namespace Joi {
         | DateSchema
         | FunctionSchema
         | NumberSchema
-        | ObjectSchema
+        | ObjectSchema<P>
         | StringSchema
         | LinkSchema
         | SymbolSchema;
