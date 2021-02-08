@@ -1451,6 +1451,28 @@ describe('alternatives', () => {
             ]);
         });
 
+        it('merges return values when matching all objects', () => {
+
+            const schema = Joi.alternatives([
+                Joi.object({ foo: Joi.string().default('bar') }).unknown(),
+                Joi.object({
+                    baz: Joi.string().default('buz'),
+                    lol: Joi.string()
+                })
+            ]).match('all');
+
+            Helper.validate(schema, [
+                [{}, true, { foo: 'bar', baz: 'buz' }],
+                [{ lol: 'rofl' }, true, { foo: 'bar', baz: 'buz', lol: 'rofl' }],
+                [{ lol: 5 }, false, {
+                    message: '"value" does not match all of the required types',
+                    path: [],
+                    type: 'alternatives.all',
+                    context: { label: 'value', value: { lol: 5 } }
+                }]
+            ]);
+        });
+
         it('errors on mix with conditional', () => {
 
             expect(() => Joi.alternatives().match('all').conditional('$a', { is: true, then: false })).to.throw('Cannot combine match mode all with conditional rule');
