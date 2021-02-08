@@ -8537,7 +8537,8 @@ describe('string', () => {
             const schema = Joi.string().uri({ allowRelative: true, domain: { minDomainSegments: 3, tlds: { allow: ['com'] } } });
             Helper.validate(schema, [
                 ['//test.example.com:8042/over/there?name=ferret#nose', true],
-                ['//example.com:8042/over/there?name=ferret#nose', false, '"value" must contain a valid domain name']
+                ['//example.com:8042/over/there?name=ferret#nose', false, '"value" must contain a valid domain name'],
+                ['relative', true]
             ]);
         });
 
