@@ -1223,6 +1223,7 @@ const userSchemaObject = Joi.object<User>({
     family: Joi.string()
 });
 
+
 let userSchema = Joi.object<User>().keys({
     name: Joi.string().required(),
     family: Joi.string()
@@ -1232,8 +1233,8 @@ userSchema = userSchema.append({
     age: Joi.number()
 });
 
+userSchema.append({ height: Joi.number() });
 
-expect.error(userSchema.append({ height: Joi.number() }));
 
 const userSchema2 = Joi.object<User>().keys({
     name: Joi.string().required()
