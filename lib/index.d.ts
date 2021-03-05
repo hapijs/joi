@@ -1764,7 +1764,7 @@ declare namespace Joi {
         /**
          * Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value.
          */
-        conditional(ref: string | Reference, options: WhenOptions): this;
+        conditional(ref: string | Reference, options: WhenOptions | WhenOptions[]): this;
         conditional(ref: Schema, options: WhenSchemaOptions): this;
 
         /**
