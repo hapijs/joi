@@ -1,5 +1,5 @@
 {
-    "name": "n-joi",
+    "name": "@nlundquist/joi",
     "description": "Nils' release of his joi fork and it's patches.",
     "version": "17.5.0",
     "repository": "git://github.com/sideway/joi",
