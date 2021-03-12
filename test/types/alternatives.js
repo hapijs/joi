@@ -1464,11 +1464,11 @@ describe('alternatives', () => {
             Helper.validate(schema, [
                 [{}, true, { foo: 'bar', baz: 'buz' }],
                 [{ lol: 'rofl' }, true, { foo: 'bar', baz: 'buz', lol: 'rofl' }],
-                [{ lol: 5 }, false, {
+                [{ lol: [] }, false, {
                     message: '"value" does not match all of the required types',
                     path: [],
                     type: 'alternatives.all',
-                    context: { label: 'value', value: { lol: 5 } }
+                    context: { label: 'value', value: { lol: [] } }
                 }]
             ]);
         });
