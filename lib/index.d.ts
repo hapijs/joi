@@ -2090,7 +2090,7 @@ declare namespace Joi {
         /**
          * Checks whether or not the provided argument is a joi schema.
          */
-        isSchema(schema: any, options?: CompileOptions): boolean;
+        isSchema(schema: any, options?: CompileOptions): schema is AnySchema;
 
         /**
          * A special value used with `any.allow()`, `any.invalid()`, and `any.valid()` as the first value to reset any previously set values.
