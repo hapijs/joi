@@ -1473,6 +1473,21 @@ describe('alternatives', () => {
             ]);
         });
 
+        it.only('merges defaults when nesting alternatives', () => {
+            const schema = Joi.alternatives([
+                Joi.alternatives(
+                    Joi.object({ foo: Joi.string().default('bar') }).unknown(),
+                    Joi.object({ baz: Joi.boolean().default(false) }).unknown()
+                ).match('all'),
+                Joi.object({ lol: Joi.boolean().default(true) }).unknown()
+            ]).match('all');
+
+            Helper.validate(schema, [
+                [{}, true, { foo: 'bar', baz: false, lol: true }],
+                [{ foo: 'rofl' }, true, { foo: 'rofl', baz: false, lol: true }]
+            ]);
+        });
+
         it('errors on mix with conditional', () => {
 
             expect(() => Joi.alternatives().match('all').conditional('$a', { is: true, then: false })).to.throw('Cannot combine match mode all with conditional rule');
