@@ -918,7 +918,7 @@ const schema = Joi.any().note('this is special', 'this is important');
 
 #### `any.only()`
 
-Requires the validated value to match of the provided `any.allow()` values. It has not effect when
+Requires the validated value to match of the provided `any.allow()` values. It has no effect when
 called together with `any.valid()` since it already sets the requirements. When used with
 `any.allow()` it converts it to an `any.valid()`.
 
