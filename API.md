@@ -4041,13 +4041,13 @@ Additional local context properties:
 
 #### `object.missing`
 
-The OR or XOR condition between the properties you specified was not satisfied in that object, none of it were set.
+The OR or XOR condition between the properties you specified was not satisfied in that object, none of them were set.
 
 Additional local context properties:
 ```ts
 {
-    peers: Array<string>, // List of properties were none of it was set
-    peersWithLabels: Array<string> // List of labels for the properties were none of it was set
+    peers: Array<string>, // List of properties where none of them were set
+    peersWithLabels: Array<string> // List of labels for the properties where none of them were set
 }
 ```
 
