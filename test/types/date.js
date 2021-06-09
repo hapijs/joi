@@ -222,10 +222,17 @@ describe('date', () => {
 
         it('validates greater', () => {
 
-            const d = new Date('1-1-2000 UTC');
+            const d = new Date(Date.UTC(2000, 0, 1));
             const message = `"value" must be greater than "${d.toISOString()}"`;
-            Helper.validate(Joi.date().greater('1-1-2000 UTC'), [
+            Helper.validate(Joi.date().greater(d), [
+                [new Date(Date.UTC(2001, 0, 1)), true, new Date(Date.UTC(2001, 0, 1))],
                 ['1-1-2001 UTC', true, new Date('1-1-2001 UTC')],
+                [new Date(Date.UTC(2000, 0, 1)), false, {
+                    message,
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: d, label: 'value', value: new Date(Date.UTC(2000, 0, 1)) }
+                }],
                 ['1-1-2000 UTC', false, {
                     message,
                     path: [],
@@ -519,14 +526,26 @@ describe('date', () => {
 
         it('validates less', () => {
 
-            const d = new Date('1-1-1970 UTC');
+            const d = new Date(Date.UTC(1970, 0, 1));
             const message = `"value" must be less than "${d}"`;
-            Helper.validate(Joi.date().less('1-1-1970 UTC').prefs({ dateFormat: 'string' }), [
+            Helper.validate(Joi.date().less(d).prefs({ dateFormat: 'string' }), [
+                [new Date(Date.UTC(1971, 0, 1)), false, {
+                    message,
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date(Date.UTC(1971, 0, 1)) }
+                }],
                 ['1-1-1971 UTC', false, {
                     message,
                     path: [],
                     type: 'date.less',
                     context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
+                }],
+                [new Date(Date.UTC(1970, 0, 1)), false, {
+                    message,
+                    path: [],
+                    type: 'date.less',
+                    context: { limit: d, label: 'value', value: new Date(Date.UTC(1970, 0, 1)) }
                 }],
                 ['1-1-1970 UTC', false, {
                     message,
@@ -552,6 +571,7 @@ describe('date', () => {
                     type: 'date.less',
                     context: { limit: d, label: 'value', value: new Date(0) }
                 }],
+                [new Date(Date.UTC(1969, 11, 31)), true, new Date(Date.UTC(1969, 11, 31))],
                 ['-1', true, new Date(-1)],
                 ['1-1-2014 UTC', false, {
                     message,
@@ -684,15 +704,22 @@ describe('date', () => {
 
         it('validates max', () => {
 
-            const d = new Date('1-1-1970 UTC');
+            const d = new Date(Date.UTC(1970, 0, 1));
             const message = `"value" must be less than or equal to "${d.toISOString()}"`;
-            Helper.validate(Joi.date().max('1-1-1970 UTC'), [
+            Helper.validate(Joi.date().max(d), [
+                [new Date(Date.UTC(1971, 0, 1)), false, {
+                    message,
+                    path: [],
+                    type: 'date.max',
+                    context: { limit: d, label: 'value', value: new Date(Date.UTC(1971, 0, 1)) }
+                }],
                 ['1-1-1971 UTC', false, {
                     message,
                     path: [],
                     type: 'date.max',
                     context: { limit: d, label: 'value', value: new Date('1-1-1971 UTC') }
                 }],
+                [new Date(Date.UTC(1970, 0, 1)), true, new Date(Date.UTC(1970, 0, 1))],
                 ['1-1-1970 UTC', true, new Date('1-1-1970 UTC')],
                 [0, true, new Date(0)],
                 [1, false, {
@@ -846,11 +873,13 @@ describe('date', () => {
 
         it('validates min', () => {
 
-            const d = new Date('1-1-2000 UTC');
+            const d = new Date(Date.UTC(2000, 0, 1));
             const message = `"value" must be greater than or equal to "${d.toISOString()}"`;
-            Helper.validate(Joi.date().min('1-1-2000 UTC'), [
+            Helper.validate(Joi.date().min(d), [
+                [new Date(Date.UTC(2001, 0, 1)), true, new Date(Date.UTC(2001, 0, 1))],
                 ['1-1-2001 UTC', true, new Date('1-1-2001 UTC')],
-                ['1-1-2000 UTC', true, d],
+                [new Date(Date.UTC(2000, 0, 1)), true, new Date(Date.UTC(2000, 0, 1))],
+                ['1-1-2000 UTC', true, new Date('1-1-2000 UTC')],
                 [0, false, {
                     message,
                     path: [],
@@ -868,6 +897,12 @@ describe('date', () => {
                     path: [],
                     type: 'date.min',
                     context: { limit: d, label: 'value', value: new Date(-1) }
+                }],
+                [new Date(Date.UTC(1999, 0, 1)), false, {
+                    message,
+                    path: [],
+                    type: 'date.min',
+                    context: { limit: d, label: 'value', value: new Date(Date.UTC(1999, 0, 1)) }
                 }],
                 ['1-1-1999 UTC', false, {
                     message,
