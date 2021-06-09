@@ -1800,6 +1800,22 @@ await boolean.validateAsync('Y'); // Valid
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified. Note that some invalid date strings will be accepted if they can be adjusted to valid dates (e.g. `'2/31/2019'` will be converted to `'3/3/2019'`) by the internal JS `Date.parse()` implementation.
 
+Note: Parsing of date strings with the Date constructor (and Date.parse(), which works the same way) is strongly discouraged due to browser differences and inconsistencies.
+
+```js
+// macOS Chrome
+// version 91.0.4472.77（Official Build）（x86_64）
+const date1 = new Date('1-1-1910')
+// -> Sat Jan 01 1910 00:00:00 GMT+0000
+
+// macOS Safari
+// version 14.1.1 (15611.2.7.1.6, 15611)
+const date2 = new Date('1-1-1910')
+// -> Invalid Date
+```
+
+See: <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date>
+
 Supports the same methods of the [`any()`](#any) type.
 
 ```js
@@ -1814,7 +1830,7 @@ Possible validation errors: [`date.base`](#datebase), [`date.strict`](#datestric
 Specifies that the value must be greater than `date` (or a reference).
 
 ```js
-const schema = Joi.date().greater('1-1-1974');
+const schema = Joi.date().greater(new Date(1974, 0, 1));
 ```
 
 Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future. When using `'now'` note that is includes the current time and the two values are compared based on their UTC milliseconds timestamp.
@@ -1847,7 +1863,7 @@ Possible validation errors: [`date.format`](#dateformat)
 Specifies that the value must be less than `date` (or a reference).
 
 ```js
-const schema = Joi.date().less('12-31-2020');
+const schema = Joi.date().less(new Date(2020, 11, 31));
 ```
 
 Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
@@ -1871,7 +1887,7 @@ Specifies the latest date allowed where:
 - `date` - the latest date allowed or a reference.
 
 ```js
-const schema = Joi.date().max('12-31-2020');
+const schema = Joi.date().max(new Date(2020, 11, 31));
 ```
 
 Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
@@ -1895,7 +1911,7 @@ Specifies the oldest date allowed where:
 - `date` - the oldest date allowed or a reference.
 
 ```js
-const schema = Joi.date().min('1-1-1974');
+const schema = Joi.date().min(new Date(1974, 0, 1));
 ```
 
 Notes: `'now'` can be passed in lieu of `date` so as to always compare relatively to the current date, allowing to explicitly ensure a date is either in the past or in the future.
