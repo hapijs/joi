@@ -57,8 +57,11 @@ module.exports = {
             }
         ]
     },
-    node: {
-        url: 'empty',
-        util: 'empty'
+    node: false,
+    resolve: {
+      fallback: {
+        url: false,
+        util: false,
+      }
     }
 };
