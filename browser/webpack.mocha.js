@@ -18,8 +18,8 @@ WebpackConfig.module.rules[2].use.options.presets[0][1].exclude = [
 ];
 
 // Used in testing.
-WebpackConfig.plugins.push(new Webpack.ProvidePlugin({
-  process: 'process/browser',
+WebpackConfig.plugins.push(new Webpack.DefinePlugin({
+  'process.env.NODE_DEBUG': false,
 }));
 WebpackConfig.node = {
   global: true,
