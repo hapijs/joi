@@ -26,7 +26,7 @@
         "@hapi/code": "8.x.x",
         "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
         "@hapi/lab": "24.x.x",
-        "typescript": "4.0.x"
+        "typescript": "4.3.x"
     },
     "scripts": {
         "prepublishOnly": "cd browser && npm install && npm run build",
