@@ -19,8 +19,6 @@
         "karma-webpack": "^5.0.0",
         "mocha": "^6.2.0",
         "mocha-loader": "^2.0.1",
-        "null-loader": "^3.0.0",
-        "process": "^0.11.10",
         "util": "^0.12.4",
         "webpack": "^5.40.0",
         "webpack-bundle-analyzer": "^3.4.1",
