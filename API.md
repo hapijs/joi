@@ -1138,6 +1138,8 @@ Validates a value using the current schema and options where:
     - when an `object` :
       - `arrays` - set to `true` to remove unknown items from arrays.
       - `objects` - set to `true` to remove unknown keys from objects.
+      - `errorCallback` - set a `function` to log all removed unknown items / keys
+        - the function has 1 parameter with shape `{source: 'array' | 'object', item: any; error: string}` where `item` is removed item / property from array / object
     - when `true`, it is equivalent to having `{ arrays: false, objects: true }`.
 
 Returns an object with the following keys:

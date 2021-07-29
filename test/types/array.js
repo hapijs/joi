@@ -404,6 +404,89 @@ describe('array', () => {
             ]);
         });
 
+        it('validates multiple types with stripUnknown and errorCallback', () => {
+
+            const invalidItems = [];
+            const errors = [];
+            const errorCallback = ( { source, item, error } ) => {
+
+                if (source === 'array') {
+                    errors.push(error);
+                    invalidItems.push(item);
+                }
+            };
+
+            const schema = Joi.array().items(Joi.number(), Joi.string()).prefs({ stripUnknown: { arrays: true, objects: false, errorCallback } });
+
+            Helper.validate(schema, [
+                [[1, 2, 'a'], true, [1, 2, 'a']],
+                [[1, { foo: 'bar' }, 'a', 2], true, [1, 'a', 2]]
+            ]);
+            // Double results, because `Helper.validate` calls schema.validate 2x
+            expect(invalidItems).to.equal([{ foo: 'bar' }, { foo: 'bar' }]);
+            expect(errors).to.equal(['"[1]" does not match any of the allowed types', '"[1]" does not match any of the allowed types']);
+        });
+
+        it('validates multiple types in nested array with stripUnknown and errorCallback', () => {
+
+            const invalidItems = [];
+            const errors = [];
+            const errorCallback = ( { source, item, error } ) => {
+
+                if (source === 'array') {
+                    errors.push(error);
+                    invalidItems.push(item);
+                }
+            };
+
+            const schema = Joi.array().items({
+                test: Joi.array().items(Joi.number(), Joi.string()).required()
+            }).prefs({ stripUnknown: { arrays: true, objects: false, errorCallback } });
+
+            Helper.validate(schema, [
+                [
+                    [{ test: [1, 2, 'a'] }, { test: [1, 2, 'b'] }],
+                    true,
+                    [{ test: [1, 2, 'a'] }, { test: [1, 2, 'b'] }]
+                ],
+                [
+                    [{ test: [1, 2, false] }, { test: [1, 2, { foo: 'bar' }] }],
+                    true,
+                    [{ test: [1, 2] }, { test: [1, 2] }]
+                ]
+            ]);
+            // Double results, because `Helper.validate` calls schema.validate 2x
+            expect(invalidItems).to.equal([false, { foo: 'bar' }, false, { foo: 'bar' }]);
+            expect(errors).to.equal([
+                '"[0].test[2]" does not match any of the allowed types',
+                '"[1].test[2]" does not match any of the allowed types',
+                '"[0].test[2]" does not match any of the allowed types',
+                '"[1].test[2]" does not match any of the allowed types'
+            ]);
+        });
+
+        it('validates single type with stripUnknown and errorCallback', () => {
+
+            const invalidItems = [];
+            const errors = [];
+            const errorCallback = ( { source, item, error } ) => {
+
+                if (source === 'array') {
+                    errors.push(error);
+                    invalidItems.push(item);
+                }
+            };
+
+            const schema = Joi.array().items(Joi.number()).prefs({ stripUnknown: { arrays: true, objects: false, errorCallback } });
+
+            Helper.validate(schema, [
+                [[1, { foo: 'bar' }, 2], true, [1, 2]]
+            ]);
+            // Double results, because `Helper.validate` calls schema.validate 2x
+            expect(invalidItems).to.equal([{ foo: 'bar' }, { foo: 'bar' }]);
+            expect(errors).to.equal(['"[1]" must be a number', '"[1]" must be a number']);
+        });
+
         it('allows forbidden to restrict values', () => {
 
             const schema = Joi.array().items(Joi.string().valid('four').forbidden(), Joi.string());

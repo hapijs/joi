@@ -168,7 +168,7 @@ declare namespace Joi {
          *
          * @default false
          */
-        stripUnknown?: boolean | { arrays?: boolean; objects?: boolean };
+        stripUnknown?: boolean | { arrays?: boolean; objects?: boolean; errorCallback?: (param: {source: 'array' | 'object', item: any; error: string}) => void };
     }
 
     interface ValidationOptions extends BaseValidationOptions {
