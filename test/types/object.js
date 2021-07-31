@@ -3640,6 +3640,48 @@ describe('object', () => {
                 [{ a: { b: 5, c: { e: 'ignore' } } }, true, { a: { b: 5, c: {} } }]
             ]);
         });
+
+        it('stripUnknown and errorCallback', () => {
+
+            const invalidItems = [];
+            const errors = [];
+            const errorCallback = ( { source, item, error } ) => {
+
+                if (source === 'object') {
+                    errors.push(error);
+                    invalidItems.push(item);
+                }
+            };
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.number(),
+                    c: Joi.object({
+                        d: Joi.number()
+                    })
+                })
+            }).prefs({ allowUnknown: false, stripUnknown: { arrays: false, objects: true, errorCallback } });
+
+            Helper.validate(schema, [
+                [{ a: { b: 5 } }, true, { a: { b: 5 } }],
+                [{ a: { b: 'x' } }, false, {
+                    message: '"a.b" must be a number',
+                    path: ['a', 'b'],
+                    type: 'number.base',
+                    context: { label: 'a.b', key: 'b', value: 'x' }
+                }],
+                [{ a: { b: 5 }, d: 'ignore' }, true, { a: { b: 5 } }],
+                [{ a: { b: 5, c: { e: 'ignore' } } }, true, { a: { b: 5, c: {} } }]
+            ]);
+            // Double results, because `Helper.validate` calls schema.validate 2x
+            expect(invalidItems).to.equal(['d', 'd', 'e', 'e']);
+            expect(errors).to.equal([
+                '"d" is not allowed',
+                '"d" is not allowed',
+                '"a.c.e" is not allowed',
+                '"a.c.e" is not allowed'
+            ]);
+        });
     });
 
     describe('with()', () => {
