@@ -469,6 +469,19 @@ describe('array', () => {
             ]);
         });
 
+        it('validates that values are validated when all items are required', () => {
+
+            const schema = Joi.array().items(Joi.string().valid('one').required(), Joi.string().valid('two').required());
+            Helper.validate(schema, [
+                [['one', 'one', 'two', 'two', 'three'], false, {
+                    message: '"[4]" does not match any of the allowed types',
+                    path: [4],
+                    type: 'array.includes',
+                    context: { pos: 4, value: 'three', label: '[4]', key: 4 }
+                }]
+            ]);
+        });
+
         it('validates that a required value exists with abortEarly = false', () => {
 
             const schema = Joi.array()
