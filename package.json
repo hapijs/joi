@@ -1,7 +1,7 @@
 {
     "name": "joi",
     "description": "Object schema validation",
-    "version": "17.4.1",
+    "version": "17.4.2",
     "repository": "git://github.com/sideway/joi",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
