@@ -4211,6 +4211,18 @@ describe('string', () => {
                     path: [],
                     type: 'string.hostname',
                     context: { value: '0:?:0:0:0:0:0:1', label: 'value' }
+                }],
+                ['10.10.10.10/24', false, {
+                    message: '"value" must be a valid hostname',
+                    path: [],
+                    type: 'string.hostname',
+                    context: { value: '10.10.10.10/24', label: 'value' }
+                }],
+                ['2001:db8::/48', false, {
+                    message: '"value" must be a valid hostname',
+                    path: [],
+                    type: 'string.hostname',
+                    context: { value: '2001:db8::/48', label: 'value' }
                 }]
             ]);
         });
