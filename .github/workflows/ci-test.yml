@@ -1,0 +1,35 @@
+name: CI Tests
+
+on: [ push, pull_request ]
+
+jobs:
+  ci-test:
+    runs-on: ${{ matrix.platform }}
+
+    strategy:
+      matrix:
+        platform: [ ubuntu-latest, macos-latest, windows-latest ]
+        node-version: [ 12, 16 ]
+      fail-fast: false
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      # tests run fine without this, but its here in case
+#     - name: Install Chrome
+#       uses: browser-actions/setup-chrome@latest
+#     - run: chrome --version || chromium --version
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: npm install
+        run: npm install && cd browser && npm install
+
+      - name: Run test suite
+        run: pwd && npm test
