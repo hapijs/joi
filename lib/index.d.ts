@@ -680,8 +680,12 @@ declare namespace Joi {
     }
 
     type CustomValidator<V = any> = (value: V, helpers: CustomHelpers) => V | ErrorReport;
+    
+    interface ExternalValidationHelpers {
+        prefs: ValidationOptions;
+    }
 
-    type ExternalValidationFunction = (value: any) => any;
+    type ExternalValidationFunction<V = any> = (value: V, helpers: ExternalValidationHelpers) => V | Promise<V>;
 
     type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
     type SchemaLike = SchemaLikeWithoutArray | object;
