@@ -1606,13 +1606,35 @@ describe('alternatives', () => {
                 Joi.alternatives(
                     Joi.object({ foo: Joi.string().default('bar') }).unknown(),
                     Joi.object({ baz: Joi.boolean().default(false) }).unknown()
-                ).match('all'),
+                ).
+                    match('all'),
+
                 Joi.object({ lol: Joi.boolean().default(true) }).unknown()
-            ]).match('all');
+            ])
+                .match('all');
 
             Helper.validate(schema, [
                 [{}, true, { foo: 'bar', baz: false, lol: true }],
-                [{ foo: 'rofl' }, true, { foo: 'rofl', baz: false, lol: true }]
+                [{ foo: 'rofl' }, true, { foo: 'rofl', baz: false, lol: true }],
+                [{ foo: 9 }, false, '"value" does not match all of the required types']
+            ]);
+        });
+
+        it('ignores defaults when nesting does not include objects', () => {
+
+            const schema = Joi.alternatives([
+                Joi.alternatives(
+                    Joi.number(),
+                    Joi.string()
+                ).
+                    match('all'),
+
+                Joi.any()
+            ])
+                .match('all');
+
+            Helper.validate(schema, [
+                ['123', true, '123']
             ]);
         });
 
