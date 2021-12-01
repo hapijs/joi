@@ -714,7 +714,7 @@ describe('number', () => {
 
             const schema = Joi.number().multiple(3.5);
             Helper.validate(schema, [
-                [0, true], // 0 is a multiple of every integer
+                [0, true],  // 0 is a multiple of every number
                 [3.5, true],
                 [3.6, false, {
                     message: '"value" must be a multiple of 3.5',
@@ -741,6 +741,17 @@ describe('number', () => {
                     type: 'number.multiple',
                     context: { multiple: 3.5, value: 10.499, label: 'value' }
                 }]
+            ]);
+        });
+
+        it('handles 0.1 multiples', () => {
+
+            const schema = Joi.number().multiple(0.1);
+            Helper.validate(schema, [
+                [0, true],  // 0 is a multiple of every number
+                [3.5, true],
+                [100.1, true],
+                [3.61, false, '"value" must be a multiple of 0.1']
             ]);
         });
 
