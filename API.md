@@ -1800,6 +1800,10 @@ await boolean.validateAsync('Y'); // Valid
 
 Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds). If the validation `convert` option is on (enabled by default), a string or number will be converted to a Date if specified. Note that some invalid date strings will be accepted if they can be adjusted to valid dates (e.g. `'2/31/2019'` will be converted to `'3/3/2019'`) by the internal JS `Date.parse()` implementation.
 
+Note: When **joi** is used in a browser environment, the parsing of date strings with the Date
+constructor (and Date.parse(), which works the same way) is strongly discouraged due to browser
+differences and inconsistencies. For example `'1-1-1910'` is valid in Chrome but will error in Safari.
+
 Supports the same methods of the [`any()`](#any) type.
 
 ```js
