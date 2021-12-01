@@ -693,7 +693,11 @@ declare namespace Joi {
 
     type CustomValidator<V = any> = (value: V, helpers: CustomHelpers) => V | ErrorReport;
 
-    type ExternalValidationFunction = (value: any) => any;
+    interface ExternalHelpers {
+        prefs: ValidationOptions;
+    }
+
+    type ExternalValidationFunction<V = any> = (value: V, helpers: ExternalHelpers) => V | undefined;
 
     type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
     type SchemaLike = SchemaLikeWithoutArray | object;
