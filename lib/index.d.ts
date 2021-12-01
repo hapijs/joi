@@ -251,6 +251,12 @@ declare namespace Joi {
 
     interface EmailOptions {
         /**
+         * if `true`, domains ending with a `.` character are permitted
+         *
+         * @default false
+         */
+        allowFullyQualified?: boolean;
+        /**
          * If `true`, Unicode characters are permitted
          *
          * @default true
@@ -289,6 +295,12 @@ declare namespace Joi {
     }
 
     interface DomainOptions {
+        /**
+         * if `true`, domains ending with a `.` character are permitted
+         *
+         * @default false
+         */
+        allowFullyQualified?: boolean;
         /**
          * If `true`, Unicode characters are permitted
          *

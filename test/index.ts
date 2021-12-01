@@ -86,6 +86,7 @@ renOpts = { ignoreUndefined: bool };
 
 let emailOpts: Joi.EmailOptions = {};
 
+emailOpts = { allowFullyQualified: bool };
 emailOpts = { allowUnicode: bool };
 emailOpts = { tlds: { allow: strArr } };
 emailOpts = { minDomainSegments: 2 };
@@ -95,6 +96,7 @@ emailOpts = { tlds: false };
 
 let domainOpts: Joi.DomainOptions = {};
 
+domainOpts = { allowFullyQualified: bool };
 domainOpts = { allowUnicode: bool };
 domainOpts = { tlds: { allow: strArr } };
 domainOpts = { minDomainSegments: 2 };
