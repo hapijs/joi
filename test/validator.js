@@ -405,6 +405,22 @@ describe('Validator', () => {
             const result = await schema.validateAsync(input, { context });
             expect(result).to.equal('bar');
         });
+
+        it('changes the message depending on label\'s value', async () => {
+
+            const context = { foo: 'bar' };
+
+            const tag = (value, { prefs }) => {
+
+                throw new Error('Oops');
+            };
+
+            const schema = Joi.string().external(tag);
+            const input = 'my string';
+
+            await expect(schema.validateAsync(input, { context })).to.reject('Oops (value)');
+            await expect(schema.validateAsync(input, { context, errors: { label: false } })).to.reject('Oops');
+        });
     });
 
     describe('finalize()', () => {
