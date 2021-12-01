@@ -1925,6 +1925,36 @@ describe('any', () => {
             expect(schema.label('special').validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"special" too small');
         });
 
+        it('overrides wildcard message in specific language', () => {
+
+            const messages = {
+                english: {
+                    root: 'value',
+                    'number.min': '{#label} too small',
+                    '*': '{#label} is something else'
+                }
+            };
+
+            const schema = Joi.number().min(10).max(11).messages(messages);
+
+            expect(schema.validate(1, { errors: { language: 'english' } }).error).to.be.an.error('"value" too small');
+            expect(schema.validate(12, { errors: { language: 'english' } }).error).to.be.an.error('"value" is something else');
+        });
+
+        it('overrides wildcard message', () => {
+
+            const messages = {
+                root: 'value',
+                'number.min': '{#label} too small',
+                '*': '{#label} is something else'
+            };
+
+            const schema = Joi.number().min(10).max(11).messages(messages);
+
+            expect(schema.validate(1).error).to.be.an.error('"value" too small');
+            expect(schema.validate(12).error).to.be.an.error('"value" is something else');
+        });
+
         it('overrides message in multiple language (nested)', () => {
 
             const messages = {
