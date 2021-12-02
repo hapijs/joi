@@ -1127,6 +1127,7 @@ Validates a value using the current schema and options where:
     - `wrap` - overrides the way values are wrapped (e.g. `[]` around arrays, `""` around labels and variables prefixed with `:`). Each key can be set to a string with one (same character before and after the value) or two characters (first character before and second character after), or `false` to disable wrapping:
         - `label` - the characters used around `{#label}` references. Defaults to `'"'`.
         - `array` - the characters used around array values. Defaults to `'[]'`.
+        - `string` - the characters used around each array string values. Defaults to `false`.
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Use the `'*'` error code as a catch-all for all error codes that do not have a message provided in the override. Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.

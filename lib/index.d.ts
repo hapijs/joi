@@ -77,11 +77,18 @@ declare namespace Joi {
             label?: string | false,
 
             /**
-             * the characters used around array avlues. Defaults to `'[]'`
+             * the characters used around array values. Defaults to `'[]'`
              *
              * @default '[]'
              */
             array?: string | false
+
+            /**
+             * the characters used around array string values. Defaults to no wrapping.
+             *
+             * @default false
+             */
+            string?: string | false
         };
     }
 
