@@ -5616,6 +5616,14 @@ describe('string', () => {
             ]);
         });
 
+        it('allows empty string when min explicitly set to zero', () => {
+
+            Helper.validate(Joi.string().min(0), [
+                [undefined, true],
+                ['', true]
+            ]);
+        });
+
         it('accepts references as min length', () => {
 
             const ref = Joi.ref('a');
