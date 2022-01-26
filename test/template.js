@@ -201,5 +201,71 @@ describe('Template', () => {
                 Helper.validate(schema, { context: { x: {} } }, [[4, false, '"value" must be [{number(1) + number(true) + number(false) + number("1") + number($x)}]']]);
             });
         });
+
+        describe('length()', () => {
+
+            it('calculates object size', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}')),
+                    b: Joi.object()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1, 2], b: { a: true, b: true } }, true],
+                    [{ a: [1, 2, 3], b: { a: true, b: true } }, false, '"a" must contain {length(b)} items']
+                ]);
+            });
+
+            it('calcualtes array size', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}')),
+                    b: Joi.array()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1, 2], b: [2, 3] }, true],
+                    [{ a: [1, 2, 3], b: [1] }, false, '"a" must contain {length(b)} items']
+                ]);
+            });
+
+            it('handles null', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}')),
+                    b: Joi.array().allow(null)
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1], b: null }, false, '"a" limit references "{length(b)}" which must be a positive integer']
+                ]);
+            });
+
+            it('handles strings', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}')),
+                    b: Joi.string()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1], b: 'x' }, true],
+                    [{ a: [1], b: 'xx' }, false, '"a" must contain {length(b)} items']
+                ]);
+            });
+
+            it('handles items without length', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}')),
+                    b: Joi.number()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1], b: 1 }, false, '"a" limit references "{length(b)}" which must be a positive integer']
+                ]);
+            });
+        });
     });
 });
