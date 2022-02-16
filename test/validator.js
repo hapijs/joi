@@ -508,6 +508,47 @@ describe('Validator', () => {
                 }
             });
         });
+
+        it('reports warnings with nested options', () => {
+
+            const schema = Joi.object({
+                nested: Joi.object({
+                    validKey: Joi.string()
+                })
+            }).warning('custom.x').message('test');
+
+            const allowUnknown = {
+                mode: 'warn',
+                type: 'custom.x'
+            };
+
+            const input = {
+                nested: {
+                    validKey: 'some string',
+                    invalidKey: 'oh no!'
+                }
+            };
+
+            const { value, error, warning } = schema.validate(input, { allowUnknown });
+            expect(value).to.equal(input);
+            expect(error).to.not.exist();
+            expect(warning).to.equal({
+                message: 'test',
+                details: [
+                    {
+                        message: 'test',
+                        path: ['nested', 'invalidKey'],
+                        type: 'custom.x',
+                        context: {
+                            child: 'invalidKey',
+                            key: 'invalidKey',
+                            label: 'nested.invalidKey',
+                            value: 'oh no!'
+                        }
+                    }
+                ]
+            });
+        });
     });
 
     describe('Shadow', () => {
