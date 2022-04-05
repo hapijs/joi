@@ -2076,7 +2076,7 @@ describe('object', () => {
         });
     });
 
-    describe('oxor()', () => {
+    describe.only('oxor()', () => {
 
         it('errors when a parameter is not a string', () => {
 
@@ -2174,6 +2174,21 @@ describe('object', () => {
             Helper.validate(schema, [
                 [{ a: 'test', b: Object.assign(() => { }, { d: 80 }) }, true, Helper.skip],
                 [{ a: 'test', b: Object.assign(() => { }, { c: 'test2' }) }, false, '"value" contains a conflict between optional exclusive peers [a, b.c]']
+            ]);
+        });
+
+        it('allows setting custom isPresent function', () => {
+
+            const schema = Joi.object({
+                'a': Joi.string().allow(null),
+                'b': Joi.string().allow(null)
+            })
+                .oxor('a', 'b', { isPresent: (value) => value !== undefined && value !== null });
+
+            Helper.validate(schema, [
+                [{ a: null, b: null }, true],
+                [{}, true],
+                [{ a: 'foo', b: 'bar' }, false, '"value" contains a conflict between optional exclusive peers [a, b]']
             ]);
         });
     });

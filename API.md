@@ -2274,6 +2274,7 @@ them are required as well where:
 - `peers` - the string key names of which if one present, all are required.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
@@ -2394,6 +2395,7 @@ Defines a relationship between keys where not all peers can be present at the sa
 - `peers` - the key names of which if one present, the others may not all be present.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
@@ -2411,6 +2413,7 @@ allowed) where:
 - `peers` - the key names of which at least one must appear.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
@@ -2428,6 +2431,7 @@ required where:
 - `peers` - the exclusive key names that must not appear together but where none are required.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
@@ -2566,6 +2570,7 @@ Requires the presence of other keys whenever the specified key is present where:
   single string value or an array of string values.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 Note that unlike [`object.and()`](#objectandpeers-options), `with()` creates a dependency only between the `key` and each of the `peers`, not
 between the `peers` themselves.
@@ -2587,6 +2592,7 @@ Forbids the presence of other keys whenever the specified is present where:
   single string value or an array of string values.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
@@ -2604,6 +2610,7 @@ the same time where:
 - `peers` - the exclusive key names that must not appear together but where one of them is required.
 - `options` - optional settings:
     - `separator` - overrides the default `.` hierarchy separator. Set to `false` to treat the `key` as a literal value.
+    - `isPresent` - function that overrides the default check for an empty value. Default: `(resolved) => resolved !== undefined`
 
 ```js
 const schema = Joi.object({
