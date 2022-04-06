@@ -2076,7 +2076,7 @@ describe('object', () => {
         });
     });
 
-    describe.only('oxor()', () => {
+    describe('oxor()', () => {
 
         it('errors when a parameter is not a string', () => {
 
