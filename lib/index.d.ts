@@ -150,6 +150,13 @@ declare namespace Joi {
          */
         externals?: boolean;
         /**
+         * if true, and "abortEarly" is false, the external rules set with `any.external()` will be executed even after synchronous validators have failed.
+         * This setting has no effect if "abortEarly" is true since external rules get executed after all other validators. Default: false.
+         *
+         * @default true
+         */
+        alwaysExecuteExternals?: boolean;
+        /**
          * when true, do not apply default values.
          *
          * @default false
@@ -731,9 +738,15 @@ declare namespace Joi {
 
     interface ExternalHelpers {
         prefs: ValidationOptions;
+        path: string[],
+        label: string,
+        root: any,
+        context: any,
+        error: ExternalValidationFunctionErrorCallback,
     }
 
     type ExternalValidationFunction<V = any> = (value: V, helpers: ExternalHelpers) => V | undefined;
+    type ExternalValidationFunctionErrorCallback = (message: string) => void;
 
     type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
     type SchemaLike = SchemaLikeWithoutArray | object;
