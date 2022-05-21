@@ -729,14 +729,14 @@ declare namespace Joi {
         : T extends NullableType<Array<any>>
         ? Joi.ArraySchema
         : T extends NullableType<object>
-        ? ObjectSchema<StrictSchemaMap<T>>
+        ? ObjectSchema<T>
         : never    
     
     type PartialSchemaMap<TSchema = any> = {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
     } 
 
-    type StrictSchemaMap<TSchema = any> =  {
+    type StrictSchemaMap<TSchema> =  {
         [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>
     };
 
@@ -2024,7 +2024,7 @@ declare namespace Joi {
          * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
          */
         // tslint:disable-next-line:no-unnecessary-generics
-        object<TSchema = any, isStrict = false, T = TSchema>(schema?: SchemaMap<T, isStrict>): ObjectSchema<TSchema>;
+        object<TSchema = any, isStrict extends boolean = false, T = TSchema>(schema?: SchemaMap<T, isStrict>): ObjectSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow('').
