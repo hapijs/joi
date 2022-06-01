@@ -628,6 +628,7 @@ declare namespace Joi {
         messages: LanguageMessages;
         state: State;
         value: any;
+        local: any;
     }
 
     interface ValidationError extends Error {
