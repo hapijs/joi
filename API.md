@@ -3123,7 +3123,7 @@ Before writing your own extensions, it is useful to understand how input values 
 - Returns the result if caching is enabled and the input value is found in the cache. 
 - Runs the `prepare` method defined below. If a validation error is returned, the process will be aborted regardless of `abortEarly`.
 - Coerces the input value using the `coerce` method defined below if `convert` is enabled. If a validation error is returned, the process will be aborted regardless of `abortEarly`.
-- If the input alue matches the schema passed to [`any.empty()`](#anyemptyschema)), it is converted to `undefined`.
+- If the input value matches the schema passed to [`any.empty()`](#anyemptyschema)), it is converted to `undefined`.
 - Validates presences.
 - Validates allowed/valid/invalid values.
 - Runs base validation using the `validate` method defined below. If a validation error is returned, the process will be aborted regardless of `abortEarly`.
