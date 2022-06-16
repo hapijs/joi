@@ -1185,7 +1185,7 @@ declare namespace Joi {
         /**
          * Validates a value using the schema and options.
          */
-        validateAsync(value: any, options?: AsyncValidationOptions): Promise<any>;
+        validateAsync(value: any, options?: AsyncValidationOptions): Promise<TSchema>;
 
         /**
          * Same as `rule({ warn: true })`.
