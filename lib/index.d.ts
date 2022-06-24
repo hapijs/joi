@@ -2076,8 +2076,8 @@ declare namespace Joi {
          * @param schema - the schema object.
          * @param message - optional message string prefix added in front of the error message. may also be an Error object.
          */
-        attempt(value: any, schema: Schema, options?: ValidationOptions): any;
-        attempt(value: any, schema: Schema, message: string | Error, options?: ValidationOptions): any;
+        attempt<T = any>(value: any, schema: Schema<T>, options?: ValidationOptions): T;
+        attempt<T = any>(value: any, schema: Schema<T>, message: string | Error, options?: ValidationOptions): T;
 
         cache: CacheConfiguration;
 
