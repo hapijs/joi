@@ -1003,7 +1003,7 @@ declare namespace Joi {
          *
          * @param path - a dot `.` separated path string or a pre-split array of path keys. The keys must match the sub-schema id or object key (if no id was explicitly set).
          */
-        extract(path: string | string[]): Schema;
+        extract(path: keyof TSchema | keyof TSchema[]): Schema;
 
         /**
          * Sets a failover value if the original value fails passing validation.
