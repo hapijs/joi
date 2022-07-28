@@ -299,6 +299,12 @@ declare namespace Joi {
          * @default 2
          */
         minDomainSegments?: number;
+        /**
+         * The maximum number of domain segments (e.g. `x.y.z` has 3 segments) allowed. Defaults to no limit.
+         *
+         * @default Infinity
+         */
+        maxDomainSegments?: number;
     }
 
     interface DomainOptions {
@@ -327,6 +333,12 @@ declare namespace Joi {
          * @default 2
          */
         minDomainSegments?: number;
+        /**
+         * The maximum number of domain segments (e.g. `x.y.z` has 3 segments) allowed. Defaults to no limit.
+         *
+         * @default Infinity
+         */
+        maxDomainSegments?: number;
     }
 
     interface HexOptions {
