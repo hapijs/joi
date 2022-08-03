@@ -1019,6 +1019,26 @@ describe('Joi', () => {
             expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('invalid value Oh noes !');
             expect(() => Joi.attempt('x', schema, 'invalid value')).to.throw('invalid value Oh noes !');
         });
+
+        it('should not convert to iso date', () => {
+
+            let value;
+            expect(() => {
+
+                value = Joi.attempt('2022-02-21T21:28:00Z', Joi.string().isoDate(), '', { convert: false });
+            }).to.not.throw();
+            expect(value).to.equal('2022-02-21T21:28:00Z')
+        });
+
+        it('should convert to iso date', () => {
+
+            let value;
+            expect(() => {
+
+                value = Joi.attempt('2022-02-21T21:28:00Z', Joi.string().isoDate(), '', { convert: true });
+            }).to.not.throw();
+            expect(value).to.equal('2022-02-21T21:28:00.000Z')
+        });
     });
 
     describe('checkPreferences()', () => {
