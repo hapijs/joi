@@ -2066,8 +2066,8 @@ declare namespace Joi {
          * @param schema - the schema object.
          * @param message - optional message string prefix added in front of the error message. may also be an Error object.
          */
-        assert(value: any, schema: Schema, options?: ValidationOptions): void;
-        assert(value: any, schema: Schema, message: string | Error, options?: ValidationOptions): void;
+        assert<T = any>(value: any, schema: Schema<T>, options?: ValidationOptions): asserts value is T;
+        assert<T = any>(value: any, schema: Schema<T>, message: string | Error, options?: ValidationOptions): asserts value is T;
 
         /**
          * Validates a value against a schema, returns valid object, and throws if validation fails.
