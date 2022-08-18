@@ -887,6 +887,12 @@ declare namespace Joi {
         alter(targets: Record<string, (schema: this) => Schema>): this;
 
         /**
+         * Assigns the schema an artifact id which is included in the validation result if the rule passed validation.
+         * @param id - any value other than undefined which will be returned as-is in the result artifacts map.
+         */
+        artifact(id: any): this;
+        
+        /**
          * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
          * they use `this` internally.
          * So `Joi.string()` works but if you extract the function from it and call `string()` it won't.
