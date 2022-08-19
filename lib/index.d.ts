@@ -891,6 +891,12 @@ declare namespace Joi {
          * @param targets - an object where each key is a target name, and each value is a function that takes an schema and returns an schema.
          */
         alter(targets: Record<string, (schema: this) => Schema>): this;
+
+        /**
+         * Assigns the schema an artifact id which is included in the validation result if the rule passed validation.
+         * @param id - any value other than undefined which will be returned as-is in the result artifacts map.
+         */
+        artifact(id: any): this;
         
         /**
          * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
@@ -1191,7 +1197,7 @@ declare namespace Joi {
         /**
          * Validates a value using the schema and options.
          */
-        validateAsync(value: any, options?: AsyncValidationOptions): Promise<any>;
+        validateAsync(value: any, options?: AsyncValidationOptions): Promise<TSchema>;
 
         /**
          * Same as `rule({ warn: true })`.
