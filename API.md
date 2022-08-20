@@ -94,7 +94,7 @@ const { error, value } = schema.validate({ a: 'a string' });
 ```
 
 If the input is valid, then the `error` will be `undefined`. If the input is invalid, `error` is assigned
-a [`ValidationError`](https://github.com/sideway/joi/blob/master/API.md#validationerror) object
+a [`ValidationError`](#validationerror) object
 providing more information.
 
 The schema can be a plain JavaScript object where every key is assigned a **joi** type, or it can be a **joi** type directly:
