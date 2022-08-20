@@ -4517,7 +4517,7 @@ describe('string', () => {
         it('should validate all ip addresses with optional CIDR by default', () => {
 
             const schema = Joi.string().ip();
-            const message = '"value" must be a valid ip address with an optional CIDR';
+            const message = '"value" must be a valid ip address with a optional CIDR';
             Helper.validate(schema, []
                 .concat(validIPv4sWithCidr(true))
                 .concat(validIPv4sWithoutCidr(true))
@@ -4534,7 +4534,7 @@ describe('string', () => {
         it('should validate all ip addresses with an optional CIDR', () => {
 
             const schema = Joi.string().ip({ cidr: 'optional' });
-            const message = '"value" must be a valid ip address with an optional CIDR';
+            const message = '"value" must be a valid ip address with a optional CIDR';
             Helper.validate(schema, []
                 .concat(validIPv4sWithCidr(true))
                 .concat(validIPv4sWithoutCidr(true))
@@ -4616,7 +4616,7 @@ describe('string', () => {
 
             const schema = { item: Joi.string().ip() };
             Helper.validate(Joi.compile(schema), [[{ item: 'something' }, false, {
-                message: '"item" must be a valid ip address with an optional CIDR',
+                message: '"item" must be a valid ip address with a optional CIDR',
                 path: ['item'],
                 type: 'string.ip',
                 context: {
@@ -4667,7 +4667,7 @@ describe('string', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv4] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
@@ -4685,7 +4685,7 @@ describe('string', () => {
 
                 const version = 'ipv4';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv4] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv4] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
@@ -4742,7 +4742,7 @@ describe('string', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv6] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(false, message, [version]))
                     .concat(validIPv4sWithoutCidr(false, message, [version]))
@@ -4760,7 +4760,7 @@ describe('string', () => {
 
                 const version = 'ipv6';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv6] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv6] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(false, message, [version]))
                     .concat(validIPv4sWithoutCidr(false, message, [version]))
@@ -4817,7 +4817,7 @@ describe('string', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version });
-                const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(false, message, [version]))
                     .concat(validIPv4sWithoutCidr(false, message, [version]))
@@ -4835,7 +4835,7 @@ describe('string', () => {
 
                 const version = 'ipvfuture';
                 const schema = Joi.string().ip({ version, cidr: 'optional' });
-                const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipvfuture] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(false, message, [version]))
                     .concat(validIPv4sWithoutCidr(false, message, [version]))
@@ -4891,7 +4891,7 @@ describe('string', () => {
             it('should validate all ipv4 and ipv6 addresses with a default CIDR strategy', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'] });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
@@ -4908,7 +4908,7 @@ describe('string', () => {
             it('should validate all ipv4 and ipv6 addresses with an optional CIDR', () => {
 
                 const schema = Joi.string().ip({ version: ['ipv4', 'ipv6'], cidr: 'optional' });
-                const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with an optional CIDR';
+                const message = '"value" must be a valid ip address of one of the following versions [ipv4, ipv6] with a optional CIDR';
                 Helper.validate(schema, []
                     .concat(validIPv4sWithCidr(true))
                     .concat(validIPv4sWithoutCidr(true))
