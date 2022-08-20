@@ -25,7 +25,8 @@
         "@hapi/bourne": "2.x.x",
         "@hapi/code": "8.x.x",
         "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
-        "@hapi/lab": "24.x.x",
+        "@hapi/lab": "^25.0.1",
+        "@types/node": "^14.18.24",
         "typescript": "4.3.x"
     },
     "scripts": {
