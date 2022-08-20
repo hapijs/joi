@@ -2,7 +2,7 @@
     "name": "joi",
     "description": "Object schema validation",
     "version": "17.6.0",
-    "repository": "git://github.com/sideway/joi",
+    "repository": "git://github.com/hapijs/joi",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "browser": "dist/joi-browser.min.js",
