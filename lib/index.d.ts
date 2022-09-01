@@ -1973,7 +1973,7 @@ declare namespace Joi {
          */
         version: string;
 
-        ValidationError: new (message: string, details: any, original: any) => ValidationError;
+        ValidationError: new (message: string, details: ValidationErrorItem[], original: any) => ValidationError;
 
         /**
          * Generates a schema object that matches any data type.
