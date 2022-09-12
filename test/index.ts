@@ -1244,6 +1244,16 @@ const userSchema2 = Joi.object<User>().keys({
     family: Joi.string()
 });
 
+interface CommentWithAlternatives {
+    text: string;
+    user: string | User;
+}
+
+const commentWithAlternativesSchemaObject = Joi.object<CommentWithAlternatives, true>({
+    text: Joi.string().required(),
+    user: Joi.alternatives(Joi.string(), userSchemaObject),
+});
+
 
 expect.error(userSchema2.keys({ height: Joi.number() }));
 

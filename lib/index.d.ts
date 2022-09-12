@@ -736,8 +736,8 @@ declare namespace Joi {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
     } 
 
-    type StrictSchemaMap<TSchema = any> =  {
-        [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>
+    type StrictSchemaMap<TSchema = any> = {
+        [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]> | AlternativesSchema
     };
 
     type SchemaMap<TSchema = any, isStrict = false> = isStrict extends true ? StrictSchemaMap<TSchema> : PartialSchemaMap<TSchema>
