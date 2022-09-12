@@ -729,9 +729,9 @@ declare namespace Joi {
         : T extends NullableType<Array<any>>
         ? Joi.ArraySchema
         : T extends NullableType<object>
-        ? ObjectSchema<StrictSchemaMap<T>>
-        : never    
-    
+        ? ObjectSchema<T>
+        : never
+
     type PartialSchemaMap<TSchema = any> = {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
     } 
