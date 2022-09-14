@@ -1989,5 +1989,13 @@ describe('number', () => {
                 [-9007199254740992, true, -9007199254740992]
             ]);
         });
+
+        it('accepts unsafe numbers with precision specified', () => {
+
+            const t = Joi.number().precision(2);
+            Helper.validate(t, [
+                ['9.4e-1', true, 0.94]
+            ]);
+        });
     });
 });
