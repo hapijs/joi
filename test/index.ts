@@ -1029,12 +1029,16 @@ expect.error(Joi.assert(obj, schemaLike));
 
 {
     let value = { username: 'example', password: 'example' };
-    value = Joi.attempt(obj, schema);
-    value = Joi.attempt(obj, schema, str);
-    value = Joi.attempt(obj, schema, str, validOpts);
-    value = Joi.attempt(obj, schema, err);
-    value = Joi.attempt(obj, schema, err, validOpts);
-    value = Joi.attempt(obj, schema, validOpts);
+    type TResult = { username: string; password: string };
+    let typedSchema = schema as Joi.ObjectSchema<TResult>;
+    value = Joi.attempt(obj, typedSchema);
+    value = Joi.attempt(obj, typedSchema, str);
+    value = Joi.attempt(obj, typedSchema, str, validOpts);
+    value = Joi.attempt(obj, typedSchema, err);
+    value = Joi.attempt(obj, typedSchema, err, validOpts);
+    value = Joi.attempt(obj, typedSchema, validOpts);
+    expect.type<TResult>(Joi.attempt(obj, typedSchema));
+    expect.error<string>(Joi.attempt(obj, typedSchema));
 }
 
 expect.error(Joi.attempt(obj, schemaLike));
