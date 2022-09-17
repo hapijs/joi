@@ -2088,8 +2088,8 @@ declare namespace Joi {
          * @param schema - the schema object.
          * @param message - optional message string prefix added in front of the error message. may also be an Error object.
          */
-        attempt(value: any, schema: Schema, options?: ValidationOptions): any;
-        attempt(value: any, schema: Schema, message: string | Error, options?: ValidationOptions): any;
+        attempt<TSchema extends Schema>(value: any, schema: TSchema, options?: ValidationOptions): TSchema extends Schema<infer Value> ? Value : never;
+        attempt<TSchema extends Schema>(value: any, schema: TSchema, message: string | Error, options?: ValidationOptions): TSchema extends Schema<infer Value> ? Value : never;
 
         cache: CacheConfiguration;
 
