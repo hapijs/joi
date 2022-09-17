@@ -106,6 +106,12 @@ declare namespace Joi {
          */
         allowUnknown?: boolean;
         /**
+         * when true, return artifacts alongside the value.
+         * 
+         * @default false
+         */
+        artifacts?: boolean;
+        /**
          * when true, schema caching is enabled (for schemas with explicit caching rules).
          *
          * @default false
@@ -886,6 +892,12 @@ declare namespace Joi {
          */
         alter(targets: Record<string, (schema: this) => Schema>): this;
 
+        /**
+         * Assigns the schema an artifact id which is included in the validation result if the rule passed validation.
+         * @param id - any value other than undefined which will be returned as-is in the result artifacts map.
+         */
+        artifact(id: any): this;
+        
         /**
          * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
          * they use `this` internally.
