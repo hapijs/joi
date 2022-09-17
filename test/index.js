@@ -1027,7 +1027,7 @@ describe('Joi', () => {
 
                 value = Joi.attempt('2022-02-21T21:28:00Z', Joi.string().isoDate(), '', { convert: false });
             }).to.not.throw();
-            expect(value).to.equal('2022-02-21T21:28:00Z')
+            expect(value).to.equal('2022-02-21T21:28:00Z');
         });
 
         it('should convert to iso date', () => {
@@ -1037,7 +1037,7 @@ describe('Joi', () => {
 
                 value = Joi.attempt('2022-02-21T21:28:00Z', Joi.string().isoDate(), '', { convert: true });
             }).to.not.throw();
-            expect(value).to.equal('2022-02-21T21:28:00.000Z')
+            expect(value).to.equal('2022-02-21T21:28:00.000Z');
         });
     });
 
