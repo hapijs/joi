@@ -1007,7 +1007,7 @@ const schema = Joi.number().$.min(1).max(10).rule({ message: 'Number must be bet
 
 #### `any.shared(schema)`
 
-Registers a schema to be used by decendents of the current schema in named link references, where:
+Registers a schema to be used by descendants of the current schema in named link references, where:
 - `schema` - a **joi** schema with an id.
 
 ```js
@@ -1133,7 +1133,7 @@ Validates a value using the current schema and options where:
   - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Use the `'*'` error code as a catch-all for all error codes that do not have a message provided in the override. Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
-  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerables properties. Defaults to `false`.
+  - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerable properties. Defaults to `false`.
   - `presence` - sets the default presence requirements. Supported modes: `'optional'`, `'required'`, and `'forbidden'`. Defaults to `'optional'`.
   - `skipFunctions` - when `true`, ignores unknown keys with a function value. Defaults to `false`.
   - `stripUnknown` - remove unknown elements from objects and arrays. Defaults to `false`.
@@ -2046,7 +2046,7 @@ const person = Joi.object({
 #### `link.ref(ref)`
 
 Initializes the schema after constructions for cases where the schema has to be constructed first and
-then initialized. If `ref` was not passed to the constructor, `link.ref()` must be called prior to usaged.
+then initialized. If `ref` was not passed to the constructor, `link.ref()` must be called prior to usage.
 
 Will throw an error during validation if left uninitialized (e.g. `Joi.link()` called without a link and `link.ref()` not called).
 
