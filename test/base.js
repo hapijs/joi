@@ -1052,7 +1052,7 @@ describe('any', () => {
             ]);
         });
 
-        it('should not overide a value when value is given', () => {
+        it('should not override a value when value is given', () => {
 
             const schema = Joi.object({ foo: Joi.string().default('bar') });
             const input = { foo: 'test' };

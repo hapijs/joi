@@ -64,7 +64,7 @@ declare namespace Joi {
          */
         stack?: boolean;
         /**
-         * overrides the way values are wrapped (e.g. `[]` arround arrays, `""` around labels).
+         * overrides the way values are wrapped (e.g. `[]` around arrays, `""` around labels).
          * Each key can be set to a string with one (same character before and after the value) or two characters (first character
          * before and second character after), or `false` to disable wrapping.
          */
@@ -156,7 +156,7 @@ declare namespace Joi {
          */
         noDefaults?: boolean;
         /**
-         * when true, inputs are shallow cloned to include non-enumerables properties.
+         * when true, inputs are shallow cloned to include non-enumerable properties.
          *
          * @default false
          */
@@ -948,7 +948,7 @@ declare namespace Joi {
          *    - a function which returns the default value using the signature `function(parent, helpers)` where:
          *        - `parent` - a clone of the object containing the value being validated. Note that since specifying a
          *          `parent` argument performs cloning, do not declare format arguments if you are not using them.
-         *        - `helpers` - same as thsoe described in [`any.custom()`](anycustomermethod_description)
+         *        - `helpers` - same as those described in [`any.custom()`](anycustomermethod_description)
          *
          * When called without any `value` on an object schema type, a default value will be automatically generated
          * based on the default values of the object keys.
@@ -1167,7 +1167,7 @@ declare namespace Joi {
         rule(options: RuleOptions): this;
 
         /**
-         * Registers a schema to be used by decendents of the current schema in named link references.
+         * Registers a schema to be used by descendants of the current schema in named link references.
          */
         shared(ref: Schema): this;
 
@@ -1377,7 +1377,7 @@ declare namespace Joi {
         case(direction: 'upper' | 'lower'): this;
 
         /**
-         * Requires the number to be a credit card number (Using Lunh Algorithm).
+         * Requires the number to be a credit card number (Using Luhn Algorithm).
          */
         creditCard(): this;
 
@@ -1865,7 +1865,7 @@ declare namespace Joi {
 
         /**
          * Initializes the schema after constructions for cases where the schema has to be constructed first and then initialized.
-         * If `ref` was not passed to the constructor, `link.ref()` must be called prior to usaged.
+         * If `ref` was not passed to the constructor, `link.ref()` must be called prior to usage.
          */
         ref(ref: string): this;
     }
