@@ -1260,7 +1260,7 @@ const commentSchemaObject = Joi.object<Comment, true>({
 
 interface Comment2 {
     text: string;
-    user: {
+    user?: {
         name: string;
     }
 }
