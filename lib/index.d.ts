@@ -1,6 +1,6 @@
 // The following definitions have been copied (almost) as-is from:
 // https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/hapi__joi
-// 
+//
 // Note: This file is expected to change dramatically in the next major release and have been
 // imported here to make migrating back to the "joi" module name simpler. It include known bugs
 // and other issues. It does not include some new features included in version 17.2.0 or newer.
@@ -107,7 +107,7 @@ declare namespace Joi {
         allowUnknown?: boolean;
         /**
          * when true, return artifacts alongside the value.
-         * 
+         *
          * @default false
          */
         artifacts?: boolean;
@@ -196,6 +196,12 @@ declare namespace Joi {
     }
 
     interface AsyncValidationOptions extends ValidationOptions {
+        /**
+         * when true, artifacts are returned alongside the value (i.e. `{ value, artifacts }`)
+         *
+         * @default false
+         */
+        artifacts?: boolean;
         /**
          * when true, warnings are returned alongside the value (i.e. `{ value, warning }`).
          *
@@ -594,7 +600,7 @@ declare namespace Joi {
         iterables?: boolean;
 
         /**
-         * when true, the value of the reference is used instead of its name in error messages 
+         * when true, the value of the reference is used instead of its name in error messages
          * and template rendering. Defaults to false.
          */
         render?: boolean;
@@ -734,7 +740,7 @@ declare namespace Joi {
 
     type NullableType<T> = undefined | null | T
 
-    type ObjectPropertiesSchema<T = any> = 
+    type ObjectPropertiesSchema<T = any> =
         T extends NullableType<string>
         ? Joi.StringSchema
         : T extends NullableType<number>
@@ -753,7 +759,7 @@ declare namespace Joi {
 
     type PartialSchemaMap<TSchema = any> = {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
-    } 
+    }
 
     type StrictSchemaMap<TSchema = any> =  {
         [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>
@@ -910,7 +916,7 @@ declare namespace Joi {
          * @param id - any value other than undefined which will be returned as-is in the result artifacts map.
          */
         artifact(id: any): this;
-        
+
         /**
          * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
          * they use `this` internally.
@@ -1210,7 +1216,19 @@ declare namespace Joi {
         /**
          * Validates a value using the schema and options.
          */
-        validateAsync(value: any, options?: AsyncValidationOptions): Promise<TSchema>;
+        validateAsync<TOpts extends AsyncValidationOptions>(
+          value: any,
+          options?: TOpts
+        ): Promise<
+          TOpts extends { artifacts: true } | { warnings: true }
+            ? { value: TSchema } & (TOpts extends { artifacts: true }
+            ? { artifacts: Map<any, string[][]> }
+            : {}) &
+            (TOpts extends { warnings: true }
+              ? { warning: ValidationError[] }
+              : {})
+            : TSchema
+          >;
 
         /**
          * Same as `rule({ warn: true })`.

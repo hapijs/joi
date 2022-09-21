@@ -984,18 +984,19 @@ schema = Joi.link(str);
 { // validate tests
     {
         let value = { username: 'example', password: 'example' };
-        const schema = Joi.object().keys({
+        type TResult = { username: string; password: string };
+        const schema = Joi.object<TResult>().keys({
             username: Joi.string().max(255).required(),
             password: Joi.string().pattern(/^[a-zA-Z0-9]{3,255}$/).required()
         });
         let result: Joi.ValidationResult;
-        let asyncResult: Promise<any>;
-
-        value = schema.validate(value).value;
+        let asyncResult: Promise<TResult>;
 
         result = schema.validate(value);
         if (result.error) {
             throw Error('error should not be set');
+        } else {
+            expect.type<TResult>(result.value);
         }
         result = schema.validate(value, validOpts);
         asyncResult = schema.validateAsync(value);
@@ -1005,6 +1006,17 @@ schema = Joi.link(str);
             .then(val => JSON.stringify(val, null, 2))
             .then(val => { throw new Error('one error'); })
             .catch(e => { });
+
+        expect.type<Promise<TResult>>(schema.validateAsync(value));
+        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { artifacts: true }));
+        expect.type<Promise<{ value: TResult, warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { warnings: true }));
+        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]>; warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
+        expect.error<Promise<{ value: TResult, warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { artifacts: true }));
+        expect.error<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { warnings: true }));
+        expect.error<Promise<TResult>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
+        expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false }));
+        expect.type<Promise<TResult>>(schema.validateAsync(value, { warnings: false }));
+        expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false, warnings: false }));
 
         const falsyValue = { username: 'example' };
         result = schema.validate(falsyValue);
