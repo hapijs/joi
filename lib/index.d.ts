@@ -741,7 +741,11 @@ declare namespace Joi {
     type NullableType<T> = undefined | null | T
 
     type IsUnion<T, U extends T = T> =
-      T extends unknown ? [U] extends [T] ? false : true : false;
+      T extends unknown ?
+        T extends boolean ?
+          never :
+          [U] extends [T] ? never : true
+        : never;
 
     type ObjectPropertiesSchema<T = any> =
         true extends IsUnion<Exclude<T, undefined | null>>
