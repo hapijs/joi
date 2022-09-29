@@ -1263,11 +1263,13 @@ const userSchema2 = Joi.object<User>().keys({
 interface Comment {
     text: string;
     user: User;
+    isNew: boolean;
 }
 
 const commentSchemaObject = Joi.object<Comment, true>({
     text: Joi.string().required(),
-    user: userSchemaObject
+    user: userSchemaObject,
+    isNew: Joi.boolean().required(),
 });
 
 interface Comment2 {
@@ -1287,11 +1289,15 @@ const commentSchemaObject2 = Joi.object<Comment2, true>({
 interface CommentWithAlternatives {
     text: string;
     user: string | User;
+    type: 'topLevel' | 'pingback' | 'reply';
+    reported: boolean | number;
 }
 
 const commentWithAlternativesSchemaObject = Joi.object<CommentWithAlternatives, true>({
     text: Joi.string().required(),
     user: Joi.alternatives(Joi.string(), userSchemaObject),
+    type: Joi.string().required().valid('topLevel', 'pingback', 'reply'),
+    reported: Joi.alternatives(Joi.boolean(), Joi.number()),
 });
 
 expect.error(userSchema2.keys({ height: Joi.number() }));

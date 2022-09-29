@@ -740,11 +740,30 @@ declare namespace Joi {
 
     type NullableType<T> = undefined | null | T
 
+    type IsPrimitiveSubset<T> =
+        [T] extends [string]
+        ? true
+        : [T] extends [number]
+        ? true
+        : [T] extends [bigint]
+        ? true
+        : [T] extends [boolean]
+        ? true
+        : [T] extends [symbol]
+        ? true
+        : [T] extends [null]
+        ? true
+        : [T] extends [undefined]
+        ? true
+        : false;
+
     type IsUnion<T, U extends T = T> =
       T extends unknown ? [U] extends [T] ? false : true : false;
 
+    type IsNonPrimitiveSubsetUnion<T> = true extends IsUnion<T> ? true extends IsPrimitiveSubset<T> ? false : true : false;
+
     type ObjectPropertiesSchema<T = any> =
-        true extends IsUnion<Exclude<T, undefined | null>>
+        true extends IsNonPrimitiveSubsetUnion<Exclude<T, undefined | null>>
         ? Joi.AlternativesSchema
         : T extends NullableType<string>
         ? Joi.StringSchema
