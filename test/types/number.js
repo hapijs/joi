@@ -1932,18 +1932,10 @@ describe('number', () => {
             const t = Joi.number();
             Helper.validate(t, [
                 ['-0', true, 0],
-                ['9007199254740981.1', false, {
-                    message: '"value" must be a safe number',
-                    path: [],
-                    type: 'number.unsafe',
-                    context: { value: '9007199254740981.1', label: 'value' }
-                }],
-                ['90071992547409811e-1', false, {
-                    message: '"value" must be a safe number',
-                    path: [],
-                    type: 'number.unsafe',
-                    context: { value: '90071992547409811e-1', label: 'value' }
-                }],
+                ['9007199254740981.1', true, 9007199254740981],
+                ['90071992547409811e-1', true, 9007199254740981],
+                ['1.9642346977926366e-5', true, 0.000019642346977926367],
+                ['1.9642346977926364E-5', true, 0.000019642346977926364],
                 ['9007199254740992', false, {
                     message: '"value" must be a safe number',
                     path: [],
