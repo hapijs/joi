@@ -8583,14 +8583,21 @@ describe('string', () => {
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');
         });
 
-        it('validates if uri is from a given hostname', () => {
+        it.only('validates if uri is from one or more hostnames', () => {
 
-            const schema = Joi.string().uri({ scheme: 'https', domain: { hostname: 'example.com' } });
-            Helper.validate(schema, [
+            const stringSchema = Joi.string().uri({ scheme: 'https', domain: { hostname: 'example.com' } });
+            Helper.validate(stringSchema, [
                 ['https://example.com', true],
                 ['https://example.com/test', true],
                 ['https://test.com', false, '"value" is not from given hostname'],
                 ['https://test.com/example', false, '"value" is not from given hostname']
+            ]);
+
+            const arraySchema = Joi.string().uri({ scheme: 'https', domain: { hostname: ['example.com', 'dummy.org'] } });
+            Helper.validate(arraySchema, [
+                ['https://example.com/test', true],
+                ['https://test.com/example', false, '"value" is not from given hostname'],
+                ['https://dummy.org/test', true]
             ]);
         });
     });
