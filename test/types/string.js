@@ -1035,6 +1035,11 @@ describe('string', () => {
             const rule = Joi.string().dataUri();
             Helper.validate(rule, [
                 ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['data:text/html,%3Ch1%3EHello%2C%20World!%3C%2Fh1%3E', true],
+                ['data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==', true],
+                ['data:,Hello%2C%20World!', true],
+                ['data:text/html,<script>alert(\'hi\');</script>', true],
+                ['data:text/html;charset=iso,%3Ch1%3EHello!%3C%2Fh1%3E', true],
                 ['ata:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     path: [],
@@ -1044,7 +1049,24 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4', false, {
+                    message: '"value" must be a valid dataUri string',
+                    path: [],
+                    type: 'string.dataUri',
+                    context: {
+                        value: 'data:image/png;base64,=YW55IGNhcm5hbCBwbGVhc3VyZS4',
+                        label: 'value'
+                    }
+                }],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
+                    message: '"value" must be a valid dataUri string',
+                    path: [],
+                    type: 'string.dataUri',
+                    context: {
+                        value: 'data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                        label: 'value'
+                    }
+                }],
                 ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     path: [],
@@ -1092,7 +1114,15 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
+                    message: '"value" must be a valid dataUri string',
+                    path: [],
+                    type: 'string.dataUri',
+                    context: {
+                        value: 'data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                        label: 'value'
+                    }
+                }],
                 ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     path: [],
@@ -1140,7 +1170,15 @@ describe('string', () => {
                         label: 'value'
                     }
                 }],
-                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', true],
+                ['data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
+                    message: '"value" must be a valid dataUri string',
+                    path: [],
+                    type: 'string.dataUri',
+                    context: {
+                        value: 'data:image/png;iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==',
+                        label: 'value'
+                    }
+                }],
                 ['base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAABJRU5ErkJggg==', false, {
                     message: '"value" must be a valid dataUri string',
                     path: [],
