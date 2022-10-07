@@ -5259,6 +5259,14 @@ describe('string', () => {
             ]);
         });
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().length();
+            }).to.throw('length limit is required');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -5460,6 +5468,14 @@ describe('string', () => {
             ]);
         });
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().max();
+            }).to.throw('max limit is required');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -5572,6 +5588,14 @@ describe('string', () => {
     });
 
     describe('min()', () => {
+
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().min();
+            }).to.throw('min limit is required');
+        });
 
         it('throws when limit is not a number', () => {
 
