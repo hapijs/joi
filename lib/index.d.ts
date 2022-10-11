@@ -792,18 +792,18 @@ declare namespace Joi {
     type SchemaMap<TSchema = any, isStrict = false> = isStrict extends true ? StrictSchemaMap<TSchema> : PartialSchemaMap<TSchema>
 
     type Schema<P = any> =
-        | AnySchema
-        | ArraySchema
-        | AlternativesSchema
-        | BinarySchema
-        | BooleanSchema
-        | DateSchema
-        | FunctionSchema
-        | NumberSchema
+        | AnySchema<P>
+        | ArraySchema<P>
+        | AlternativesSchema<P>
+        | BinarySchema<P>
+        | BooleanSchema<P>
+        | DateSchema<P>
+        | FunctionSchema<P>
+        | NumberSchema<P>
         | ObjectSchema<P>
-        | StringSchema
-        | LinkSchema
-        | SymbolSchema;
+        | StringSchema<P>
+        | LinkSchema<P>
+        | SymbolSchema<P>;
 
     type SchemaFunction = (schema: Schema) => Schema;
 
@@ -1312,7 +1312,7 @@ declare namespace Joi {
         localize?(...args: any[]): State;
     }
 
-    interface BooleanSchema extends AnySchema {
+    interface BooleanSchema<TSchema = boolean> extends AnySchema<TSchema> {
         /**
          * Allows for additional values to be considered valid booleans by converting them to false during validation.
          * String comparisons are by default case insensitive,
@@ -1335,7 +1335,7 @@ declare namespace Joi {
         truthy(...values: Array<string | number>): this;
     }
 
-    interface NumberSchema extends AnySchema {
+    interface NumberSchema<TSchema = number> extends AnySchema<TSchema> {
         /**
          * Specifies that the value must be greater than limit.
          * It can also be a reference to another field.
@@ -1402,7 +1402,7 @@ declare namespace Joi {
         unsafe(enabled?: any): this;
     }
 
-    interface StringSchema extends AnySchema {
+    interface StringSchema<TSchema = string> extends AnySchema<TSchema> {
         /**
          * Requires the string value to only contain a-z, A-Z, and 0-9.
          */
@@ -1567,7 +1567,7 @@ declare namespace Joi {
         uuid(options?: GuidOptions): this;
     }
 
-    interface SymbolSchema extends AnySchema {
+    interface SymbolSchema<TSchema = Symbol> extends AnySchema<TSchema> {
         // TODO: support number and symbol index
         map(iterable: Iterable<[string | number | boolean | symbol, symbol]> | { [key: string]: symbol }): this;
     }
@@ -1591,7 +1591,7 @@ declare namespace Joi {
 
     type ComparatorFunction = (a: any, b: any) => boolean;
 
-    interface ArraySchema extends AnySchema {
+    interface ArraySchema<TSchema = any[]> extends AnySchema<TSchema> {
         /**
          * Verifies that an assertion passes for at least one item in the array, where:
          * `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
@@ -1787,7 +1787,7 @@ declare namespace Joi {
         xor(...peers: Array<string | HierarchySeparatorOptions>): this;
     }
 
-    interface BinarySchema extends AnySchema {
+    interface BinarySchema<TSchema = Buffer> extends AnySchema<TSchema> {
         /**
          * Sets the string encoding format if a string input is converted to a buffer.
          */
@@ -1809,7 +1809,7 @@ declare namespace Joi {
         length(limit: number | Reference): this;
     }
 
-    interface DateSchema extends AnySchema {
+    interface DateSchema<TSchema = Date> extends AnySchema<TSchema> {
         /**
          * Specifies that the value must be greater than date.
          * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
@@ -1854,7 +1854,7 @@ declare namespace Joi {
         timestamp(type?: 'javascript' | 'unix'): this;
     }
 
-    interface FunctionSchema extends ObjectSchema {
+    interface FunctionSchema<TSchema = Function> extends ObjectSchema<TSchema> {
         /**
          * Specifies the arity of the function where:
          * @param n - the arity expected.
@@ -1879,7 +1879,7 @@ declare namespace Joi {
         maxArity(n: number): this;
     }
 
-    interface AlternativesSchema extends AnySchema {
+    interface AlternativesSchema<TSchema = any> extends AnySchema<TSchema> {
         /**
          * Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value.
          */
@@ -1898,7 +1898,7 @@ declare namespace Joi {
         try(...types: SchemaLikeWithoutArray[]): this;
     }
 
-    interface LinkSchema extends AnySchema {
+    interface LinkSchema<TSchema = any> extends AnySchema<TSchema> {
         /**
          * Same as `any.concat()` but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link.
          * Will throw an exception during validation if the merged types are not compatible.
@@ -2045,47 +2045,47 @@ declare namespace Joi {
         /**
          * Generates a schema object that matches any data type.
          */
-        any(): AnySchema;
+        any<TSchema = any>(): AnySchema<TSchema>;
 
         /**
          * Generates a schema object that matches an array data type.
          */
-        array(): ArraySchema;
+        array<TSchema = any[]>(): ArraySchema<TSchema>;
 
         /**
          * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool().
          */
-        bool(): BooleanSchema;
+        bool<TSchema = boolean>(): BooleanSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool().
          */
-        boolean(): BooleanSchema;
+        boolean<TSchema = boolean>(): BooleanSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a Buffer data type (as well as the strings which will be converted to Buffers).
          */
-        binary(): BinarySchema;
+        binary<TSchema = Buffer>(): BinarySchema<TSchema>;
 
         /**
          * Generates a schema object that matches a date type (as well as a JavaScript date string or number of milliseconds).
          */
-        date(): DateSchema;
+        date<TSchema = Date>(): DateSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a function type.
          */
-        func(): FunctionSchema;
+        func<TSchema = Function>(): FunctionSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a function type.
          */
-        function(): FunctionSchema;
+        function<TSchema = Function>(): FunctionSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
          */
-        number(): NumberSchema;
+        number<TSchema = number>(): NumberSchema<TSchema>;
 
         /**
          * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
@@ -2096,24 +2096,24 @@ declare namespace Joi {
         /**
          * Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow('').
          */
-        string(): StringSchema;
+        string<TSchema = string>(): StringSchema<TSchema>;
 
         /**
          * Generates a schema object that matches any symbol.
          */
-        symbol(): SymbolSchema;
+        symbol<TSchema = Symbol>(): SymbolSchema<TSchema>;
 
         /**
          * Generates a type that will match one of the provided alternative schemas
          */
-        alternatives(types: SchemaLike[]): AlternativesSchema;
-        alternatives(...types: SchemaLike[]): AlternativesSchema;
+        alternatives<TSchema = any>(types: SchemaLike[]): AlternativesSchema<TSchema>;
+        alternatives<TSchema = any>(...types: SchemaLike[]): AlternativesSchema<TSchema>;
 
         /**
          * Alias for `alternatives`
          */
-        alt(types: SchemaLike[]): AlternativesSchema;
-        alt(...types: SchemaLike[]): AlternativesSchema;
+        alt<TSchema = any>(types: SchemaLike[]): AlternativesSchema<TSchema>;
+        alt<TSchema = any>(...types: SchemaLike[]): AlternativesSchema<TSchema>;
 
         /**
          * Links to another schema node and reuses it for validation, typically for creative recursive schemas.
@@ -2124,7 +2124,7 @@ declare namespace Joi {
          * in absolute terms from the schema run-time root (`Joi.link('/a')`),
          * or using schema ids implicitly using object keys or explicitly using `any.id()` (`Joi.link('#a.b.c')`).
          */
-        link(ref?: string): LinkSchema;
+        link<TSchema = any>(ref?: string): LinkSchema<TSchema>;
 
         /**
          * Validates a value against a schema and throws if validation fails.
