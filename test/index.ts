@@ -14,11 +14,13 @@ declare const value: any;
 const num = 0;
 const str = 'test';
 const bool: boolean = true;
+const buf: Buffer = Buffer.alloc(0);
 const exp: RegExp = /./;
 const obj: object = {};
 const date: Date = new Date();
 const err: Error = new Error('test');
 const func: () => void = () => { };
+const symbol = Symbol('test');
 
 const numArr: number[] = [1, 2, 3];
 const strArr: string[] = ['a', 'b', 'c'];
@@ -1052,6 +1054,15 @@ expect.error(Joi.assert(obj, schemaLike));
     expect.type<TResult>(Joi.attempt(obj, typedSchema));
     expect.error<string>(Joi.attempt(obj, typedSchema));
 }
+
+expect.type<number[]>(Joi.attempt(numArr, Joi.array()));
+expect.type<boolean>(Joi.attempt(bool, Joi.bool()));
+expect.type<Buffer>(Joi.attempt(buf, Joi.binary()));
+expect.type<Date>(Joi.attempt(date, Joi.date()));
+expect.type<Function>(Joi.attempt(func, Joi.func()));
+expect.type<number>(Joi.attempt(num, Joi.number()));
+expect.type<string>(Joi.attempt(str, Joi.string()));
+expect.type<Symbol>(Joi.attempt(symbol, Joi.symbol()));
 
 expect.error(Joi.attempt(obj, schemaLike));
 
