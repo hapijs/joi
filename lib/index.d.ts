@@ -2053,7 +2053,7 @@ declare namespace Joi {
         array<TSchema = any[]>(): ArraySchema<TSchema>;
 
         /**
-         * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool().
+         * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via boolean().
          */
         bool<TSchema = boolean>(): BooleanSchema<TSchema>;
 
