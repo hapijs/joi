@@ -128,7 +128,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().greater();
-            }).to.throw('limit is required');
+            }).to.throw('limit must be a number or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -258,7 +258,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().less();
-            }).to.throw('limit is required');
+            }).to.throw('limit must be a number or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -400,7 +400,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().max();
-            }).to.throw('limit is required');
+            }).to.throw('limit must be a number or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -524,7 +524,7 @@ describe('number', () => {
 
         it('throws when limit is undefined', () => {
 
-            expect(() => Joi.number().min()).to.throw('limit is required');
+            expect(() => Joi.number().min()).to.throw('limit must be a number or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -694,7 +694,7 @@ describe('number', () => {
             expect(() => {
 
                 Joi.number().multiple();
-            }).to.throw('base is required');
+            }).to.throw('base must be a positive number or reference');
         });
 
         it('throws when multiple is not a number', () => {

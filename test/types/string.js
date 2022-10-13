@@ -5264,7 +5264,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().length();
-            }).to.throw('length limit is required');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -5473,7 +5473,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().max();
-            }).to.throw('max limit is required');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not a number', () => {
@@ -5594,7 +5594,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().min();
-            }).to.throw('min limit is required');
+            }).to.throw('limit must be a positive integer or reference');
         });
 
         it('throws when limit is not a number', () => {
