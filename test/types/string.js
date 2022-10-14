@@ -5259,6 +5259,14 @@ describe('string', () => {
             ]);
         });
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().length();
+            }).to.throw('limit must be a positive integer or reference');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -5460,6 +5468,14 @@ describe('string', () => {
             ]);
         });
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().max();
+            }).to.throw('limit must be a positive integer or reference');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -5572,6 +5588,14 @@ describe('string', () => {
     });
 
     describe('min()', () => {
+
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.string().min();
+            }).to.throw('limit must be a positive integer or reference');
+        });
 
         it('throws when limit is not a number', () => {
 
