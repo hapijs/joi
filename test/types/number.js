@@ -123,6 +123,14 @@ describe('number', () => {
 
     describe('greater()', () => {
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.number().greater();
+            }).to.throw('limit must be a number or reference');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -244,6 +252,14 @@ describe('number', () => {
     });
 
     describe('less()', () => {
+
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.number().less();
+            }).to.throw('limit must be a number or reference');
+        });
 
         it('throws when limit is not a number', () => {
 
@@ -379,6 +395,14 @@ describe('number', () => {
 
     describe('max()', () => {
 
+        it('throws when limit is undefined', () => {
+
+            expect(() => {
+
+                Joi.number().max();
+            }).to.throw('limit must be a number or reference');
+        });
+
         it('throws when limit is not a number', () => {
 
             expect(() => {
@@ -497,6 +521,11 @@ describe('number', () => {
     });
 
     describe('min()', () => {
+
+        it('throws when limit is undefined', () => {
+
+            expect(() => Joi.number().min()).to.throw('limit must be a number or reference');
+        });
 
         it('throws when limit is not a number', () => {
 
@@ -659,6 +688,14 @@ describe('number', () => {
     });
 
     describe('multiple()', () => {
+
+        it('throws when base is undefined', () => {
+
+            expect(() => {
+
+                Joi.number().multiple();
+            }).to.throw('base must be a positive number or reference');
+        });
 
         it('throws when multiple is not a number', () => {
 
