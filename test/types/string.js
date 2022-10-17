@@ -8630,6 +8630,9 @@ describe('string', () => {
                 ['https://dummy.org/test', true],
                 ['https://dummy.com/test', true]
             ]);
+
+            const numberSchema = Joi.string().uri({ scheme: 'https', domain: { hostname: 1 } });
+            expect(numberSchema.validate(null).error.annotate()).to.equal('"value" must be a string');
         });
     });
 
