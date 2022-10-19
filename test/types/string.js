@@ -6526,6 +6526,16 @@ describe('string', () => {
                 }]
             ]);
         });
+
+        it('should accept regex strings', () => {
+
+            const schema = Joi.string().regex('/^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/');
+            Helper.validate(schema, [
+                ['example@example.com', true],
+                ['example@@example.com', false, '"value" with value "example@@example.com" fails to match the required pattern: /^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/']
+            ]);
+        });
+
     });
 
     describe('replace()', () => {
