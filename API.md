@@ -2972,7 +2972,7 @@ Possible validation errors: [`string.normalize`](#stringnormalize)
 #### `string.pattern(regex, [name | options])` - aliases: `regex`
 
 Defines a pattern rule where:
-- `regex` - a regular expression object the string value must match against. Note that if the pattern is a regular expression, for it to match the entire key name, it must begin with `^` and end with `$`.
+- `regex` - a regular expression object (or a string with a regular expression) the string value must match against. Note that if the pattern is a regular expression, for it to match the entire key name, it must begin with `^` and end with `$`.
 - `name` - optional name for patterns (useful with multiple patterns).
 - `options` - an optional configuration object with the following supported properties:
   - `name` - optional pattern name.
