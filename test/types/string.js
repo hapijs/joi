@@ -6581,7 +6581,7 @@ describe('string', () => {
             expect(() => {
 
                 Joi.string().regex('[');
-            }).to.throw('Invalid regex string');
+            }).to.throw('invalid regex string');
         });
 
     });
