@@ -6413,6 +6413,14 @@ describe('string', () => {
 
     describe('regex()', () => {
 
+        it('should throw if pattern is not regex or regex string', () => {
+
+            expect(() => {
+
+                Joi.string().regex(1);
+            }).to.throw('pattern must be a RegExp or a RegExp string');
+        });
+
         it('validates regex', () => {
 
             const schema = Joi.string().regex(/^[0-9][-][a-z]+$/);
@@ -6529,11 +6537,51 @@ describe('string', () => {
 
         it('should accept regex strings', () => {
 
-            const schema = Joi.string().regex('/^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/');
-            Helper.validate(schema, [
+            const schemaA = Joi.string().regex('/^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/');
+            const schemaB = Joi.string().regex('^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$');
+            Helper.validate(schemaA, [
                 ['example@example.com', true],
                 ['example@@example.com', false, '"value" with value "example@@example.com" fails to match the required pattern: /^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/']
             ]);
+            Helper.validate(schemaB, [
+                ['example@example.com', true],
+                ['example@@example.com', false, '"value" with value "example@@example.com" fails to match the required pattern: /^[\\w+.]+@\\w+\\.\\w{2,}(?:\\.\\w{2})?$/']
+            ]);
+        });
+
+        it('should accept regex strings with flags', () => {
+
+            const schema = Joi.string().regex('/example.com/m');
+            Helper.validate(schema, [
+                ['example.com', true],
+                ['test.com', false, '"value" with value "test.com" fails to match the required pattern: /example.com/m']
+            ]);
+        });
+
+        it('should validate with regex string not containing flags', () => {
+
+            const schema = Joi.string().regex('example.com');
+            Helper.validate(schema, [
+                ['example.com', true],
+                ['test.com', false, '"value" with value "test.com" fails to match the required pattern: /example.com/']
+            ]);
+        });
+
+        it('should handle duplicated flags in regex string', () => {
+
+            const schema = Joi.string().regex('/example.com/mm');
+            Helper.validate(schema, [
+                ['example.com', true],
+                ['test.com', false, '"value" with value "test.com" fails to match the required pattern: /example.com/m']
+            ]);
+        });
+
+        it('should throw when received invalid regex string', () => {
+
+            expect(() => {
+
+                Joi.string().regex('[');
+            }).to.throw('Invalid regex string');
         });
 
     });
