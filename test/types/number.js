@@ -1146,6 +1146,8 @@ describe('number', () => {
                 ['-00100e-003', true, -0.1],
                 ['-001231.0133210e003', true, -1231013.321],
                 ['+001231.0133210e003', true, 1231013.321],
+                ['1.9642346977926364E-5', true, 0.000019642346977926364],
+                ['9.4e-1', true, 0.94],
                 ['0.00000095', true, 0.00000095],
                 ['.5', true, 0.5],
                 ['1 some text', false, {
@@ -1998,6 +2000,12 @@ describe('number', () => {
                     path: [],
                     type: 'number.unsafe',
                     context: { value: 90071992549000000, label: 'value' }
+                }],
+                ['1.9642346977926366E-5', false, {
+                    message: '"value" must be a safe number',
+                    path: [],
+                    type: 'number.unsafe',
+                    context: { value: '1.9642346977926366E-5', label: 'value' }
                 }],
                 [9007199254740992, false, {
                     message: '"value" must be a safe number',
