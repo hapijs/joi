@@ -199,5 +199,14 @@ module.exports = (Joi) => [
             { a: 'foo', b: 'bar' }
         ],
         (schema, value) => schema.validate(value)
+    ],
+    [
+        'Parsing of exponential numbers',
+        () => [
+            Joi.number(),
+            '+001231.0133210e003',
+            '90071992547409811e-1'
+        ],
+        (schema, value) => schema.validate(value)
     ]
 ];
