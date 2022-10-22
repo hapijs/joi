@@ -37,6 +37,16 @@ module.exports = (Joi) => [
                 }).unknown(false).prefs({ convert: false }),
                 { id: '1', level: 'info' },
                 { id: '2', level: 'warning' }
+            ],
+            17: () => [
+                Joi.object({
+                    id: Joi.string().required(),
+                    level: Joi.string()
+                        .valid('debug', 'info', 'notice')
+                        .required()
+                }).unknown(false).prefs({ convert: false }),
+                { id: '1', level: 'info' },
+                { id: '2', level: 'warning' }
             ]
         },
         (schema, value) => schema.validate(value)
@@ -70,6 +80,31 @@ module.exports = (Joi) => [
                     .default(() => 'foo', 'Def')
                     .optional(),
             16: () =>
+
+                Joi.object({
+                    foo: Joi.array().items(
+                        Joi.boolean().required(),
+                        Joi.string().allow(''),
+                        Joi.symbol()
+                    ).single().sparse().required(),
+                    bar: Joi.number().min(12).max(353).default(56).positive(),
+                    baz: Joi.date().timestamp('unix'),
+                    qux: [Joi.function().minArity(12).strict(), Joi.binary().max(345)],
+                    quxx: Joi.string().ip({ version: ['ipv6'] }),
+                    quxxx: [554, 'azerty', true]
+                })
+                    .xor('foo', 'bar')
+                    .or('bar', 'baz')
+                    .pattern(/b/, Joi.when('a', {
+                        is: true,
+                        then: Joi.prefs({ messages: { 'any.required': 'oops' } })
+                    }))
+                    .meta('foo')
+                    .strip()
+                    .default(() => 'foo')
+                    .optional(),
+
+            17: () =>
 
                 Joi.object({
                     foo: Joi.array().items(
@@ -152,6 +187,17 @@ module.exports = (Joi) => [
                     .unknown(false),
                 { id: 1, level: 'info', tags: [true, false] }
             ],
+        (schema, value) => schema.validate(value)
+    ],
+    [
+        'Dependency validation',
+        () => [
+            Joi.object({
+                'a': Joi.string(),
+                'b': Joi.string()
+            }),
+            { a: 'foo', b: 'bar' }
+        ],
         (schema, value) => schema.validate(value)
     ]
 ];

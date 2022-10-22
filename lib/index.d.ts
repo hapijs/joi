@@ -268,6 +268,15 @@ declare namespace Joi {
         separator?: string | false;
     }
 
+    interface DependencyOptions extends HierarchySeparatorOptions {
+        /**
+         * overrides the default check for a present value.
+         *
+         * @default (resolved) => resolved !== undefined
+         */
+        isPresent?: (resolved: any) => boolean;
+    }
+
     interface EmailOptions {
         /**
          * if `true`, domains ending with a `.` character are permitted
@@ -1673,7 +1682,7 @@ declare namespace Joi {
          *
          * Optional settings must be the last argument.
          */
-        and(...peers: Array<string | HierarchySeparatorOptions>): this;
+        and(...peers: Array<string | DependencyOptions>): this;
 
         /**
          * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
@@ -1720,21 +1729,21 @@ declare namespace Joi {
          *
          * Optional settings must be the last argument.
          */
-        nand(...peers: Array<string | HierarchySeparatorOptions>): this;
+        nand(...peers: Array<string | DependencyOptions>): this;
 
         /**
          * Defines a relationship between keys where one of the peers is required (and more than one is allowed).
          *
          * Optional settings must be the last argument.
          */
-        or(...peers: Array<string | HierarchySeparatorOptions>): this;
+        or(...peers: Array<string | DependencyOptions>): this;
 
         /**
          * Defines an exclusive relationship between a set of keys where only one is allowed but none are required.
          *
          * Optional settings must be the last argument.
          */
-        oxor(...peers: Array<string | HierarchySeparatorOptions>): this;
+        oxor(...peers: Array<string | DependencyOptions>): this;
 
         /**
          * Specify validation rules for unknown keys matching a pattern.
@@ -1772,19 +1781,19 @@ declare namespace Joi {
         /**
          * Requires the presence of other keys whenever the specified key is present.
          */
-        with(key: string, peers: string | string[], options?: HierarchySeparatorOptions): this;
+        with(key: string, peers: string | string[], options?: DependencyOptions): this;
 
         /**
          * Forbids the presence of other keys whenever the specified is present.
          */
-        without(key: string, peers: string | string[], options?: HierarchySeparatorOptions): this;
+        without(key: string, peers: string | string[], options?: DependencyOptions): this;
 
         /**
          * Defines an exclusive relationship between a set of keys. one of them is required but not at the same time.
          *
          * Optional settings must be the last argument.
          */
-        xor(...peers: Array<string | HierarchySeparatorOptions>): this;
+        xor(...peers: Array<string | DependencyOptions>): this;
     }
 
     interface BinarySchema<TSchema = Buffer> extends AnySchema<TSchema> {
