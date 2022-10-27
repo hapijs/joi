@@ -3,6 +3,7 @@
 const Path = require('path');
 
 const Webpack = require('webpack');
+const { BundleComparisonPlugin } = require('@mixer/webpack-bundle-compare');
 
 
 module.exports = {
@@ -16,6 +17,11 @@ module.exports = {
     plugins: [
         new Webpack.DefinePlugin({
             Buffer: false
+        }),
+        new BundleComparisonPlugin({
+            file: '../stats.msp.gz',
+            format: 'msgpack',
+            gzip: true,
         })
     ],
     module: {
@@ -44,6 +50,10 @@ module.exports = {
                         ]
                     }
                 }
+            },
+            {
+                test: /@(hapi|sideway)\//,
+                sideEffects: false
             }
         ]
     },
@@ -54,7 +64,8 @@ module.exports = {
           [Path.join(__dirname, '../lib/manifest.js')]: false,
           [Path.join(__dirname, '../lib/trace.js')]: false,
           [Path.join(__dirname, '../lib/types/binary.js')]: false,
-          [Path.join(__dirname, '../node_modules/@sideway/address/lib/tlds.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/tlds/esm/index.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/address/esm/decode.js')]: false,
       },
       fallback: {
         url: false,
