@@ -40,7 +40,7 @@ declare namespace Joi {
         /**
          * defines the value used to set the label context variable.
          */
-        label?: 'path' | 'key' | false;
+        label?: 'path' | 'key' | false | ((path: string[]) => string);
         /**
          * The preferred language code for error messages.
          * The value is matched against keys at the root of the messages object, and then the error code as a child key of that.

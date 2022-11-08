@@ -582,6 +582,7 @@ describe('errors', () => {
         expect(schema.validate({ x: { y: { z: 'o' } } }).error).to.be.an.error('"x.y.z" must be [z]');
         expect(schema.validate({ x: { y: { z: 'o' } } }, { errors: { label: false } }).error).to.be.an.error('must be [z]');
         expect(schema.validate({ x: { y: { z: 'o' } } }, { errors: { label: 'key' } }).error).to.be.an.error('"z" must be [z]');
+        expect(schema.validate({ x: { y: { z: 'o' } } }, { errors: { label: (path) => path.slice(-1)[0].toUpperCase() } }).error).to.be.an.error('"Z" must be [z]');
         expect(schema.validate(1, { errors: { label: 'key' } }).error).to.be.an.error('"value" must be of type object');
         expect(schema.validate({ x: { y: { a: [1] } } }, { errors: { label: 'key' } }).error).to.be.an.error('"[0]" must be a string');
     });

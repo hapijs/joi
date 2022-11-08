@@ -1122,6 +1122,7 @@ Validates a value using the current schema and options where:
       - `'path'` - the full path to the value being validated. This is the default value.
       - `'key'` - the key of the value being validated.
       - `false` - remove any label prefix from error message, including the `""`.
+      - `function` - function which receives `path` as only argument and must return a string to be used as label
     - `language` - the preferred language code for error messages. The value is matched against keys at the root of the `messages` object, and then the error code as a child key of that. Can be a reference to the value, global context, or local context which is the root value passed to the validation function. Note that references to the value are usually not what you want as they move around the value structure relative to where the error happens. Instead, either use the global context, or the absolute value (e.g. `Joi.ref('/variable')`);
     - `render` - when `false`, skips rendering error templates. Useful when error messages are generated elsewhere to save processing time. Defaults to `true`.
     - `stack` - when `true`, the main error will possess a stack trace, otherwise it will be disabled. Defaults to `false` for performance reasons. Has no effect on platforms other than V8/node.js as it uses the [Stack trace API](https://v8.dev/docs/stack-trace-api).
