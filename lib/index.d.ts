@@ -732,7 +732,7 @@ declare namespace Joi {
         prefs: ValidationOptions;
         original: V;
         warn: (code: string, local?: Context) => void;
-        error: (code: string, local?: Context) => ErrorReport;
+        error: (code: string, local?: Context, localState?: State) => ErrorReport;
         message: (messages: LanguageMessages, local?: Context) => ErrorReport;
     }
 

@@ -613,7 +613,7 @@ Adds a custom validation function to execute arbitrary code where:
         - `state` - the current validation state.
         - `prefs` - the current preferences.
         - `original` - the original value passed into validation before any conversions.
-        - `error(code, [local])` - a method to generate error codes using a message code and optional local context.
+        - `error(code, [local], [localState])` - a method to generate error codes using a message code, optional local context and optional validation local state.
         - `message(messages, [local])` - a method to generate an error with an internal `'custom'` error code and the provided messages object to use as override. Note that this is much slower than using the preferences `messages` option but is much simpler to write when performance is not important.
         - `warn(code, [local])` - a method to add a warning using a message code and optional local context.
 
