@@ -1328,7 +1328,7 @@ declare namespace Joi {
          * see `boolean.sensitive()` to change this behavior.
          * @param values - strings, numbers or arrays of them
          */
-        falsy(...values: Array<string | number>): this;
+        falsy(...values: Array<string | number | null>): this;
 
         /**
          * Allows the values provided to truthy and falsy as well as the "true" and "false" default conversion
@@ -1341,7 +1341,7 @@ declare namespace Joi {
          * String comparisons are by default case insensitive, see `boolean.sensitive()` to change this behavior.
          * @param values - strings, numbers or arrays of them
          */
-        truthy(...values: Array<string | number>): this;
+        truthy(...values: Array<string | number | null>): this;
     }
 
     interface NumberSchema<TSchema = number> extends AnySchema<TSchema> {

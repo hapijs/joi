@@ -7,6 +7,9 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read #  for actions/checkout
+
 jobs:
   test:
     uses: hapijs/.github/.github/workflows/ci-module.yml@master
