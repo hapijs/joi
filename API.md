@@ -252,7 +252,7 @@ The reference names can have one of the following prefixes:
 
 The formula syntax also supports built-in functions:
 - `if(condition, then, otherwise)` - returns `then` when `condition` is truthy, otherwise `otherwise`.
-- `length(item)` - reutrn the length of an array or string, the number of keys of an object, otherwise `null`.
+- `length(item)` - return the length of an array or string, the number of keys of an object, otherwise `null`.
 - `msg(code)` - embeds another error code message.
 - `number(value)` - cast value to a number.
 
