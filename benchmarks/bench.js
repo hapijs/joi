@@ -2,7 +2,7 @@
 
 const Fs = require('fs');
 
-const Assert = require('@hapi/hoek/lib/assert');
+const Assert = require('@hapi/hoek/assert');
 const Benchmark = require('benchmark');
 const Bossy = require('@hapi/bossy');
 const Chalk = require('chalk');
