@@ -34,6 +34,11 @@ describe('Joi', () => {
         Assert.ok(!schema.validate('test@example.com').error);
         Assert.ok(schema.validate('test@example.com ').error);
         Assert.ok(!schema.validate('伊昭傑@郵件.商務').error);
+
+        const schema2 = Joi.string().email({ tlds: { allow: false } }).required();
+        Assert.ok(!schema2.validate('test@example.com').error);
+        Assert.ok(schema2.validate('test@example.com ').error);
+        Assert.ok(!schema2.validate('伊昭傑@郵件.商務').error);
     });
 
     it('validates domain', () => {
@@ -42,5 +47,10 @@ describe('Joi', () => {
         Assert.ok(!schema.validate('example.com').error);
         Assert.ok(schema.validate('example.com ').error);
         Assert.ok(!schema.validate('example.商務').error);
+
+        const schema2 = Joi.string().domain({ tlds: { allow: false } }).required();
+        Assert.ok(!schema2.validate('example.com').error);
+        Assert.ok(schema2.validate('example.com ').error);
+        Assert.ok(!schema2.validate('example.商務').error);
     });
 });
