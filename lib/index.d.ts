@@ -291,12 +291,6 @@ declare namespace Joi {
          */
         allowUnicode?: boolean;
         /**
-         * If `true`, underscores (`_`) are allowed in the domain name
-         *
-         * @default false
-         */
-        allowUnderscore?: boolean;
-        /**
          * if `true`, ignore invalid email length errors.
          *
          * @default false
@@ -347,12 +341,7 @@ declare namespace Joi {
          * @default true
          */
         allowUnicode?: boolean;
-        /**
-         * If `true`, underscores (`_`) are allowed in the domain name
-         *
-         * @default false
-         */
-        allowUnderscore?: boolean;
+
         /**
          * Options for TLD (top level domain) validation. By default, the TLD must be a valid name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt)
          *
