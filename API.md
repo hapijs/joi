@@ -2524,7 +2524,7 @@ Using a regular expression with template:
 
 ```js
 const schema = Joi.object()
-    .rename(/^(\d+)$/, Joi.template('x{#1}x'))
+    .rename(/^(\d+)$/, Joi.expression('x{#1}x'))
     .pattern(/^x\d+x$/, Joi.any());
 
 const input = {
