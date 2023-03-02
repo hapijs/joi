@@ -784,6 +784,11 @@ Adds an external validation rule where:
     - `value` - a clone of the object containing the value being validated.
     - `helpers` - an object with the following helpers:
         - `prefs` - the current preferences.
+        - `path` - ordered array where each element is the accessor to the value where the error happened.
+        - `label` - label of the value. If you are validating an object's property, it will contain the name of that property.
+        - `root` - the root object or primitive value under validation.
+        - `context` - same as `root`, but contains only the closest parent object in case of nested objects validation.
+        - `error` - a function with signature `function(message)`. You can use it in a return statement (`return error('Oops!')`) or you can call it multiple times if you want to push more than one error message in a single external validator.
 - `description` - optional string used to document the purpose of the method.
 
 Note that external validation rules are only called after the all other validation rules for the
@@ -791,7 +796,80 @@ entire schema (from the value root) are checked. This means that any changes mad
 the external rules are not available to any other validation rules during the non-external
 validation phase.
 
-If schema validation failed, no external validation rules are called.
+By default, if schema validation fails, no external validation rules are called. You can change this
+behavior by using `abortEarly: false` and `alwaysExecuteExternals: true` settings together.
+
+Chains of external validation rules abort early regardless of any settings.
+
+If your validator returns a replacement value after it added an error (using `error` helper), the replacement value will be ignored.
+
+A few examples:
+```js
+const data = {
+    foo: {
+        bar: 'baz'
+    }
+};
+
+await Joi.object({
+    foo: {
+        bar: Joi.any().external((value, { prefs, path, label, root, context, error }) => {
+            // "prefs" object contains current validation settings
+            // value === 'baz'
+            // path === ['foo', 'bar']
+            // label === 'foo.bar'
+            // root === { foo: { bar: 'baz' } }
+            // context === { bar: 'baz' }
+
+            if (value !== 'hello') {
+                return error(`"${value}" is not a valid value for prop ${label}`);
+            }
+        })
+    }
+}).validateAsync(data);
+```
+
+```js
+// an example of a reusable validator with additional params
+const exists = (tableName, columnName) => {
+    columnName ??= 'id';
+
+    return async (value, { label, error }) => {
+        const count = await doQueryTheDatabase(`SELECT COUNT(*) FROM ${tableName} WHERE ${columnName} = ?`, value);
+        
+        if (count < 1) {
+            return error(`${label} in invalid. Record does not exist.`);
+        }
+    };
+}
+
+const data = {
+    userId: 123,
+    bookCode: 'AE-1432',
+};
+
+const schema = Joi.object({
+    userId: Joi.number().external(exists('users')),
+    bookCode: Joi.string().external(exists('books', 'code'))
+});
+
+await schema.validateAsync(data);
+```
+
+```js
+Joi.any().external((value, { error }) => {
+    // you can add more than one error in a single validator
+    error('error 1');
+    error('error 2');
+    
+    // you can return at any moment
+    if (value === 'hi!') {
+        return;
+    }
+    
+    error('error 3');
+})
+```
 
 #### `any.extract(path)`
 
@@ -1131,6 +1209,7 @@ Validates a value using the current schema and options where:
         - `string` - the characters used around each array string values. Defaults to `false`.
     - `wrapArrays` - if `true`, array values in error messages are wrapped in `[]`. Defaults to `true`.
   - `externals` - if `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) are ignored, which is required to ignore any external validations in synchronous mode (or an exception is thrown). Defaults to `true`.
+  - `alwaysExecuteExternals` - if `true`, and `abortEarly` is `false`, the external rules set with [`any.external()`](#anyexternalmethod-description) will be executed even after synchronous validators have failed. This setting has no effect if `abortEarly` is `true` since external rules get executed after all other validators. Default: `false`.
   - `messages` - overrides individual error messages. Defaults to no override (`{}`). Use the `'*'` error code as a catch-all for all error codes that do not have a message provided in the override. Messages use the same rules as [templates](#template-syntax). Variables in double braces `{{var}}` are HTML escaped if the option `errors.escapeHtml` is set to `true`.
   - `noDefaults` - when `true`, do not apply default values. Defaults to `false`.
   - `nonEnumerables` - when `true`, inputs are shallow cloned to include non-enumerable properties. Defaults to `false`.

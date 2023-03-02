@@ -6,6 +6,7 @@ const Joi = require('..');
 const Lab = require('@hapi/lab');
 
 const Helper = require('./helper');
+const { ValidationError } = require('../lib/errors.js');
 
 const internals = {};
 
@@ -420,6 +421,264 @@ describe('Validator', () => {
 
             await expect(schema.validateAsync(input, { context })).to.reject('Oops (value)');
             await expect(schema.validateAsync(input, { context, errors: { label: false } })).to.reject('Oops');
+        });
+
+        it('externals receive correct helpers', async () => {
+
+            let helpersObject;
+
+            const schema = Joi
+                .object({
+                    foo: {
+                        bar: Joi.any().external((value, helpers) => {
+
+                            helpersObject = helpers;
+                        })
+                    }
+                });
+
+            await schema.validateAsync({ foo: { bar: 'baz' } });
+
+            expect(helpersObject.root).to.equal({ foo: { bar: 'baz' } });
+            expect(helpersObject.context).to.equal({ bar: 'baz' });
+            expect(helpersObject.path).to.equal(['foo', 'bar']);
+            expect(helpersObject.label).to.equal('foo.bar');
+            expect(typeof helpersObject.error === 'function').to.be.true();
+        });
+
+        it('externals receive correct context', async () => {
+
+            const contexts = [];
+            const validator = Joi.any().external((value, { context }) => {
+
+                contexts.push(context);
+            });
+
+            await Joi.object({ foo: { bar: validator } }).validateAsync({ foo: { bar: 'baz' } });
+            await validator.validateAsync('hello');
+
+            const [contextForObject, contextForPrimitive] = contexts;
+
+            expect(contextForObject).to.equal({ bar: 'baz' });
+            expect(contextForPrimitive).to.equal('hello');
+        });
+
+        it('should throw a ValidationError instance when externals fail', () => {
+
+            const promise = Joi
+                .any()
+                .external((value, { error }) => error('Oops'))
+                .validateAsync(0);
+
+            return promise.catch((err) => {
+
+                expect(err).to.be.an.instanceOf(ValidationError);
+                expect(err).to.be.an.error('Invalid input');
+                expect(err.details).to.equal([{
+                    message: 'Oops',
+                    path: [],
+                    type: 'external',
+                    context: { value: 0, label: 'value' }
+                }]);
+            });
+        });
+
+        it('should execute externals after another validator has failed when alwaysExecuteExternals is true and abortEarly is false', async () => {
+
+            const schema = Joi
+                .string()
+                .external((value, { error }) => error('Oops'));
+
+            // first check that it does not run externals with the default configuration
+            await schema.validateAsync(0).catch((err) => {
+
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, label: 'value' }
+                }]);
+            });
+
+            // now check with "alwaysExecuteExternals" param
+            await schema.validateAsync(0, { alwaysExecuteExternals: true, abortEarly: false }).catch((err) => {
+
+                expect(err.details).to.equal([{
+                    message: '"value" must be a string',
+                    path: [],
+                    type: 'string.base',
+                    context: { value: 0, label: 'value' }
+                }, {
+                    message: 'Oops',
+                    path: [],
+                    type: 'external',
+                    context: { value: 0, label: 'value' }
+                }]);
+            });
+        });
+
+        it('externals should set "path" correctly', () => {
+
+            const schema = Joi.object({
+                foo: Joi.any().external((value, { error }) => error('Oops'))
+            });
+
+            return schema.validateAsync({ foo: 'bar' }).catch((err) => {
+
+                expect(err.details).to.equal([{
+                    message: 'Oops',
+                    path: ['foo'],
+                    type: 'external',
+                    context: { value: 'bar', label: 'foo' }
+                }]);
+            });
+        });
+
+        it('an external may push multiple error messages', () => {
+
+            const promise = Joi
+                .any()
+                .external((value, { error }) => {
+
+                    error('Oops 1');
+                    error('Oops 2');
+                }).validateAsync(0, { abortEarly: false });
+
+            return promise.catch((err) => {
+
+                expect(err.details[0].message).to.equal('Oops 1');
+                expect(err.details[1].message).to.equal('Oops 2');
+            });
+        });
+
+        it('externals should not be executed if another validator failed, the "abortEarly" setting is true and "alwaysExecuteExternals" is true', () => {
+
+            const promise = Joi
+                .string()
+                .external((value, { error }) => error('Oops 1'))
+                .validateAsync(0, { abortEarly: true, alwaysExecuteExternals: true });
+
+            return promise.catch((err) => {
+
+                expect(err.details.length).to.equal(1);
+                expect(err.details[0].type).to.equal('string.base');
+            });
+        });
+
+        it('externals should not be executed if another validator failed, the "abortEarly" setting is false and "alwaysExecuteExternals" is false', () => {
+
+            const promise = Joi
+                .string()
+                .external((value, { error }) => error('Oops 1'))
+                .validateAsync(0, { abortEarly: false, alwaysExecuteExternals: false });
+
+            return promise.catch((err) => {
+
+                expect(err.details.length).to.equal(1);
+                expect(err.details[0].type).to.equal('string.base');
+            });
+        });
+
+        it('externals should respect the "abortEarly" setting', () => {
+
+            const promise = Joi
+                .any()
+                .external((value, { error }) => {
+
+                    error('Oops 1');
+                    error('Oops 2');
+                })
+                .external((value, { error }) => {
+
+                    error('Oops 3');
+                }).validateAsync(0, { abortEarly: true });
+
+            return promise.catch((err) => {
+
+                expect(err.details.length).to.equal(1);
+                expect(err.details[0].message).to.equal('Oops 1');
+            });
+        });
+
+        it('chains of externals should abort once the first external validator in the chain fails regardless of the "abortEarly" setting', () => {
+
+            const data = {
+                foo: 1,
+                bar: 2
+            };
+
+            const schema = Joi.object({
+                foo: Joi
+                    .any()
+                    .external((value, { error }) => error('foo err 1'))  // fails
+                    .external((value, { error }) => error('foo err 2')), // fails
+                bar: Joi
+                    .any()
+                    .external(() => {})                                 // does not fail
+                    .external((value, { error }) => error('bar err 1')) // fails
+            });
+
+            const promise = schema.validateAsync(data, { abortEarly: false });
+
+            return promise.catch((err) => {
+
+                expect(err.details.length).to.equal(2);
+                expect(err.details[0].message).to.equal('foo err 1');
+                expect(err.details[1].message).to.equal('bar err 1');
+            });
+        });
+
+        it('returning some value from an external should modify the original value', () => {
+
+            const data = { foo: 'bar' };
+            const schema = Joi.object({
+                foo: Joi.any().external(() => {
+
+                    return 'baz';
+                })
+            });
+            const promise = schema.validateAsync(data);
+
+            return promise.catch(() => {
+
+                expect(data.foo).to.equal('baz');
+            });
+        });
+
+        it('returning an error from an external should not modify the original value', () => {
+
+            const data = { foo: 'bar' };
+            const schema = Joi.object({
+                foo: Joi.any().external((value, { error }) => {
+
+                    return error('Oops');
+                })
+            });
+            const promise = schema.validateAsync(data);
+
+            return promise.catch(() => {
+
+                expect(data.foo).to.equal('bar');
+            });
+        });
+
+        it('returning some value from an external after adding an error should not modify the original value', () => {
+
+            const data = { foo: 'bar' };
+            const schema = Joi.object({
+                foo: Joi.any().external((value, { error }) => {
+
+                    error('Oops');
+
+                    return 'baz';
+                })
+            });
+            const promise = schema.validateAsync(data);
+
+            return promise.catch(() => {
+
+                expect(data.foo).to.equal('bar');
+            });
         });
     });
 
