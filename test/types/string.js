@@ -8606,6 +8606,32 @@ describe('string', () => {
 
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');
         });
+
+        it('validates domain.hostname', () => {
+
+            const stringSchema = Joi.string().uri({ scheme: 'https', domain: { hostname: 'example.com' } });
+            Helper.validate(stringSchema, [
+                ['https://example.com', true],
+                ['https://example.com/test', true],
+                ['https://test.com', false, '"value" does not match example.com'],
+                ['https://test.com/example', false, '"value" does not match example.com']
+            ]);
+
+            const regexSchema = Joi.string().uri({ scheme: 'https', domain: { hostname: /example.com/ } });
+            Helper.validate(regexSchema, [
+                ['https://example.com', true],
+                ['https://dummy.com', false, '"value" does not match /example.com/']
+            ]);
+
+            const arraySchema = Joi.string().uri({ scheme: 'https', domain: { hostname: ['example.com', 'dummy.org', /dummy.com/] } });
+            Helper.validate(arraySchema, [
+                ['https://example.com/test', true],
+                ['https://test.com/example', false, '"value" does not match any of the hostname items'],
+                ['https://dummy.org/test', true],
+                ['https://dummy.com/test', true]
+            ]);
+
+        });
     });
 
     describe('valid()', () => {
