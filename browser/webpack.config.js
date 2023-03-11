@@ -3,6 +3,7 @@
 const Path = require('path');
 
 const Webpack = require('webpack');
+const { BundleComparisonPlugin } = require('@mixer/webpack-bundle-compare');
 
 
 module.exports = {
@@ -16,6 +17,11 @@ module.exports = {
     plugins: [
         new Webpack.DefinePlugin({
             Buffer: false
+        }),
+        new BundleComparisonPlugin({
+            file: '../stats.msp.gz',
+            format: 'msgpack',
+            gzip: true,
         })
     ],
     module: {
@@ -40,10 +46,16 @@ module.exports = {
                             ]
                         ],
                         plugins: [
-                            '@babel/plugin-proposal-class-properties'
+                            '@babel/plugin-proposal-class-properties',
+                            '@babel/plugin-proposal-optional-chaining',
+                            '@babel/plugin-proposal-nullish-coalescing-operator',
                         ]
                     }
                 }
+            },
+            {
+                test: /@(hapi|sideway)\//,
+                sideEffects: false
             }
         ]
     },
@@ -54,7 +66,19 @@ module.exports = {
           [Path.join(__dirname, '../lib/manifest.js')]: false,
           [Path.join(__dirname, '../lib/trace.js')]: false,
           [Path.join(__dirname, '../lib/types/binary.js')]: false,
-          [Path.join(__dirname, '../node_modules/@sideway/address/lib/tlds.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/tlds/esm/index.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/address/esm/decode.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/bench.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/block.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/contain.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/flatten.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/intersect.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/isPromise.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/escapeHeaderAttribute.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/escapeJson.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/once.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/reachTemplate.js')]: false,
+          [Path.join(__dirname, '../node_modules/@hapi/hoek/lib/wait.js')]: false,
       },
       fallback: {
         url: false,

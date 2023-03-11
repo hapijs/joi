@@ -15,18 +15,19 @@
         "validation"
     ],
     "dependencies": {
-        "@hapi/hoek": "^9.0.0",
-        "@hapi/topo": "^5.0.0",
-        "@sideway/address": "^4.1.3",
-        "@sideway/formula": "^3.0.1",
-        "@sideway/pinpoint": "^2.0.0"
+        "@hapi/hoek": "^11.0.2",
+        "@hapi/tlds": "^1.0.1",
+        "@hapi/topo": "^6.0.2",
+        "@hapi/address": "^5.1.1",
+        "@hapi/pinpoint": "^2.0.1",
+        "@hapi/formula": "^3.0.2"
     },
     "devDependencies": {
-        "@hapi/bourne": "2.x.x",
-        "@hapi/code": "8.x.x",
+        "@hapi/bourne": "^3.0.0",
+        "@hapi/code": "^9.0.3",
         "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
-        "@hapi/lab": "^25.0.1",
-        "@types/node": "^14.18.24",
+        "@hapi/lab": "^25.1.2",
+        "@types/node": "^14.18.37",
         "typescript": "4.3.x"
     },
     "scripts": {

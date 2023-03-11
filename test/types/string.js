@@ -1334,6 +1334,37 @@ describe('string', () => {
                 context: { value: 'something', label: 'item', key: 'item' }
             }]]);
         });
+
+        it('validates domain with underscores', () => {
+
+            const validSchema = Joi.string().domain({ allowUnderscore: true });
+            Helper.validate(validSchema, [
+                ['_acme-challenge.example.com', true],
+                ['_abc.example.com', true]
+            ]);
+
+            const invalidSchema = Joi.string().domain();
+            Helper.validate(invalidSchema, [
+                ['_acme-challenge.example.com', false, {
+                    context: {
+                        label: 'value',
+                        value: '_acme-challenge.example.com'
+                    },
+                    message: '"value" must contain a valid domain name',
+                    path: [],
+                    type: 'string.domain'
+                }],
+                ['_abc.example.com', false, {
+                    context: {
+                        label: 'value',
+                        value: '_abc.example.com'
+                    },
+                    message: '"value" must contain a valid domain name',
+                    path: [],
+                    type: 'string.domain'
+                }]
+            ]);
+        });
     });
 
     describe('email()', () => {
@@ -4589,7 +4620,7 @@ describe('string', () => {
 
         it('throws when options.cidr is not a string', () => {
 
-            expect(() => Joi.string().ip({ cidr: 42 })).to.throw('options.cidr must be a string');
+            expect(() => Joi.string().ip({ cidr: 42 })).to.throw('options.cidr must be one of required, optional, forbidden');
         });
 
         it('throws when options.cidr is not a valid value', () => {
