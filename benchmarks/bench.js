@@ -2,7 +2,7 @@
 
 const Fs = require('fs');
 
-const Assert = require('@hapi/hoek/lib/assert');
+const { assert } = require('@hapi/hoek');
 const Benchmark = require('benchmark');
 const Bossy = require('@hapi/bossy');
 const Chalk = require('chalk');
@@ -74,8 +74,8 @@ const test = ([name, initFn, testFn]) => {
 
     const [schema, valid, invalid] = versionPick(initFn)();
 
-    Assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
-    Assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
+    assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
+    assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
 
     testFn = versionPick(testFn);
     Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
