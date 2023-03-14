@@ -695,6 +695,12 @@ declare namespace Joi {
 
     type ValidationErrorFunction = (errors: ErrorReport[]) => string | ValidationErrorItem | Error;
 
+    interface ValidationWarning {
+        message: string;
+
+        details: ValidationErrorItem[];
+    }
+
     type ValidationResult<TSchema = any> = {
         error: undefined;
         warning?: ValidationError;
@@ -1258,7 +1264,7 @@ declare namespace Joi {
             ? { artifacts: Map<any, string[][]> }
             : {}) &
             (TOpts extends { warnings: true }
-              ? { warning: ValidationError[] }
+              ? { warning: ValidationWarning }
               : {})
             : TSchema
           >;
