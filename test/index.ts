@@ -1011,9 +1011,9 @@ schema = Joi.link(str);
 
         expect.type<Promise<TResult>>(schema.validateAsync(value));
         expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { artifacts: true }));
-        expect.type<Promise<{ value: TResult, warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { warnings: true }));
-        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]>; warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
-        expect.error<Promise<{ value: TResult, warning: Joi.ValidationError[] }>>(schema.validateAsync(value, { artifacts: true }));
+        expect.type<Promise<{ value: TResult, warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { warnings: true }));
+        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]>; warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
+        expect.error<Promise<{ value: TResult, warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { artifacts: true }));
         expect.error<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { warnings: true }));
         expect.error<Promise<TResult>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
         expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false }));
