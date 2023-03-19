@@ -30,6 +30,8 @@ declare namespace Joi {
 
     type PresenceMode = 'optional' | 'required' | 'forbidden';
 
+    type AllowMode = boolean | 'allowed' | 'forbidden' | 'warn';
+
     interface ErrorFormattingOptions {
         /**
          * when true, error message templates will escape special characters to HTML entities, for security purposes.
@@ -104,7 +106,10 @@ declare namespace Joi {
          *
          * @default false
          */
-        allowUnknown?: boolean;
+        allowUnknown?: AllowMode | {
+            mode: AllowMode,
+            type?: string,
+        };
         /**
          * when true, return artifacts alongside the value.
          *
