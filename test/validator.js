@@ -887,6 +887,78 @@ describe('Validator', () => {
                 }
             });
         });
+
+        it('does not report warnings on mismatched array items', async () => {
+
+            const schema = Joi.array().items(
+                Joi.string().min(5).warning('custom.x'),
+                Joi.string()
+            );
+
+            expect(await schema.validateAsync(['x', 'y'], { warnings: true, abortEarly: false })).to.equal({ value: ['x', 'y'] });
+        });
+
+        it('does not report warnings on mismatched alternatives', async () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.string().min(5).warning('custom.x'),
+                Joi.string()
+            );
+
+            expect(await schema.validateAsync('x', { warnings: true, abortEarly: false })).to.equal({ value: 'x' });
+        });
+
+        it('does not report warnings on mismatched alternatives with match mode "one"', async () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.string().min(5).warning('custom.x'),
+                Joi.string()
+            ).match('one');
+
+            expect(await schema.validateAsync('x', { warnings: true, abortEarly: false })).to.equal({ value: 'x' });
+        });
+
+        it('does not report custom warnings on mismatched array items', async () => {
+
+            const schema = Joi.array().items(
+                Joi.string().min(5).custom((value, { warn }) => {
+
+                    warn('custom.x');
+                    return value;
+                }),
+                Joi.string()
+            );
+
+            expect(await schema.validateAsync(['x', 'y'], { warnings: true, abortEarly: false })).to.equal({ value: ['x', 'y'] });
+        });
+
+        it('does not report custom warnings on mismatched alternatives', async () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.string().min(5).custom((value, { warn }) => {
+
+                    warn('custom.x');
+                    return value;
+                }),
+                Joi.string()
+            );
+
+            expect(await schema.validateAsync('x', { warnings: true, abortEarly: false })).to.equal({ value: 'x' });
+        });
+
+        it('does not report custom warnings on mismatched alternatives with match mode "one"', async () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.string().min(5).custom((value, { warn }) => {
+
+                    warn('custom.x');
+                    return value;
+                }),
+                Joi.string()
+            ).match('one');
+
+            expect(await schema.validateAsync('x', { warnings: true, abortEarly: false })).to.equal({ value: 'x' });
+        });
     });
 
     describe('Shadow', () => {
