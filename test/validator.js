@@ -286,6 +286,13 @@ describe('Validator', () => {
             expect(await schema.validateAsync(['skip'])).to.equal(['skip!']);
         });
 
+        it('executes externals on array', async () => {
+
+            const schema = Joi.array().items(Joi.string()).external((value) => [...value, 'extra']);
+
+            expect(await schema.validateAsync(['valid'])).to.equal(['valid', 'extra']);
+        });
+
         it('skips externals when prefs is false', async () => {
 
             const check = (id) => {
@@ -300,6 +307,22 @@ describe('Validator', () => {
             await expect(schema.validateAsync({ id: 'valid' })).to.reject('Invalid id (id)');
             expect(() => schema.validate({ id: 'valid' }, { externals: false })).to.not.throw();
             expect(() => schema.validate({ id: 'valid' })).to.throw('Schema with external rules must use validateAsync()');
+        });
+
+        it('skips externals when validation failed', async () => {
+
+            let called = false;
+            const check = (id) => {
+
+                called = true;
+            };
+
+            const schema = Joi.object({
+                id: Joi.string().min(10).external(check)
+            });
+
+            await expect(schema.validateAsync({ id: 'valid' })).to.reject('"id" length must be at least 10 characters long');
+            expect(called).to.be.false();
         });
 
         it('supports describe', () => {
@@ -390,20 +413,67 @@ describe('Validator', () => {
             expect(input).to.equal([[1]]);
         });
 
-        it('has access to prefs', async () => {
+        it('has access to helpers', async () => {
 
             const context = { foo: 'bar' };
 
-            const tag = (value, { prefs }) => {
+            const tag = (value, helpers) => {
 
-                return prefs.context.foo;
+                expect(value).to.equal('my stringmy string');
+                expect(helpers).to.be.an.object();
+                expect(Joi.isSchema(helpers.schema)).to.be.true();
+                expect(helpers.schema.type).to.equal('string');
+                expect(helpers.state).to.be.an.object();
+                expect(helpers.state.ancestors).to.equal([]);
+                expect(helpers.state.path).to.equal([]);
+                expect(helpers.prefs.context).to.equal({ foo: 'bar' });
+                expect(helpers.original).to.equal('my string');
+                expect(helpers.warn).to.be.a.function();
+                expect(helpers.message).to.be.a.function();
+                return helpers.prefs.context.foo;
             };
 
-            const schema = Joi.string().external(tag);
+            const schema = Joi.string().custom((v) => v + v).external(tag);
             const input = 'my string';
 
             const result = await schema.validateAsync(input, { context });
             expect(result).to.equal('bar');
+        });
+
+        it('has access to helpers on nested objects', async () => {
+
+            const context = { foo: 'bar' };
+
+            const ext = (value, helpers) => {
+
+                expect(value).to.equal('my stringmy string');
+                expect(helpers).to.be.an.object();
+                expect(Joi.isSchema(helpers.schema)).to.be.true();
+                expect(helpers.schema.type).to.equal('string');
+                expect(helpers.state).to.be.an.object();
+                expect(helpers.state.ancestors).to.equal([
+                    { parent: 'my stringmy string' },
+                    {
+                        grandparent: { parent: 'my stringmy string' }
+                    }
+                ]);
+                expect(helpers.state.path).to.equal(['grandparent', 'parent']);
+                expect(helpers.prefs.context).to.equal({ foo: 'bar' });
+                expect(helpers.original).to.equal('my string');
+                expect(helpers.warn).to.be.a.function();
+                expect(helpers.message).to.be.a.function();
+                return helpers.prefs.context.foo;
+            };
+
+            const schema = Joi.object({
+                grandparent: Joi.object({
+                    parent: Joi.string().custom((v) => v + v).external(ext)
+                })
+            });
+            const input = { grandparent: { parent: 'my string' } };
+
+            const result = await schema.validateAsync(input, { context });
+            expect(result).to.equal({ grandparent: { parent: 'bar' } });
         });
 
         it('changes the message depending on label\'s value', async () => {
@@ -420,6 +490,315 @@ describe('Validator', () => {
 
             await expect(schema.validateAsync(input, { context })).to.reject('Oops (value)');
             await expect(schema.validateAsync(input, { context, errors: { label: false } })).to.reject('Oops');
+        });
+
+        it('should add warnings when warn helper is used', async () => {
+
+            const ext = (value, { warn }) => {
+
+                const newValue = value + value;
+
+                warn('string.max', { limit: 10, value: newValue });
+                warn('string.min', { limit: 1, value: newValue });
+
+                return newValue;
+            };
+
+            const schema = Joi.string().external(ext);
+            const input = 'my string';
+
+            const result = await schema.validateAsync(input, { warnings: true });
+            expect(result.value).to.equal('my stringmy string');
+            expect(result.warning).to.equal({
+                message: '"value" length must be less than or equal to 10 characters long. "value" length must be at least 1 characters long',
+                details: [
+                    {
+                        message: '"value" length must be less than or equal to 10 characters long',
+                        path: [],
+                        type: 'string.max',
+                        context: {
+                            label: 'value',
+                            limit: 10,
+                            value: 'my stringmy string'
+                        }
+                    },
+                    {
+                        message: '"value" length must be at least 1 characters long',
+                        path: [],
+                        type: 'string.min',
+                        context: {
+                            label: 'value',
+                            limit: 1,
+                            value: 'my stringmy string'
+                        }
+                    }
+                ]
+            });
+        });
+
+        it('should add errors when error helper is used', async () => {
+
+            const ext = (value, { error }) => {
+
+                const newValue = value + value;
+
+                return error('string.max', { limit: 10, value: newValue });
+            };
+
+            const schema = Joi.string().external(ext);
+            const input = 'my string';
+
+            const error = await expect(schema.validateAsync(input)).to.reject('"value" length must be less than or equal to 10 characters long');
+            expect(error.details).to.equal([{
+                message: '"value" length must be less than or equal to 10 characters long',
+                path: [],
+                type: 'string.max',
+                context: {
+                    label: 'value',
+                    limit: 10,
+                    value: 'my stringmy string'
+                }
+            }]);
+        });
+
+        it('should add multiple errors when errorsArray helper is used', async () => {
+
+            const ext = (value, { error, errorsArray }) => {
+
+                const newValue = value + value;
+
+                const errors = errorsArray();
+                errors.push(
+                    error('string.max', { limit: 10, value: newValue }),
+                    error('string.min', { limit: 1, value: newValue })
+                );
+                return errors;
+            };
+
+            const schema = Joi.string().external(ext);
+            const input = 'my string';
+
+            const error = await expect(schema.validateAsync(input)).to.reject('"value" length must be less than or equal to 10 characters long. "value" length must be at least 1 characters long');
+            expect(error.details).to.equal([{
+                message: '"value" length must be less than or equal to 10 characters long',
+                path: [],
+                type: 'string.max',
+                context: {
+                    label: 'value',
+                    limit: 10,
+                    value: 'my stringmy string'
+                }
+            }, {
+                message: '"value" length must be at least 1 characters long',
+                path: [],
+                type: 'string.min',
+                context: {
+                    label: 'value',
+                    limit: 1,
+                    value: 'my stringmy string'
+                }
+            }]);
+        });
+
+        it('should add a custom error when message helper is used', async () => {
+
+            const ext = (value, { message }) => {
+
+                return message('{{#label}} has an invalid value {{#value}} ({{#custom}})', { custom: 'denied' });
+            };
+
+            const schema = Joi.string().external(ext);
+            const input = 'my string';
+
+            const error = await expect(schema.validateAsync(input)).to.reject('"value" has an invalid value my string (denied)');
+            expect(error.details).to.equal([{
+                message: '"value" has an invalid value my string (denied)',
+                path: [],
+                type: 'external',
+                context: {
+                    label: 'value',
+                    value: 'my string',
+                    custom: 'denied'
+                }
+            }]);
+        });
+
+        it('should add warnings when warn helper is used on a link', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.link('a').external((value, helpers) => {
+
+                    expect(helpers.schema.type).to.equal('link');
+                    expect(helpers.linked.type).to.equal('number');
+                    expect(helpers.state.schemas).to.have.length(2);
+                    expect(helpers.state.schemas[0].schema.type).to.equal('link');
+                    expect(helpers.state.schemas[1].schema.type).to.equal('object');
+                    helpers.warn('number.max', { limit: 1, value });
+                    return value * 2;
+                })
+            });
+
+            const result = await schema.validateAsync({ a: 1, b: 4 }, { warnings: true });
+            expect(result.value).to.equal({ a: 1, b: 8 });
+            expect(result.warning).to.equal({
+                message: '"b" must be less than or equal to 1',
+                details: [{
+                    context: {
+                        key: 'b',
+                        label: 'b',
+                        limit: 1,
+                        value: 4
+                    },
+                    message: '"b" must be less than or equal to 1',
+                    path: ['b'],
+                    type: 'number.max'
+                }]
+            });
+        });
+
+        it('should add errors when error helper is used on a link', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.link('a').external((value, helpers) => {
+
+                    expect(helpers.schema.type).to.equal('link');
+                    expect(helpers.linked.type).to.equal('number');
+                    expect(helpers.state.schemas).to.have.length(2);
+                    expect(helpers.state.schemas[0].schema.type).to.equal('link');
+                    expect(helpers.state.schemas[1].schema.type).to.equal('object');
+                    return helpers.error('number.max', { limit: 1, value });
+                })
+            });
+
+            const error = await expect(schema.validateAsync({ a: 1, b: 4 }, { warnings: true })).to.reject('"b" must be less than or equal to 1');
+            expect(error.details).to.equal([{
+                context: {
+                    key: 'b',
+                    label: 'b',
+                    limit: 1,
+                    value: 4
+                },
+                message: '"b" must be less than or equal to 1',
+                path: ['b'],
+                type: 'number.max'
+            }]);
+        });
+
+        it('should add a custom error when message helper is used on a link', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number(),
+                b: Joi.link('a').external((value, helpers) => {
+
+                    return helpers.message('{{#label}} should be {{#sign}} {{#value}}', { sign: '>' });
+                })
+            });
+
+            const error = await expect(schema.validateAsync({ a: 1, b: 4 })).to.reject('"b" should be > 4');
+            expect(error.details).to.equal([{
+                message: '"b" should be > 4',
+                path: ['b'],
+                type: 'external',
+                context: {
+                    key: 'b',
+                    label: 'b',
+                    value: 4,
+                    sign: '>'
+                }
+            }]);
+        });
+
+        it('should call multiple externals when abortEarly is false and error helper is used', async () => {
+
+            const ext1 = (value, { error }) => {
+
+                const newValue = value + value;
+
+                return error('string.max', { limit: 10, value: newValue });
+            };
+
+            const ext2 = (value, { error, errorsArray }) => {
+
+                const errors = errorsArray();
+                errors.push(
+                    error('string.min', { limit: 8, value }),
+                    error('string.max', { limit: 15, value })
+                );
+                return errors;
+            };
+
+            const schema = Joi.string().external(ext1).external(ext2);
+            const input = 'my string';
+
+            const error = await expect(schema.validateAsync(input, { abortEarly: false })).to.reject('"value" length must be less than or equal to 10 characters long. "value" length must be at least 8 characters long. "value" length must be less than or equal to 15 characters long');
+            expect(error.details).to.equal([
+                {
+                    message: '"value" length must be less than or equal to 10 characters long',
+                    path: [],
+                    type: 'string.max',
+                    context: {
+                        label: 'value',
+                        limit: 10,
+                        value: 'my stringmy string'
+                    }
+                },
+                {
+                    message: '"value" length must be at least 8 characters long',
+                    path: [],
+                    type: 'string.min',
+                    context: {
+                        label: 'value',
+                        limit: 8,
+                        value: 'my string'
+                    }
+                },
+                {
+                    message: '"value" length must be less than or equal to 15 characters long',
+                    path: [],
+                    type: 'string.max',
+                    context: {
+                        label: 'value',
+                        limit: 15,
+                        value: 'my string'
+                    }
+                }
+            ]);
+        });
+
+        it('should add debug information', async () => {
+
+            const ext1 = (value, { error }) => {
+
+                const newValue = value + value;
+
+                return newValue;
+            };
+
+            const ext2 = (value, { error, errorsArray }) => {
+
+                const errors = errorsArray();
+                errors.push(
+                    error('string.min', { limit: 8, value }),
+                    error('string.max', { limit: 15, value })
+                );
+                return errors;
+            };
+
+            const schema = Joi.string().external(ext1).external(ext2);
+            const input = 'my string';
+
+            const error = await expect(schema.validateAsync(input, { abortEarly: false, debug: true })).to.reject();
+            expect(error.debug).to.equal( [
+                { type: 'entry', path: [] },
+                { type: 'value', by: 'rule', path: [], from: 'my string', name: 'external', to: 'my stringmy string' },
+                { type: 'rule', name: 'external', result: 'error', path: [] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'value', path: [] },
+                { type: 'resolve', ref: 'ref:local:limit', to: 8, path: [] },
+                { type: 'resolve', ref: 'ref:local:label', to: 'value', path: [] },
+                { type: 'resolve', ref: 'ref:local:limit', to: 15, path: [] }
+            ]);
         });
     });
 

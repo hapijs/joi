@@ -783,7 +783,14 @@ Adds an external validation rule where:
   return a replacement value, `undefined` to indicate no change, or throw an error, where:
     - `value` - a clone of the object containing the value being validated.
     - `helpers` - an object with the following helpers:
+        - `schema` - the current schema.
+        - `linked` - if the schema is a link, the schema it links to.
+        - `state` - the current validation state.
         - `prefs` - the current preferences.
+        - `original` - the original value passed into validation before any conversions.
+        - `error(code, [local])` - a method to generate error codes using a message code and optional local context.
+        - `message(messages, [local])` - a method to generate an error with an internal `'external'` error code and the provided messages object to use as override. Note that this is much slower than using the preferences `messages` option but is much simpler to write when performance is not important.
+        - `warn(code, [local])` - a method to add a warning using a message code and optional local context.
 - `description` - optional string used to document the purpose of the method.
 
 Note that external validation rules are only called after the all other validation rules for the
