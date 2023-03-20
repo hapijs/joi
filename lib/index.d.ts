@@ -742,13 +742,20 @@ declare namespace Joi {
         message: (messages: LanguageMessages, local?: Context) => ErrorReport;
     }
 
-    type CustomValidator<V = any> = (value: V, helpers: CustomHelpers) => V | ErrorReport;
+    type CustomValidator<V = any, R = V> = (value: V, helpers: CustomHelpers<R>) => R | ErrorReport;
 
-    interface ExternalHelpers {
+    interface ExternalHelpers<V = any> {
+        schema: ExtensionBoundSchema;
+        linked: ExtensionBoundSchema | null;
+        state: State;
         prefs: ValidationOptions;
+        original: V;
+        warn: (code: string, local?: Context) => void;
+        error: (code: string, local?: Context) => ErrorReport;
+        message: (messages: LanguageMessages, local?: Context) => ErrorReport;
     }
 
-    type ExternalValidationFunction<V = any> = (value: V, helpers: ExternalHelpers) => V | undefined;
+    type ExternalValidationFunction<V = any, R = V> = (value: V, helpers: ExternalHelpers<R>) => R | undefined;
 
     type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
     type SchemaLike = SchemaLikeWithoutArray | object;
