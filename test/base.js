@@ -1657,6 +1657,36 @@ describe('any', () => {
                 ]
             });
         });
+
+        it('does not run on invalid array items', async () => {
+
+            const schema = Joi.array().items(
+                Joi.string().min(5).external((value) => value + value),
+                Joi.string().external((value) => value + '-')
+            );
+
+            expect(await schema.validateAsync(['x'])).to.equal(['x-']);
+        });
+
+        it('does not run on invalid alternatives', async () => {
+
+            const schema = Joi.alternatives(
+                Joi.string().min(5).external((value) => value + value),
+                Joi.string().external((value) => value + '-')
+            );
+
+            expect(await schema.validateAsync('x')).to.equal('x-');
+        });
+
+        it('does not run on invalid alternatives with match mode "one"', async () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.string().min(5).external((value) => value + value),
+                Joi.string().external((value) => value + '-')
+            ).match('one');
+
+            expect(await schema.validateAsync('x')).to.equal('x-');
+        });
     });
 
     describe('failover()', () => {
