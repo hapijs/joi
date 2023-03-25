@@ -1848,8 +1848,9 @@ declare namespace Joi {
          * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
          * allowing to explicitly ensure a date is either in the past or in the future.
          * It can also be a reference to another field.
+         * 'today' is similar to 'now', but its [h,m,s,ms] is [0,0,0,0]
          */
-        greater(date: 'now' | Date | number | string | Reference): this;
+        greater(date: 'now' | 'today' | Date | number | string | Reference): this;
 
         /**
          * Requires the string value to be in valid ISO 8601 date format.
@@ -1861,24 +1862,27 @@ declare namespace Joi {
          * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
          * allowing to explicitly ensure a date is either in the past or in the future.
          * It can also be a reference to another field.
+         * 'today' is similar to 'now', but its [h,m,s,ms] is [0,0,0,0]
          */
-        less(date: 'now' | Date | number | string | Reference): this;
+        less(date: 'now' | 'today' | Date | number | string | Reference): this;
 
         /**
          * Specifies the oldest date allowed.
          * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
          * allowing to explicitly ensure a date is either in the past or in the future.
          * It can also be a reference to another field.
+         * 'today' is similar to 'now', but its [h,m,s,ms] is [0,0,0,0]
          */
-        min(date: 'now' | Date | number | string | Reference): this;
+        min(date: 'now' | 'today'| Date | number | string | Reference): this;
 
         /**
          * Specifies the latest date allowed.
          * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
          * allowing to explicitly ensure a date is either in the past or in the future.
          * It can also be a reference to another field.
+         * 'today' is similar to 'now', but its [h,m,s,ms] is [0,0,0,0]
          */
-        max(date: 'now' | Date | number | string | Reference): this;
+        max(date: 'now' | 'today'| Date | number | string | Reference): this;
 
         /**
          * Requires the value to be a timestamp interval from Unix Time.

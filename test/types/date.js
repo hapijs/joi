@@ -12,7 +12,8 @@ const internals = {};
 
 const { describe, it, before, after } = exports.lab = Lab.script();
 const { expect } = Code;
-
+const ONE_HOUR = 60 * 60 * 1000;
+const ONE_DAY = 24 * 60;
 
 describe('date', () => {
 
@@ -276,6 +277,31 @@ describe('date', () => {
                     path: [],
                     type: 'date.greater',
                     context: { limit: 'now', label: 'value', value: past }
+                }]
+            ]);
+        });
+
+        it('accepts "today" as the greater date', () => {
+
+            const startOfToday = new Date();
+            startOfToday.setHours(0, 0, 0, 0);
+            const future = new Date(startOfToday.getTime() + 1000000);
+
+            expect(Joi.date().greater('today').validate(future)).to.equal({ value: future });
+        });
+
+        it('errors if .greater("today") is used with a past date', () => {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const past = new Date(today.getTime() - 1000000);
+
+            Helper.validate(Joi.date().greater('today'), [
+                [past, false, {
+                    message: '"value" must be greater than "today"',
+                    path: [],
+                    type: 'date.greater',
+                    context: { limit: 'today', label: 'value', value: past }
                 }]
             ]);
         });
@@ -581,6 +607,26 @@ describe('date', () => {
             }]]);
         });
 
+        it('accepts "today" as the less date', () => {
+
+            const past = new Date(Date.now() - ONE_DAY);
+            Helper.validate(Joi.date().less('today'), [[past, true, past]]);
+        });
+
+        it('errors if .less("today") is used with a future date', () => {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const future = new Date(today.getTime() + ONE_HOUR);
+
+            Helper.validate(Joi.date().less('today'), [[future, false, {
+                message: '"value" must be less than "today"',
+                path: [],
+                type: 'date.less',
+                context: { limit: 'today', label: 'value', value: future }
+            }]]);
+        });
+
         it('accepts references as less date', () => {
 
             const ref = Joi.ref('a');
@@ -728,6 +774,26 @@ describe('date', () => {
                 path: [],
                 type: 'date.max',
                 context: { limit: 'now', label: 'value', value: future }
+            }]]);
+        });
+
+        it('accepts "today" as the max date', () => {
+
+            const past = new Date(Date.now() - ONE_DAY);
+            Helper.validate(Joi.date().max('today'), [[past, true, past]]);
+        });
+
+        it('errors if .max("today") is used with a future date', () => {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const future = new Date(today.getTime() + 1);
+
+            Helper.validate(Joi.date().max('today'), [[future, false, {
+                message: '"value" must be less than or equal to "today"',
+                path: [],
+                type: 'date.max',
+                context: { limit: 'today', label: 'value', value: future }
             }]]);
         });
 
@@ -894,6 +960,27 @@ describe('date', () => {
                 path: [],
                 type: 'date.min',
                 context: { limit: 'now', label: 'value', value: past }
+            }]]);
+        });
+
+        it('accepts "today" as the min date', () => {
+
+            const now = new Date();
+            expect(Joi.date().min('today').validate(now)).to.equal({ value: now });
+
+        });
+
+        it('errors if .min("today") is used with a past date', () => {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const past = new Date(today.getTime() - 1);
+
+            Helper.validate(Joi.date().min('today'), [[past, false, {
+                message: '"value" must be greater than or equal to "today"',
+                path: [],
+                type: 'date.min',
+                context: { limit: 'today', label: 'value', value: past }
             }]]);
         });
 
