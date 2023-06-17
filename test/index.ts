@@ -873,12 +873,12 @@ strSchema = strSchema.uri();
 strSchema = strSchema.uri(uriOpts);
 strSchema = strSchema.guid();
 strSchema = strSchema.guid({
-  version: ['uuidv1', 'uuidv2', 'uuidv3', 'uuidv4', 'uuidv5'],
+  version: ['uuidv1', 'uuidv2', 'uuidv3', 'uuidv4', 'uuidv5', 'uuidv6', 'uuidv7', 'uuidv8'],
 });
 strSchema = strSchema.guid({ version: 'uuidv4' });
 strSchema = strSchema.uuid();
 strSchema = strSchema.uuid({
-  version: ['uuidv1', 'uuidv2', 'uuidv3', 'uuidv4', 'uuidv5'],
+  version: ['uuidv1', 'uuidv2', 'uuidv3', 'uuidv4', 'uuidv5', 'uuidv6', 'uuidv7', 'uuidv8'],
 });
 strSchema = strSchema.uuid({ version: 'uuidv4' });
 strSchema = strSchema.hex();
