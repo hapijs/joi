@@ -381,7 +381,7 @@ declare namespace Joi {
         cidr?: PresenceMode;
     }
 
-    type GuidVersions = 'uuidv1' | 'uuidv2' | 'uuidv3' | 'uuidv4' | 'uuidv5';
+    type GuidVersions = 'uuidv1' | 'uuidv2' | 'uuidv3' | 'uuidv4' | 'uuidv5' | 'uuidv6' | 'uuidv7' | 'uuidv8';
 
     interface GuidOptions {
         version?: GuidVersions[] | GuidVersions;
