@@ -29,6 +29,18 @@ describe('binary', () => {
         expect(value.toString('utf8')).to.equal('test');
     });
 
+    it('converts a JSON encoded and decoded buffer to a buffer', () => {
+
+        const testPngMagicNumber = Buffer.from('89504E470D0A', 'hex');
+        const jsonEncodedBuffer = JSON.stringify(testPngMagicNumber);
+        const jsonDecodedBuffer = JSON.parse(jsonEncodedBuffer);
+
+        const value = Joi.binary().validate(jsonDecodedBuffer).value;
+        expect(value instanceof Buffer).to.equal(true);
+        expect(value.length).to.equal(testPngMagicNumber.length);
+        expect(value).to.equal(testPngMagicNumber);
+    });
+
     it('validates allowed buffer content', () => {
 
         const hello = Buffer.from('hello');
@@ -116,6 +128,23 @@ describe('binary', () => {
                     path: [],
                     type: 'binary.base',
                     context: { label: 'value', value: 5 }
+                }]
+            ]);
+        });
+
+        it('returns an error when a JSON encoded & decoded buffer object is used in strict mode', () => {
+
+            // Generate Buffer and stringify it as JSON.
+            const testPngMagicNumber = Buffer.from('89504E470D0A', 'hex');
+            const jsonEncodedBuffer = JSON.stringify(testPngMagicNumber);
+            const jsonDecodedBuffer = JSON.parse(jsonEncodedBuffer);
+
+            Helper.validate(Joi.binary().strict(), [
+                [jsonDecodedBuffer, false, {
+                    message: '"value" must be a buffer or a string',
+                    path: [],
+                    type: 'binary.base',
+                    context: { label: 'value', value: jsonDecodedBuffer }
                 }]
             ]);
         });
