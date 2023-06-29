@@ -808,6 +808,8 @@ declare namespace Joi {
         ? Joi.BooleanSchema
         : T extends NullableType<Date>
         ? Joi.DateSchema
+        : T extends NullableType<Buffer>
+        ? Joi.BinarySchema
         : T extends NullableType<Array<any>>
         ? Joi.ArraySchema
         : T extends NullableType<object>
