@@ -708,7 +708,7 @@ declare namespace Joi {
     } | {
         error: ValidationError;
         warning?: ValidationError;
-        value: undefined;
+        value: any;
     }
 
     interface CreateErrorOptions {
