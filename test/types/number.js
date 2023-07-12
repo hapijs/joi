@@ -792,6 +792,22 @@ describe('number', () => {
             ]);
         });
 
+        it('handles floating point representations', () => {
+            //Use case: When 100.1/.1 does not give 1001, but instead 1000.999...
+            let schema = Joi.number().multiple(0.1);
+            Helper.validate(schema, [
+                [0, true],  // 0 is a multiple of every number
+                [100.1, true]
+            ]);
+            
+            //Use case: When 14400000 * (1/3600000) does not give 4, but instead 3.9999...
+            schema = Joi.number().multiple(3600000);
+            Helper.validate(schema, [
+                [0, true],  // 0 is a multiple of every number
+                [14400000, true]
+            ]);
+        });
+
         it('handles references correctly', () => {
 
             const ref = Joi.ref('a');
