@@ -1320,7 +1320,7 @@ declare namespace Joi {
         flags?: object;
         notes?: string[];
         tags?: string[];
-        meta?: any[];
+        metas?: any[];
         example?: any[];
         valids?: any[];
         invalids?: any[];
