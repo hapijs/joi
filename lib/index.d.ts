@@ -768,8 +768,8 @@ declare namespace Joi {
 
     type ExternalValidationFunction<V = any, R = V> = (value: V, helpers: ExternalHelpers<R>) => R | undefined;
 
-    type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
-    type SchemaLike = SchemaLikeWithoutArray | object;
+    type SchemaLikeWithoutArray<TSchema = any> = string | number | boolean | null | Schema<TSchema> | SchemaMap<TSchema>;
+    type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
 
     type NullableType<T> = undefined | null | T
 
@@ -1930,6 +1930,12 @@ declare namespace Joi {
         /**
          * Adds an alternative schema type for attempting to match against the validated value.
          */
+        try<A>(a: SchemaLike<A>): AlternativesSchema<A>;
+        try<A, B>(a: SchemaLike<A>, b: SchemaLike<B>): AlternativesSchema<A | B>;
+        try<A, B, C>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>): AlternativesSchema<A | B | C>;
+        try<A, B, C, D>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>): AlternativesSchema<A | B | C| D>;
+        try<A, B, C, D, E>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>): AlternativesSchema<A | B | C| D | E>;
+        try<A, B, C, D, E , F>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>, f: SchemaLike<F>): AlternativesSchema<A | B | C| D | E |F>;
         try(...types: SchemaLikeWithoutArray[]): this;
     }
 
@@ -2141,8 +2147,16 @@ declare namespace Joi {
         /**
          * Generates a type that will match one of the provided alternative schemas
          */
-        alternatives<TSchema = any>(types: SchemaLike[]): AlternativesSchema<TSchema>;
-        alternatives<TSchema = any>(...types: SchemaLike[]): AlternativesSchema<TSchema>;
+        alternatives<A,B>(params: [SchemaLike<A>,SchemaLike<B>]): AlternativesSchema<A | B>;
+        alternatives<A,B,C>(params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>]): AlternativesSchema<A | B | C>;
+        alternatives<A,B,C,D>(params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>,  SchemaLike<D>]): AlternativesSchema<A | B | C | D>;
+        alternatives<A,B,C,D, E>(params: [SchemaLike<A>,SchemaLike<B>, SchemaLike<C>,  SchemaLike<D>,  SchemaLike<E>]): AlternativesSchema<A | B | C | D|E>;
+        alternatives<A,B>(a: SchemaLike<A>,b: SchemaLike<B>): AlternativesSchema<A | B>;
+        alternatives<A,B,C>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>): AlternativesSchema<A | B | C>;
+        alternatives<A,B,C,D>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>, d: SchemaLike<D>): AlternativesSchema<A | B | C | D>;
+        alternatives<A,B,C,D, E>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>): AlternativesSchema<A | B | C | D|E>;
+        alternatives<TSchema = any>(types: SchemaLike<TSchema>[]): AlternativesSchema<TSchema>;
+        alternatives<TSchema = any>(...types: SchemaLike<TSchema>[]): AlternativesSchema<TSchema>;
 
         /**
          * Alias for `alternatives`
