@@ -768,8 +768,8 @@ declare namespace Joi {
 
     type ExternalValidationFunction<V = any, R = V> = (value: V, helpers: ExternalHelpers<R>) => R | undefined;
 
-    type SchemaLikeWithoutArray = string | number | boolean | null | Schema | SchemaMap;
-    type SchemaLike = SchemaLikeWithoutArray | object;
+    type SchemaLikeWithoutArray<TSchema = any> = string | number | boolean | null | Schema<TSchema> | SchemaMap<TSchema>;
+    type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
 
     type NullableType<T> = undefined | null | T
 
@@ -1644,7 +1644,13 @@ declare namespace Joi {
          *
          * @param type - a joi schema object to validate each array item against.
          */
-        items(...types: SchemaLikeWithoutArray[]): this;
+        items<A>(a: SchemaLike<A>): ArraySchema<A[]>;
+        items<A, B>(a: SchemaLike<A>, b: SchemaLike<B>): ArraySchema<(A | B)[]>;
+        items<A, B, C>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>): ArraySchema<(A | B | C)[]>;
+        items<A, B, C, D>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>): ArraySchema<(A | B | C| D)[]>;
+        items<A, B, C, D, E>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>): ArraySchema<(A | B | C| D | E)[]>;
+        items<A, B, C, D, E , F>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>, f: SchemaLike<F>): ArraySchema<(A | B | C| D | E |F)[]>;
+        items<TItems>(...types: SchemaLikeWithoutArray<TItems>[]): this;
 
         /**
          * Specifies the exact number of items in the array.
