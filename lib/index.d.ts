@@ -467,7 +467,7 @@ declare namespace Joi {
         otherwise: SchemaLike;
     }
 
-    interface WhenOptions {
+    interface WhenOptions<ThenSchema = any, OtherwiseSchema = any> {
         /**
          * the required condition joi type.
          */
@@ -482,12 +482,12 @@ declare namespace Joi {
         /**
          * the alternative schema type if the condition is true. Required if otherwise or switch are missing.
          */
-        then?: SchemaLike;
+        then?: SchemaLike<ThenSchema>;
 
         /**
          * the alternative schema type if the condition is false. Required if then or switch are missing.
          */
-        otherwise?: SchemaLike;
+        otherwise?: SchemaLike<OtherwiseSchema>;
 
         /**
          * the list of cases. Required if then is missing.  Required if then or otherwise are missing.
@@ -500,15 +500,15 @@ declare namespace Joi {
         break?: boolean;
     }
 
-    interface WhenSchemaOptions {
+    interface WhenSchemaOptions<ThenSchema = any, OtherwiseSchema = any> {
         /**
          * the alternative schema type if the condition is true. Required if otherwise is missing.
          */
-        then?: SchemaLike;
+        then?: SchemaLike<ThenSchema>;
         /**
          * the alternative schema type if the condition is false. Required if then is missing.
          */
-        otherwise?: SchemaLike;
+        otherwise?: SchemaLike<OtherwiseSchema>;
     }
 
     interface Cache {
@@ -1918,8 +1918,8 @@ declare namespace Joi {
         /**
          * Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value.
          */
-        conditional(ref: string | Reference, options: WhenOptions | WhenOptions[]): this;
-        conditional(ref: Schema, options: WhenSchemaOptions): this;
+        conditional<ThenSchema, OtherwiseSchema>(ref: string | Reference, options: WhenOptions | WhenOptions[]): AlternativesSchema<ThenSchema | OtherwiseSchema>;
+        conditional<ThenSchema, OtherwiseSchema>(ref: Schema, options: WhenSchemaOptions<ThenSchema, OtherwiseSchema>): AlternativesSchema<ThenSchema | OtherwiseSchema>;
 
         /**
          * Requires the validated value to match a specific set of the provided alternative.try() schemas.
