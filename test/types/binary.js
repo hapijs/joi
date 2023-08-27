@@ -132,6 +132,30 @@ describe('binary', () => {
             ]);
         });
 
+        it('returns an error when malformed JSON object is used', () => {
+
+            Helper.validate(Joi.binary(), [
+                [{ foo: 'bar' }, false, {
+                    message: '"value" must be a buffer or a string',
+                    path: [],
+                    type: 'binary.base',
+                    context: { label: 'value', value: { foo: 'bar' } }
+                }],
+                [null, false, {
+                    message: '"value" must be a buffer or a string',
+                    path: [],
+                    type: 'binary.base',
+                    context: { label: 'value', value: null }
+                }],
+                [{ type: 'Buffer' }, false, {
+                    message: '"value" must be a buffer or a string',
+                    path: [],
+                    type: 'binary.base',
+                    context: { label: 'value', value: { type: 'Buffer' } }
+                }]
+            ]);
+        });
+
         it('returns an error when a JSON encoded & decoded buffer object is used in strict mode', () => {
 
             // Generate Buffer and stringify it as JSON.
