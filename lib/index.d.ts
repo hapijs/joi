@@ -693,7 +693,7 @@ declare namespace Joi {
         context?: Context;
     }
 
-    type ValidationErrorFunction = (errors: ErrorReport[]) => string | ValidationErrorItem | Error;
+    type ValidationErrorFunction = (errors: ErrorReport[]) => string | ValidationErrorItem | Error | ErrorReport[];
 
     interface ValidationWarning {
         message: string;
