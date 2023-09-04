@@ -768,7 +768,10 @@ declare namespace Joi {
 
     type ExternalValidationFunction<V = any, R = V> = (value: V, helpers: ExternalHelpers<R>) => R | undefined;
 
-    type SchemaLikeWithoutArray<TSchema = any> = string | number | boolean | null | Schema<TSchema> | SchemaMap<TSchema>;
+    type Primitives = string | number | boolean | bigint | symbol | null;
+
+    type SchemaLikeWithoutArray<TSchema = any> = TSchema extends any[] ? never :
+      (Primitives | Schema<TSchema> | SchemaMap<TSchema>);
     type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
 
     type NullableType<T> = undefined | null | T
