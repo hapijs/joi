@@ -1933,12 +1933,12 @@ declare namespace Joi {
         /**
          * Adds an alternative schema type for attempting to match against the validated value.
          */
-        try<A>(a: SchemaLike<A>): AlternativesSchema<A>;
-        try<A, B>(a: SchemaLike<A>, b: SchemaLike<B>): AlternativesSchema<A | B>;
-        try<A, B, C>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>): AlternativesSchema<A | B | C>;
-        try<A, B, C, D>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>): AlternativesSchema<A | B | C| D>;
-        try<A, B, C, D, E>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>): AlternativesSchema<A | B | C| D | E>;
-        try<A, B, C, D, E , F>(a: SchemaLike<A>, b: SchemaLike<B>, c: SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>, f: SchemaLike<F>): AlternativesSchema<A | B | C| D | E |F>;
+        try<A>(a: SchemaLikeWithoutArray<A>): AlternativesSchema<A>;
+        try<A, B>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>): AlternativesSchema<A | B>;
+        try<A, B, C>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>): AlternativesSchema<A | B | C>;
+        try<A, B, C, D>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>): AlternativesSchema<A | B | C| D>;
+        try<A, B, C, D, E>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>, e: SchemaLikeWithoutArray<E>): AlternativesSchema<A | B | C| D | E>;
+        try<A, B, C, D, E , F>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>, e: SchemaLikeWithoutArray<E>, f: SchemaLikeWithoutArray<F>): AlternativesSchema<A | B | C| D | E |F>;
         try(...types: SchemaLikeWithoutArray[]): this;
     }
 
@@ -2164,6 +2164,14 @@ declare namespace Joi {
         /**
          * Alias for `alternatives`
          */
+        alt<A,B>(params: [SchemaLike<A>,SchemaLike<B>]): AlternativesSchema<A | B>;
+        alt<A,B,C>(params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>]): AlternativesSchema<A | B | C>;
+        alt<A,B,C,D>(params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>,  SchemaLike<D>]): AlternativesSchema<A | B | C | D>;
+        alt<A,B,C,D, E>(params: [SchemaLike<A>,SchemaLike<B>, SchemaLike<C>,  SchemaLike<D>,  SchemaLike<E>]): AlternativesSchema<A | B | C | D|E>;
+        alt<A,B>(a: SchemaLike<A>,b: SchemaLike<B>): AlternativesSchema<A | B>;
+        alt<A,B,C>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>): AlternativesSchema<A | B | C>;
+        alt<A,B,C,D>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>, d: SchemaLike<D>): AlternativesSchema<A | B | C | D>;
+        alt<A,B,C,D, E>(a: SchemaLike<A>,b: SchemaLike<B>, c:SchemaLike<C>, d: SchemaLike<D>, e: SchemaLike<E>): AlternativesSchema<A | B | C | D|E>;
         alt<TSchema = any>(types: SchemaLike[]): AlternativesSchema<TSchema>;
         alt<TSchema = any>(...types: SchemaLike[]): AlternativesSchema<TSchema>;
 
