@@ -268,4 +268,68 @@ describe('Template', () => {
             });
         });
     });
+
+
+
+    describe('formula parsing for values that could either be a primitive or an object property which might have spaces in its key', () => {
+
+        const schema = Joi.array().items(Joi.alternatives().conditional(Joi.object(), {
+            then: Joi.object({
+                'var with spaces': Joi.string().optional(),
+                variable: Joi.string().optional()
+            }).xor('variable', 'var with spaces').unknown(),
+            otherwise: Joi.string().optional()
+        })).min(1).unique((a, b) => {
+
+            const aVal = typeof a === 'object' ? a['var with spaces'] ?? a.variable : a;
+            const bVal = typeof b === 'object' ? b['var with spaces'] ?? b.variable : b;
+            return aVal === bVal;
+        }).messages({
+            'array.unique': 'Duplicate values: "{#value.variable || #value.[var with spaces] || #value}", "{#dupeValue.variable || #dupeValue.[var with spaces] || #dupeValue}"'
+        });
+
+        it('shows correct error when the value is an object', () => {
+
+            expect(schema.validate([
+                { variable: 'value' },
+                { variable: 'value' }
+            ]).error.message).to.equal('Duplicate values: "value", "value"');
+
+            expect(schema.validate([
+                { 'var with spaces': 'value' },
+                { 'var with spaces': 'value' }
+            ]).error.message).to.equal('Duplicate values: "value", "value"');
+
+            expect(schema.validate([
+                { variable: 'value' },
+                { 'var with spaces': 'value' }
+            ]).error.message).to.equal('Duplicate values: "value", "value"');
+        });
+
+        describe('throws when value is a primitive', () => {
+            it('', () => {
+
+                expect(schema.validate([
+                    'value',
+                    'value'
+                ]).error.message).to.equal('Duplicate values: "value", "value"');
+            });
+
+            it('', () => {
+
+                expect(schema.validate([
+                    'value',
+                    { variable: 'value' }
+                ]).error.message).to.equal('Duplicate values: "value", "value"');
+            });
+
+            it('', () => {
+
+                expect(schema.validate([
+                    { 'var with spaces': 'value' },
+                    'value'
+                ]).error.message).to.equal('Duplicate values: "value", "value"');
+            });
+        });
+    });
 });
