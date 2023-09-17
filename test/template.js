@@ -85,6 +85,17 @@ describe('Template', () => {
         expect(template.render({}, {}, { context: { x: 'hello', y: '!' } }, {}, { errors: { escapeHtml: false } })).to.equal('text hello! {{escaped}} xxx abc {{{ignore}} 123 {{x');
     });
 
+    it('parses template with missing elements in binary operation', () => {
+
+        const source = 'text {$x || $y}';
+        const template = Joi.x(source);
+
+        expect(template.source).to.equal(source);
+        expect(template.render({}, {}, { context: { x: 'hello' } })).to.equal('text hello');
+        expect(template.render({}, {}, { context: { y: 'hello' } })).to.equal('text hello');
+        expect(template.render({}, {}, { context: {} })).to.equal('text null');
+    });
+
     it('parses template with single variable', () => {
 
         const source = '{$x}';
