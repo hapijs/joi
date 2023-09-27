@@ -233,7 +233,8 @@ const schema = custom.object();   // Returns Joi.object().min(1)
 Generates a dynamic expression using a template string where:
 - `template` - the template string using the [template syntax](#template-syntax).
 - `options` - optional settings used when creating internal references. Supports the same options
-  as [`ref()`](#refkey-options).
+  as [`ref()`](#refkey-options), in addition to those options:
+  - `functions` - an object with keys being function names and values being their implementation that will be executed when used in the expression. Using the same name as a built-in function will result in a local override. Note: carefully check your arguments depending on the situation where the expression is used.
 
 #### Template syntax
 
