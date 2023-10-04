@@ -38,7 +38,7 @@ describe('errors', () => {
         const err = Joi.valid('foo').validate('bar', { errors: { stack: true } }).error;
         expect(err).to.be.an.error();
         expect(err.isJoi).to.be.true();
-        expect(err.stack).to.contain('at Object.exports.process');
+        expect(err.stack).to.contain('at exports.process');
     });
 
     it('supports custom errors when validating types', () => {
