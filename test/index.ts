@@ -1,5 +1,5 @@
-import * as Joi from '..';
 import * as Lab from '@hapi/lab';
+import * as Joi from '..';
 
 
 const { expect } = Lab.types;
@@ -19,7 +19,8 @@ const exp: RegExp = /./;
 const obj: object = {};
 const date: Date = new Date();
 const err: Error = new Error('test');
-const func: () => void = () => {};
+const func: () => void = () => {
+};
 const symbol = Symbol('test');
 
 const numArr: number[] = [1, 2, 3];
@@ -1011,6 +1012,8 @@ schema = Joi.alternatives();
 expect.error(Joi.alternatives().try(schemaArr));
 schema = Joi.alternatives().try(schema, schema);
 
+expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives([Joi.string(), Joi.number(), Joi.boolean()]));
+
 schema = Joi.alternatives(schemaArr);
 schema = Joi.alternatives(schema, anySchema, boolSchema);
 
@@ -1018,8 +1021,13 @@ schema = Joi.alt();
 expect.error(Joi.alt().try(schemaArr));
 schema = Joi.alt().try(schema, schema);
 
+expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alt([Joi.string(), Joi.number(), Joi.boolean()]));
+
 schema = Joi.alt(schemaArr);
 schema = Joi.alt(schema, anySchema, boolSchema);
+
+expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean()));
+
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1056,18 +1064,41 @@ schema = Joi.link(str);
       .then((val) => {
         throw new Error('one error');
       })
-      .catch((e) => {});
+      .catch((e) => {
+      });
 
-        expect.type<Promise<TResult>>(schema.validateAsync(value));
-        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { artifacts: true }));
-        expect.type<Promise<{ value: TResult, warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { warnings: true }));
-        expect.type<Promise<{ value: TResult, artifacts: Map<any, string[][]>; warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
-        expect.error<Promise<{ value: TResult, warning: Joi.ValidationWarning }>>(schema.validateAsync(value, { artifacts: true }));
-        expect.error<Promise<{ value: TResult, artifacts: Map<any, string[][]> }>>(schema.validateAsync(value, { warnings: true }));
-        expect.error<Promise<TResult>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
-        expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false }));
-        expect.type<Promise<TResult>>(schema.validateAsync(value, { warnings: false }));
-        expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false, warnings: false }));
+    expect.type<Promise<TResult>>(schema.validateAsync(value));
+    expect.type<Promise<{
+      value: TResult,
+      artifacts: Map<any, string[][]>
+    }>>(schema.validateAsync(value, { artifacts: true }));
+    expect.type<Promise<{
+      value: TResult,
+      warning: Joi.ValidationWarning
+    }>>(schema.validateAsync(value, { warnings: true }));
+    expect.type<Promise<{
+      value: TResult,
+      artifacts: Map<any, string[][]>;
+      warning: Joi.ValidationWarning
+    }>>(schema.validateAsync(value, { artifacts: true, warnings: true }));
+    expect.error<Promise<{
+      value: TResult,
+      warning: Joi.ValidationWarning
+    }>>(schema.validateAsync(value, { artifacts: true }));
+    expect.error<Promise<{
+      value: TResult,
+      artifacts: Map<any, string[][]>
+    }>>(schema.validateAsync(value, { warnings: true }));
+    expect.error<Promise<TResult>>(schema.validateAsync(value, {
+      artifacts: true,
+      warnings: true
+    }));
+    expect.type<Promise<TResult>>(schema.validateAsync(value, { artifacts: false }));
+    expect.type<Promise<TResult>>(schema.validateAsync(value, { warnings: false }));
+    expect.type<Promise<TResult>>(schema.validateAsync(value, {
+      artifacts: false,
+      warnings: false
+    }));
 
     const falsyValue = { username: 'example' };
     result = schema.validate(falsyValue);
