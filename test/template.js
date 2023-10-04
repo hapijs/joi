@@ -85,6 +85,17 @@ describe('Template', () => {
         expect(template.render({}, {}, { context: { x: 'hello', y: '!' } }, {}, { errors: { escapeHtml: false } })).to.equal('text hello! {{escaped}} xxx abc {{{ignore}} 123 {{x');
     });
 
+    it('parses template with missing elements in binary operation', () => {
+
+        const source = 'text {$x || $y}';
+        const template = Joi.x(source);
+
+        expect(template.source).to.equal(source);
+        expect(template.render({}, {}, { context: { x: 'hello' } })).to.equal('text hello');
+        expect(template.render({}, {}, { context: { y: 'hello' } })).to.equal('text hello');
+        expect(template.render({}, {}, { context: {} })).to.equal('text null');
+    });
+
     it('parses template with single variable', () => {
 
         const source = '{$x}';
@@ -164,6 +175,49 @@ describe('Template', () => {
     });
 
     describe('functions', () => {
+
+        describe('extensions', () => {
+
+            it('allow new functions', () => {
+
+                const schema = Joi.object().rename(/.*/, Joi.x('{ uppercase(#0) }', {
+                    functions: {
+                        uppercase(value) {
+
+                            if (typeof value === 'string') {
+                                return value.toUpperCase();
+                            }
+
+                            return value;
+                        }
+                    }
+                }));
+                Helper.validate(schema, {}, [
+                    [{ a: 1, b: true }, true, { A: 1, B: true }],
+                    [{ a: 1, [Symbol.for('b')]: true }, true, { A: 1, [Symbol.for('b')]: true }]
+                ]);
+            });
+
+            it('overrides built-in functions', () => {
+
+                const schema = Joi.object({
+                    a: Joi.array().length(Joi.x('{length(b)}', {
+                        functions: {
+                            length(value) {
+
+                                return value.length - 1;
+                            }
+                        }
+                    })),
+                    b: Joi.string()
+                });
+
+                Helper.validate(schema, [
+                    [{ a: [1], b: 'xx' }, true],
+                    [{ a: [1], b: 'x' }, false, '"a" must contain {length(b)} items']
+                ]);
+            });
+        });
 
         describe('msg()', () => {
 
