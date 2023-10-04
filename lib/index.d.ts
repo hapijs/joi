@@ -1647,7 +1647,13 @@ declare namespace Joi {
          *
          * @param type - a joi schema object to validate each array item against.
          */
-        items(...types: SchemaLikeWithoutArray[]): this;
+        items<A>(a: SchemaLikeWithoutArray<A>): ArraySchema<A[]>;
+        items<A, B>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>): ArraySchema<(A | B)[]>;
+        items<A, B, C>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>): ArraySchema<(A | B | C)[]>;
+        items<A, B, C, D>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>): ArraySchema<(A | B | C| D)[]>;
+        items<A, B, C, D, E>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>, e: SchemaLikeWithoutArray<E>): ArraySchema<(A | B | C| D | E)[]>;
+        items<A, B, C, D, E , F>(a: SchemaLikeWithoutArray<A>, b: SchemaLikeWithoutArray<B>, c: SchemaLikeWithoutArray<C>, d: SchemaLikeWithoutArray<D>, e: SchemaLikeWithoutArray<E>, f: SchemaLikeWithoutArray<F>): ArraySchema<(A | B | C| D | E |F)[]>;
+        items<TItems>(...types: SchemaLikeWithoutArray<TItems>[]): this;
 
         /**
          * Specifies the exact number of items in the array.

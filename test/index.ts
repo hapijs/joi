@@ -396,6 +396,8 @@ expect.error(arrSchema.items([numSchema, strSchema, schemaLike]));
 arrSchema = arrSchema.items(schemaMap);
 arrSchema = arrSchema.items(schemaMap, schemaMap, schemaLike);
 expect.error(arrSchema.items([schemaMap, schemaMap, schemaLike]));
+let value1 = Joi.array().items(Joi.string(), Joi.boolean(), Joi.number(), Joi.object({key: Joi.string()}));
+expect.type<Joi.ArraySchema<(string | number | boolean | {key: string})[]>>(value1)
 
 // - - - - - - - -
 
