@@ -224,7 +224,7 @@ If you publish your extension on npm, make sure to add `joi` and `extension` as 
 #### Examples
 
 ```js
-const Joi = require('@commercial/joi');
+const Joi = require('joi');
 const customJoi = Joi.extend((joi) => ({
     base: joi.number(),
     name: 'number',

@@ -1,5 +1,5 @@
 {
-  "name": "@commercial/joi",
+  "name": "joi",
   "description": "Object schema validation",
   "version": "12.1.0",
   "homepage": "https://github.com/hapijs/joi",
@@ -14,9 +14,9 @@
     "validation"
   ],
   "dependencies": {
-    "@commercial/address": "1.x.x",
-    "@commercial/hoek": "4.x.x",
-    "@commercial/topo": "2.x.x"
+    "@hapi/address": "1.x.x",
+    "hoek": "4.x.x",
+    "topo": "2.x.x"
   },
   "devDependencies": {
     "code": "4.x.x",
