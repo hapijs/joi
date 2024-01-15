@@ -747,6 +747,48 @@ describe('number', () => {
             ]);
         });
 
+        it('handles precision errors correctly', () => {
+
+            const cases = [
+                [3600000, [
+                    [14400000, true]
+                ]],
+                [0.01, [
+                    [2.03, true],
+                    [2.029999999999, false, {
+                        message: '"value" must be a multiple of 0.01',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 0.01, value: 2.029999999999, label: 'value' }
+                    }],
+                    [2.030000000001, false, {
+                        message: '"value" must be a multiple of 0.01',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 0.01, value: 2.030000000001, label: 'value' }
+                    }],
+                    [0.03, true]
+                ]],
+                [0.0000000001, [
+                    [0.2, true]
+                ]],
+                [0.000000101, [
+                    [0.101, true],
+                    [0.10101, false, {
+                        message: '"value" must be a multiple of 1.01e-7',
+                        path: [],
+                        type: 'number.multiple',
+                        context: { multiple: 0.000000101, value: 0.10101, label: 'value' }
+                    }]
+                ]]
+            ];
+
+            for (const [multiple, tests] of cases) {
+                const schema = Joi.number().multiple(multiple);
+                Helper.validate(schema, tests);
+            }
+        });
+
         it('handles floats multiples correctly', () => {
 
             const schema = Joi.number().multiple(3.5);
