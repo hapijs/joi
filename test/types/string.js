@@ -4487,6 +4487,21 @@ describe('string', () => {
                 }]
             ]);
         });
+
+        it('validates an hexadecimal string with prefix explicitly required', () => {
+
+            const rule = Joi.string().hex({ withPrefix: true }).strict();
+            Helper.validate(rule, [
+                ['0x0123456789abcdef', true],
+                ['123456789abcdef', true],
+                ['0123afg', false, {
+                    message: '"value" must only contain hexadecimal characters',
+                    path: [],
+                    type: 'string.hex',
+                    context: { value: '0123afg', label: 'value' }
+                }]
+            ]);
+        });
     });
 
     describe('hostname()', () => {
