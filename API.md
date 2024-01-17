@@ -2823,8 +2823,9 @@ Requires the string value to be a valid hexadecimal string.
 
 - `options` - optional settings:
   - `byteAligned` - Boolean specifying whether you want to check that the hexadecimal string is byte aligned. If `convert` is `true`, a `0` will be added in front of the string in case it needs to be aligned. Defaults to `false`.
+  - `prefix` - Boolean or `optional`. When `true`, the string will be considered valid if prefixed with `0x` or `0X`. When `false`, the prefix is forbidden. When `optional`, the string will be considered valid if prefixed or not prefixed at all. Defaults to `false`.
 ```js
-const schema = Joi.string().hex();
+const schema = Joi.string().hex({ prefix: 'optional' });
 ```
 
 Possible validation errors: [`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)
