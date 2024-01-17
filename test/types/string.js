@@ -1215,6 +1215,58 @@ describe('string', () => {
                 ]
             });
         });
+
+        it('describes a hex string', () => {
+
+            expect(Joi.string().hex().describe()).to.equal({
+                type: 'string',
+                rules: [{
+                    name: 'hex',
+                    args: {
+                        options: {
+                            byteAligned: false,
+                            prefix: false
+                        }
+                    }
+                }]
+            });
+            expect(Joi.string().hex({ byteAligned: true }).describe()).to.equal({
+                type: 'string',
+                rules: [{
+                    name: 'hex',
+                    args: {
+                        options: {
+                            byteAligned: true,
+                            prefix: false
+                        }
+                    }
+                }]
+            });
+            expect(Joi.string().hex({ prefix: true }).describe()).to.equal({
+                type: 'string',
+                rules: [{
+                    name: 'hex',
+                    args: {
+                        options: {
+                            byteAligned: false,
+                            prefix: true
+                        }
+                    }
+                }]
+            });
+            expect(Joi.string().hex({ prefix: 'optional' }).describe()).to.equal({
+                type: 'string',
+                rules: [{
+                    name: 'hex',
+                    args: {
+                        options: {
+                            byteAligned: false,
+                            prefix: 'optional'
+                        }
+                    }
+                }]
+            });
+        });
     });
 
     describe('domain()', () => {
@@ -4521,15 +4573,43 @@ describe('string', () => {
 
         it('validates an hexadecimal string with prefix explicitly required', () => {
 
-            const rule = Joi.string().hex({ withPrefix: true }).strict();
+            const rule = Joi.string().hex({ prefix: true }).strict();
             Helper.validate(rule, [
-                ['0x0123456789abcdef', true],
-                ['123456789abcdef', true],
-                ['0123afg', false, {
+                ['0123456789abcdef', false, {
                     message: '"value" must only contain hexadecimal characters',
                     path: [],
                     type: 'string.hex',
-                    context: { value: '0123afg', label: 'value' }
+                    context: { value: '0123456789abcdef', label: 'value' }
+                }],
+                ['0x0123456789abcdef', true],
+                ['0X0123456789abcdef', true]
+            ]);
+        });
+
+        it('validates an hexadecimal string with optional prefix', () => {
+
+            const rule = Joi.string().hex({ prefix: 'optional' }).strict();
+            Helper.validate(rule, [
+                ['0123456789abcdef', true],
+                ['0x0123456789abcdef', true],
+                ['0X0123456789abcdef', true],
+                ['0123456789abcdefg', false, {
+                    message: '"value" must only contain hexadecimal characters',
+                    path: [],
+                    type: 'string.hex',
+                    context: { value: '0123456789abcdefg', label: 'value' }
+                }],
+                ['0x0123456789abcdefg', false, {
+                    message: '"value" must only contain hexadecimal characters',
+                    path: [],
+                    type: 'string.hex',
+                    context: { value: '0x0123456789abcdefg', label: 'value' }
+                }],
+                ['0X0123456789abcdefg', false, {
+                    message: '"value" must only contain hexadecimal characters',
+                    path: [],
+                    type: 'string.hex',
+                    context: { value: '0X0123456789abcdefg', label: 'value' }
                 }]
             ]);
         });
