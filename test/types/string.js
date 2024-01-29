@@ -1323,7 +1323,8 @@ describe('string', () => {
                     type: 'string.domain',
                     context: { value: '"example.com', label: 'value' }
                 }],
-                ['mail@example.com', false, '"value" must contain a valid domain name']
+                ['mail@example.com', false, '"value" must contain a valid domain name'],
+                ['joi.dev.whatevertldiwant', false, '"value" must contain a valid domain name']
             ]);
         });
 
@@ -1496,7 +1497,8 @@ describe('string', () => {
                     type: 'string.email',
                     context: { value: '123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com', invalids: ['123456789012345678901234567890123456789012345678901234567890@12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345678901234567890123456789012345678901234567890123456789.12345.toolong.com'], label: 'value' }
                 }],
-                ['foo@bar%2ecom', false, '"value" must be a valid email']
+                ['foo@bar%2ecom', false, '"value" must be a valid email'],
+                ['invalid_tlds@email.ccc', false, '"value" must be a valid email']
             ]);
         });
 
