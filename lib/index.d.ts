@@ -1352,7 +1352,7 @@ declare namespace Joi {
 
     interface State {
         key?: string;
-        path?: string;
+        path?: (string | number)[];
         parent?: any;
         reference?: any;
         ancestors?: any;
