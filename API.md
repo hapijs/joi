@@ -614,7 +614,7 @@ Adds a custom validation function to execute arbitrary code where:
         - `state` - the current validation state.
         - `prefs` - the current preferences.
         - `original` - the original value passed into validation before any conversions.
-        - `error(code, [local])` - a method to generate error codes using a message code and optional local context.
+        - `error(code, [local], [localState])` - a method to generate error codes using a message code, optional local context and optional validation local state.
         - `message(messages, [local])` - a method to generate an error with an internal `'custom'` error code and the provided messages object to use as override. Note that this is much slower than using the preferences `messages` option but is much simpler to write when performance is not important.
         - `warn(code, [local])` - a method to add a warning using a message code and optional local context.
 
@@ -2825,8 +2825,9 @@ Requires the string value to be a valid hexadecimal string.
 
 - `options` - optional settings:
   - `byteAligned` - Boolean specifying whether you want to check that the hexadecimal string is byte aligned. If `convert` is `true`, a `0` will be added in front of the string in case it needs to be aligned. Defaults to `false`.
+  - `prefix` - Boolean or `optional`. When `true`, the string will be considered valid if prefixed with `0x` or `0X`. When `false`, the prefix is forbidden. When `optional`, the string will be considered valid if prefixed or not prefixed at all. Defaults to `false`.
 ```js
-const schema = Joi.string().hex();
+const schema = Joi.string().hex({ prefix: 'optional' });
 ```
 
 Possible validation errors: [`string.hex`](#stringhex), [`string.hexAlign`](#stringhexalign)

@@ -26,7 +26,7 @@ declare namespace Joi {
 
     type BasicType = boolean | number | string | any[] | object | null;
 
-    type LanguageMessages = Record<string, string>;
+    type LanguageMessages = Record<string, string | Record<string, string>>;
 
     type PresenceMode = 'optional' | 'required' | 'forbidden';
 
@@ -379,6 +379,15 @@ declare namespace Joi {
          * @default false
          */
         byteAligned?: boolean;
+        /**
+         * controls whether the prefix `0x` or `0X` is allowed (or required) on hex strings.
+         * When `true`, the prefix must be provided.
+         * When `false`, the prefix is forbidden.
+         * When `optional`, the prefix is allowed but not required.
+         *
+         * @default false
+         */
+        prefix?: boolean | 'optional';
     }
 
     interface IpOptions {
@@ -749,7 +758,7 @@ declare namespace Joi {
         prefs: ValidationOptions;
         original: V;
         warn: (code: string, local?: Context) => void;
-        error: (code: string, local?: Context) => ErrorReport;
+        error: (code: string, local?: Context, localState?: State) => ErrorReport;
         message: (messages: LanguageMessages, local?: Context) => ErrorReport;
     }
 

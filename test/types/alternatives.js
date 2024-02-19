@@ -1377,6 +1377,149 @@ describe('alternatives', () => {
                 }
             });
         });
+
+        it('does not override existing labels in nested alternatives', () => {
+
+            const schema = Joi.alternatives().try(
+                Joi.boolean().label('boolean'),
+                Joi.alternatives().try(
+                    Joi.string().label('string'),
+                    Joi.number().label('number')
+                ).label('string or number')
+            );
+
+            expect(schema.describe()).to.equal({
+                type: 'alternatives',
+                matches: [
+                    {
+                        schema: {
+                            type: 'boolean',
+                            flags: {
+                                label: 'boolean'
+                            }
+                        }
+                    },
+                    {
+                        schema: {
+                            type: 'alternatives',
+                            flags: {
+                                label: 'string or number'
+                            },
+                            matches: [
+                                {
+                                    schema: {
+                                        type: 'string',
+                                        flags: {
+                                            label: 'string'
+                                        }
+                                    }
+                                },
+                                {
+                                    schema: {
+                                        type: 'number',
+                                        flags: {
+                                            label: 'number'
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            });
+        });
+
+        it('does not override existing label of then', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.alternatives()
+                    .conditional('a', { is: true, then: Joi.string().label('not x') })
+                    .label('x')
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                keys: {
+                    a: {
+                        type: 'boolean'
+                    },
+                    b: {
+                        type: 'alternatives',
+                        flags: {
+                            label: 'x'
+                        },
+                        matches: [
+                            {
+                                is: {
+                                    type: 'any',
+                                    allow: [{ override: true }, true],
+                                    flags: {
+                                        only: true,
+                                        presence: 'required'
+                                    }
+                                },
+                                ref: {
+                                    path: ['a']
+                                },
+                                then: {
+                                    type: 'string',
+                                    flags: {
+                                        label: 'not x'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            });
+        });
+
+        it('does not override existing label of otherwise', () => {
+
+            const schema = Joi.object({
+                a: Joi.boolean(),
+                b: Joi.alternatives()
+                    .conditional('a', { is: true, otherwise: Joi.string().label('not x') })
+                    .label('x')
+            });
+
+            expect(schema.describe()).to.equal({
+                type: 'object',
+                keys: {
+                    a: {
+                        type: 'boolean'
+                    },
+                    b: {
+                        type: 'alternatives',
+                        flags: {
+                            label: 'x'
+                        },
+                        matches: [
+                            {
+                                is: {
+                                    type: 'any',
+                                    allow: [{ override: true }, true],
+                                    flags: {
+                                        only: true,
+                                        presence: 'required'
+                                    }
+                                },
+                                ref: {
+                                    path: ['a']
+                                },
+                                otherwise: {
+                                    type: 'string',
+                                    flags: {
+                                        label: 'not x'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            });
+        });
     });
 
     describe('match()', () => {
