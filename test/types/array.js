@@ -2061,7 +2061,7 @@ describe('array', () => {
 
     describe('unique()', () => {
 
-        it('errors if duplicate numbers, strings, objects, binaries, functions, dates and booleans', () => {
+        it('errors if duplicate numbers, strings, objects, binaries, functions, dates, booleans, bigint', () => {
 
             const buffer = Buffer.from('hello world');
             const func = function () { };
@@ -2185,7 +2185,21 @@ describe('array', () => {
                         key: 1,
                         value: undefined
                     }
+                }],
+                [[1n, 1n], false, {
+                    message: '"[1]" contains a duplicate value',
+                    path: [1],
+                    type: 'array.unique',
+                    context: {
+                        pos: 1,
+                        dupePos: 0,
+                        dupeValue: 1n,
+                        label: '[1]',
+                        key: 1,
+                        value: 1n
+                    }
                 }]
+
             ]);
         });
 
