@@ -2061,7 +2061,7 @@ describe('array', () => {
 
     describe('unique()', () => {
 
-        it('errors if duplicate numbers, strings, objects, binaries, functions, dates, booleans, bigint', () => {
+        it('errors if duplicate numbers, strings, objects, binaries, functions, dates, booleans and bigints', () => {
 
             const buffer = Buffer.from('hello world');
             const func = function () { };
