@@ -32,7 +32,8 @@
     "scripts": {
         "prepublishOnly": "cd browser && npm install && npm run build",
         "test": "lab -t 100 -a @hapi/code -L -Y",
-        "test-cov-html": "lab -r html -o coverage.html -a @hapi/code"
+        "test-cov-html": "lab -r html -o coverage.html -a @hapi/code",
+        "select-test": "lab -t 100 -a @hapi/code -L -Y -g"
     },
     "license": "BSD-3-Clause"
 }
