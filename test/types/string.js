@@ -9012,6 +9012,15 @@ describe('string', () => {
             ]);
         });
 
+        it('validates uri after encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true });
+
+            Helper.validate(schema, { convert: true }, [
+                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/'],
+            ]);
+        })
+
         it('errors on unknown options', () => {
 
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');
