@@ -9017,9 +9017,9 @@ describe('string', () => {
             const schema = Joi.string().uri({ encodeUri: true });
 
             Helper.validate(schema, { convert: true }, [
-                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/'],
+                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/']
             ]);
-        })
+        });
 
         it('errors on unknown options', () => {
 
