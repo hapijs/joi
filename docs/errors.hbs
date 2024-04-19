@@ -1,0 +1,12 @@
+{{#each (getErrors jsdocs)}}
+#### `{{{ property }}}`
+
+{{{ trim tags.summary }}}
+{{#if tags.description}}
+
+{{{ trim tags.description }}}
+{{/if}}
+
+Template: `{{{ value }}}`
+
+{{/each}}
