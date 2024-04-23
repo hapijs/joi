@@ -9012,6 +9012,29 @@ describe('string', () => {
             ]);
         });
 
+        it('validates uri with accented characters with encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true });
+
+            Helper.validate(schema, { convert: true }, [
+                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/']
+            ]);
+        });
+
+        it('validates uri with accented characters without encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true });
+
+            Helper.validate(schema, { convert: false }, [
+                ['https://linkedin.com/in/aïssa/', false, {
+                    message: '"value" must contain only valid characters or "convert" must be allowed',
+                    path: [],
+                    type: 'string.uriEncoding',
+                    context: { value: 'https://linkedin.com/in/aïssa/', label: 'value' }
+                }]
+            ]);
+        });
+
         it('errors on unknown options', () => {
 
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');
