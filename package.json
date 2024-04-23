@@ -1,7 +1,7 @@
 {
     "name": "joi",
     "description": "Object schema validation",
-    "version": "17.12.3",
+    "version": "17.13.0",
     "repository": "git://github.com/hapijs/joi",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
