@@ -635,6 +635,73 @@ describe('Joi', () => {
         Helper.validate(schema, { stripUnknown: { arrays: false, objects: true }, allowUnknown: true }, [[obj, true, { a: 1, b: 'a' }]]);
     });
 
+    it('validates enforces local behavior of unknown(true) when stripUnknown is set', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().min(0).max(3),
+            loosyObject: Joi.object({
+                b1: Joi.string()
+            }).unknown(true), // allows extra keys
+            anotherLoosyObject: Joi.object({
+                c1: Joi.string()
+            }).unknown() // also allows extra keys
+        });
+
+        const obj = {
+            a: 1,
+            loosyObject: {
+                b1: 'c1',
+                b2: 'c2'
+            },
+            anotherLoosyObject: {
+                c1: 'c1',
+                c2: 'c2'
+            }
+        };
+
+        Helper.validate(schema, { stripUnknown: true }, [[obj, true, {
+            a: 1,
+            loosyObject: {
+                b1: 'c1',
+                b2: 'c2'
+            },
+            anotherLoosyObject: {
+                c1: 'c1',
+                c2: 'c2'
+            }
+        }]]);
+    });
+
+    it('validates enforces local behavior of unknown(false) when stripUnknown is set', () => {
+
+        const schema = Joi.object({
+            a: Joi.number().min(0).max(3),
+            strictObject: Joi.object({
+                b1: Joi.string()
+            }).unknown(false) // it shouldn't allow extra keys
+        });
+
+        const obj = {
+            a: 1,
+            strictObject: {
+                b1: 'b1',
+                b2: 'b2'
+            }
+        };
+
+        Helper.validate(schema, { stripUnknown: true }, [[obj, false, {
+            message: '"strictObject.b2" is not allowed',
+            path: ['strictObject', 'b2'],
+            type: 'object.unknown',
+            context: {
+                child: 'b2',
+                label: 'strictObject.b2',
+                key: 'b2',
+                value: 'b2'
+            }
+        }]]);
+    });
+
     it('validates dependencies when stripUnknown is set', () => {
 
         const schema = Joi.object({
