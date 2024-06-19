@@ -1983,6 +1983,18 @@ describe('alternatives', () => {
                 [{ p: 'a' }, false, 'oops']
             ]);
         });
+
+        it('validates alternatives with the correct type', () => {
+
+            const schema = Joi.alternatives([
+                Joi.boolean(),
+                Joi.function()
+            ]);
+
+            Helper.validate(schema, [
+                ['wrong', false, '"value" must be one of [boolean, function]']
+            ]);
+        });
     });
 
     describe('when()', () => {
