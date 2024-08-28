@@ -9043,6 +9043,65 @@ describe('string', () => {
             ]);
         });
 
+        it('validates uri with accented characters with encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true });
+
+            Helper.validate(schema, { convert: true }, [
+                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/'],
+                ['https://linkedin.com/in/a%C3%AFssa/', true, 'https://linkedin.com/in/a%C3%AFssa/'],
+                ['/#.domain.com/', false, {
+                    message: '"value" must be a valid uri',
+                    path: [],
+                    type: 'string.uri',
+                    context: { label: 'value', value: '/#.domain.com/' }
+                }]
+            ]);
+        });
+
+        it('validates relative uri with accented characters with encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true, allowRelative: true });
+
+            Helper.validate(schema, { convert: true }, [
+                ['/in/aïssa/', true, '/in/a%C3%AFssa/'],
+                ['/in/a%C3%AFssa/', true, '/in/a%C3%AFssa/']
+            ]);
+        });
+
+        it('validates uri with encodeUri and scheme', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true, scheme: 'https' });
+
+            Helper.validate(schema, { convert: true }, [
+                ['https://linkedin.com/in/aïssa/', true, 'https://linkedin.com/in/a%C3%AFssa/'],
+                ['http://linkedin.com/in/aïssa/', false, {
+                    message: '"value" must be a valid uri with a scheme matching the https pattern',
+                    path: [],
+                    type: 'string.uriCustomScheme',
+                    context: {
+                        scheme: 'https',
+                        value: 'http://linkedin.com/in/aïssa/',
+                        label: 'value'
+                    }
+                }]
+            ]);
+        });
+
+        it('validates uri with accented characters without encoding', () => {
+
+            const schema = Joi.string().uri({ encodeUri: true });
+
+            Helper.validate(schema, { convert: false }, [
+                ['https://linkedin.com/in/aïssa/', false, {
+                    message: '"value" must be a valid uri',
+                    path: [],
+                    type: 'string.uri',
+                    context: { value: 'https://linkedin.com/in/aïssa/', label: 'value' }
+                }]
+            ]);
+        });
+
         it('errors on unknown options', () => {
 
             expect(() => Joi.string().uri({ foo: 'bar', baz: 'qux' })).to.throw('Options contain unknown keys: foo,baz');

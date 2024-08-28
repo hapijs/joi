@@ -3087,6 +3087,7 @@ Requires the string value to be a valid [RFC 3986](http://tools.ietf.org/html/rf
     - `relativeOnly` - Restrict only relative URIs.  Defaults to `false`.
     - `allowQuerySquareBrackets` - Allows unencoded square brackets inside the query string. This is **NOT** RFC 3986 compliant but query strings like `abc[]=123&abc[]=456` are very common these days. Defaults to `false`.
     - `domain` - Validate the domain component using the options specified in [`string.domain()`](#stringdomainoptions).
+    - `encodeUri` - When `convert` is true, if the validation fails, attempts to encode the URI using [`encodeURI`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI) before validating it again. This allows to provide, for example, unicode URIs, and have it encoded for you. Defaults to `false`.
 
 ```js
 // Accept git or git http/https

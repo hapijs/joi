@@ -587,6 +587,21 @@ describe('errors', () => {
         expect(schema.validate({ x: { y: { a: [1] } } }, { errors: { label: 'key' } }).error).to.be.an.error('"[0]" must be a string');
     });
 
+    it('removes labels when label is false', () => {
+
+        const schema = Joi.object({
+            x: Joi.object({
+                y: Joi.object({
+                    z: Joi.valid('z').label('z'),
+                    a: Joi.array().items(Joi.string().label('item'))
+                })
+            })
+        }).options({ errors: { label: false } });
+
+        expect(schema.validate({ x: { y: { z: 'o' } } }).error).to.be.an.error('must be [z]');
+        expect(schema.validate({ x: { y: { a: [1] } } }).error).to.be.an.error('must be a string');
+    });
+
     describe('annotate()', () => {
 
         it('annotates error', () => {
