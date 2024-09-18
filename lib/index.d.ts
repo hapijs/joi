@@ -437,6 +437,12 @@ declare namespace Joi {
          * Validate the domain component using the options specified in `string.domain()`.
          */
         domain?: DomainOptions;
+        /**
+         * Encode URI before validation.
+         * 
+         * @default false
+         */
+        encodeUri?: boolean;
     }
 
     interface DataUriOptions {
@@ -1352,7 +1358,7 @@ declare namespace Joi {
 
     interface State {
         key?: string;
-        path?: string;
+        path?: (string | number)[];
         parent?: any;
         reference?: any;
         ancestors?: any;
