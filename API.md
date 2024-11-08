@@ -723,8 +723,8 @@ const schema = Joi.any().description('this key will match anything you give it')
 
 #### `any.empty(schema)`
 
-Considers anything that matches the schema to be empty (`undefined`).
-- `schema` - any object or **joi** schema to match. An undefined schema unsets that rule.
+Considers anything that matches the schema to be empty (`undefined`). Overrides any previous calls to empty.
+- `schema` - an object, value, or **joi** schema to match or an array of objects, values, and **joi** schemas to match. An undefined schema unsets that rule.
 
 ```js
 let schema = Joi.string().empty('');
