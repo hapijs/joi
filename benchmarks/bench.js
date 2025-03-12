@@ -38,7 +38,7 @@ if (args.compare) {
     try {
         compare = JSON.parse(Fs.readFileSync(args.compare, 'utf8'));
     }
-    catch (e) {
+    catch {
         // Ignore error
     }
 }

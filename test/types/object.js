@@ -1941,7 +1941,7 @@ describe('object', () => {
                 Joi.object().or({});
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -1951,7 +1951,7 @@ describe('object', () => {
                 Joi.object().or(123);
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -2085,7 +2085,7 @@ describe('object', () => {
                 Joi.object().oxor({});
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -2095,7 +2095,7 @@ describe('object', () => {
                 Joi.object().oxor(123);
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -3734,7 +3734,7 @@ describe('object', () => {
                 Joi.object().with({});
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -3744,7 +3744,7 @@ describe('object', () => {
                 Joi.object().with(123);
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -3971,7 +3971,7 @@ describe('object', () => {
                 Joi.object().without({});
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 
@@ -3981,7 +3981,7 @@ describe('object', () => {
                 Joi.object().without(123);
                 error = false;
             }
-            catch (e) {
+            catch {
                 error = true;
             }
 

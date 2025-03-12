@@ -59,7 +59,9 @@ validOpts = { stripUnknown: bool };
 validOpts = { stripUnknown: { arrays: bool } };
 validOpts = { stripUnknown: { objects: bool } };
 validOpts = { stripUnknown: { arrays: bool, objects: bool } };
-validOpts = { presence: 'optional' || 'required' || 'forbidden' };
+validOpts = { presence: 'optional' };
+validOpts = { presence: 'required' };
+validOpts = { presence: 'forbidden' };
 validOpts = { context: obj };
 validOpts = { noDefaults: bool };
 validOpts = {
@@ -202,17 +204,17 @@ validErrItem = {
   context: obj,
 };
 
-validErrFunc = (errs) => errs[0];
+validErrFunc = (errs) => errs[0] ? errs[0] : [];
 validErrFunc = (errs) => 'Some error';
 validErrFunc = (errs) => err;
 
 // error() can take function with ErrorReport argument
 validErrFunc = (errors) => {
-  const path: string = errors[0].path[0];
-  const code: string = errors[0].code;
-  const messages = errors[0].prefs.messages;
+  const path: string | undefined = errors[0]?.path[0];
+  const code: string | undefined = errors[0]?.code;
+  const messages = errors[0]?.prefs.messages;
 
-  const message: string = messages ? messages[code].rendered : 'Error';
+  const message: string = messages && code && messages[code]?.rendered || 'Error';
 
   const validationErr = new Error();
   validationErr.message = `[${path}]: ${message}`;

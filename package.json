@@ -15,20 +15,21 @@
         "validation"
     ],
     "dependencies": {
-        "@hapi/hoek": "^11.0.4",
-        "@hapi/tlds": "^1.0.6",
-        "@hapi/topo": "^6.0.2",
         "@hapi/address": "^5.1.1",
+        "@hapi/formula": "^3.0.2",
+        "@hapi/hoek": "^11.0.7",
         "@hapi/pinpoint": "^2.0.1",
-        "@hapi/formula": "^3.0.2"
+        "@hapi/tlds": "^1.1.0",
+        "@hapi/topo": "^6.0.2"
     },
     "devDependencies": {
         "@hapi/bourne": "^3.0.0",
         "@hapi/code": "^9.0.3",
+        "@hapi/eslint-plugin": "^7.0.0",
         "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
-        "@hapi/lab": "^25.1.3",
-        "@types/node": "^18.18.3",
-        "typescript": "^5.2.2"
+        "@hapi/lab": "^26.0.0",
+        "@types/node": "^18.19.80",
+        "typescript": "^5.8.2"
     },
     "scripts": {
         "prepublishOnly": "cd browser && npm install && npm run build",
