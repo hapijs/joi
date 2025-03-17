@@ -728,13 +728,9 @@ declare namespace Joi {
     }
 
     type ValidationResult<TSchema = any> = {
-        error: undefined;
+        error?: ValidationError;
         warning?: ValidationError;
         value: TSchema;
-    } | {
-        error: ValidationError;
-        warning?: ValidationError;
-        value: any;
     }
 
     interface CreateErrorOptions {
