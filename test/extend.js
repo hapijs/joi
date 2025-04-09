@@ -1298,6 +1298,17 @@ describe('extension', () => {
         expect(schema.$_getFlag('_hasNumbers')).to.be.true();
     });
 
+    it('fork in schema using id fails once rules applied on base schema are not being followed', () => {
+
+        const innerSchema = Joi.object({}).id('myId');
+        const baseSchema = Joi.object({
+            myField: innerSchema
+        });
+        const strictSchema = baseSchema.fork('myField', (keySchema) => keySchema.required());
+        const { error } = strictSchema.validate({});
+        expect(error).to.be.an.error('"myField" is required');
+    });
+
     it('supports fork', () => {
 
         const custom = Joi.extend((joi) => {
