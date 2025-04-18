@@ -1530,7 +1530,7 @@ describe('extension', () => {
                     try {
                         return { value: Bourne.parse(value) };
                     }
-                    catch (ignoreErr) { }
+                    catch { }
                 }
             }
         });
@@ -1579,7 +1579,7 @@ describe('extension', () => {
                     try {
                         return { value: Bourne.parse(value) };
                     }
-                    catch (ignoreErr) { }
+                    catch { }
                 }
             }
         });

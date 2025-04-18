@@ -1061,8 +1061,8 @@ declare namespace Joi {
         disallow(...values: any[]): this;
 
         /**
-         * Considers anything that matches the schema to be empty (undefined).
-         * @param schema - any object or joi schema to match. An undefined schema unsets that rule.
+         * Considers anything that matches the schema to be empty (undefined). Overrides any previous calls to empty.
+         * @param schema - an object, value, or joi schema to match or an array of objects, values, and joi schemas to match. An undefined schema unsets that rule.
          */
         empty(schema?: SchemaLike): this;
 
@@ -2127,12 +2127,12 @@ declare namespace Joi {
         array<TSchema = any[]>(): ArraySchema<TSchema>;
 
         /**
-         * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via boolean().
+         * Generates a schema object that matches a boolean data type (as well as the strings 'true' and 'false'). Can also be called via boolean().
          */
         bool<TSchema = boolean>(): BooleanSchema<TSchema>;
 
         /**
-         * Generates a schema object that matches a boolean data type (as well as the strings 'true', 'false', 'yes', and 'no'). Can also be called via bool().
+         * Generates a schema object that matches a boolean data type (as well as the strings 'true' and 'false'). Can also be called via bool().
          */
         boolean<TSchema = boolean>(): BooleanSchema<TSchema>;
 

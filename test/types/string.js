@@ -7618,7 +7618,7 @@ describe('string', () => {
                 ['file:///whatever', true],
                 ['mailto:asdf@asdf.com', true],
                 ['ftp://www.example.com', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['javascript:alert(\'hello\');', true],
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['f://some.host/path', true],
                 ['http://localhost:18/asdf', true],
@@ -7660,7 +7660,7 @@ describe('string', () => {
                 ['dash-test://foo/bar', true],
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['javascript:alert(\'hello\');', true],
                 ['file://localhost/etc/node/', true],
                 ['file:///etc/node/', true],
                 ['http://USER:PW@www.ExAmPlE.com/', true],
@@ -8046,7 +8046,7 @@ describe('string', () => {
                 ['file:///whatever', true],
                 ['mailto:asdf@asdf.com', true],
                 ['ftp://www.example.com', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['javascript:alert(\'hello\');', true],
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['f://some.host/path', true],
                 ['http://localhost:18/asdf', true],
@@ -8076,7 +8076,7 @@ describe('string', () => {
                 ['dash-test://foo/bar', true],
                 ['xmpp:isaacschlueter@jabber.org', true],
                 ['http://atpass:foo%40bar@127.0.0.1:8080/path?search=foo#bar', true],
-                ['javascript:alert(\'hello\');', true], // eslint-disable-line no-script-url
+                ['javascript:alert(\'hello\');', true],
                 ['file://localhost/etc/node/', true],
                 ['file:///etc/node/', true],
                 ['http://USER:PW@www.ExAmPlE.com/', true],
@@ -8406,7 +8406,7 @@ describe('string', () => {
                         value: 'javascript:alert(\'hello\');',
                         label: 'value'
                     }
-                }], // eslint-disable-line no-script-url
+                }],
                 ['xmpp:isaacschlueter@jabber.org', false, {
                     message: '"value" must be a valid relative uri',
                     path: [],
@@ -8676,7 +8676,7 @@ describe('string', () => {
                         value: 'javascript:alert(\'hello\');',
                         label: 'value'
                     }
-                }], // eslint-disable-line no-script-url
+                }],
                 ['file://localhost/etc/node/', false, {
                     message: '"value" must be a valid relative uri',
                     path: [],
