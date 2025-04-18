@@ -651,7 +651,7 @@ declare namespace Joi {
     }
 
     interface ExpressionOptions extends ReferenceOptions {
-        functions: Record<string, (...args: unknown[]) => unknown>
+        functions?: Record<string, (...args: unknown[]) => unknown>
     }
 
     interface StringRegexOptions {
