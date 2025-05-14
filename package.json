@@ -19,7 +19,7 @@
         "@hapi/formula": "^3.0.2",
         "@hapi/hoek": "^11.0.7",
         "@hapi/pinpoint": "^2.0.1",
-        "@hapi/tlds": "^1.1.0",
+        "@hapi/tlds": "^1.1.1",
         "@hapi/topo": "^6.0.2"
     },
     "devDependencies": {
@@ -29,7 +29,7 @@
         "@hapi/joi-legacy-test": "npm:@hapi/joi@15.x.x",
         "@hapi/lab": "^26.0.0",
         "@types/node": "^20.17.47",
-        "typescript": "^5.8.2"
+        "typescript": "^5.8.3"
     },
     "scripts": {
         "prepublishOnly": "cd browser && npm install && npm run build",
