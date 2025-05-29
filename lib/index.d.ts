@@ -8,6 +8,7 @@
 // TypeScript Version: 2.8
 
 // TODO express type of Schema in a type-parameter (.default, .valid, .example etc)
+import type { StandardSchemaV1 } from '@standard-schema/spec';
 
 declare namespace Joi {
     type Types =
@@ -961,7 +962,7 @@ declare namespace Joi {
         $_validate(value: any, state: State, prefs: ValidationOptions): ValidationResult;
     }
 
-    interface AnySchema<TSchema = any> extends SchemaInternals {
+    interface AnySchema<TSchema = any> extends SchemaInternals, StandardSchemaV1<TSchema> {
         /**
          * Flags of current schema.
          */
