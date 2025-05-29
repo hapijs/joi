@@ -1,6 +1,6 @@
 import * as Lab from '@hapi/lab';
 import * as Joi from '..';
-
+import { StandardSchemaV1 } from "@standard-schema/spec";
 
 const { expect } = Lab.types;
 
@@ -1417,3 +1417,44 @@ const commentWithAlternativesSchemaObject = Joi.object<
 expect.error(userSchema2.keys({ height: Joi.number() }));
 
 expect.error(Joi.string('x'));
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Standard Schema Types
+{
+  Joi.any()['~standard'].version
+  Joi.any()['~standard'].vendor
+
+  {
+    // Standard Validate
+    let value = { username: 'example', password: 'example' };
+    type TResult = { username: string; password: string };
+    const schema = Joi.object<TResult>().keys({
+      username: Joi.string().max(255).required(),
+      password: Joi.string()
+          .pattern(/^[a-zA-Z0-9]{3,255}$/)
+          .required(),
+    });
+    let result: StandardSchemaV1.Result<TResult> | Promise<StandardSchemaV1.Result<TResult>>;
+
+    result = schema['~standard'].validate(value);
+    if (result instanceof Promise) {
+      throw Error("Expected sync result");
+    }
+
+    if (result.issues) {
+      throw Error('issues should not be set')
+    }
+    expect.type<TResult>(result.value)
+
+    const falsyValue = { username: 'example' };
+    result = schema['~standard'].validate(falsyValue);
+    if (result instanceof Promise) {
+      throw new Error("Expected sync result");
+    }
+
+    if (!result.issues) {
+      throw Error('issues should be set')
+    }
+    expect.error(result.value)
+  }
+}
