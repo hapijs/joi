@@ -3196,6 +3196,58 @@ describe('string', () => {
             ]);
         });
 
+        it('validates wrapper', () => {
+
+            // Wthout wrapper all are valid GUIDs
+            Helper.validate(Joi.string().guid(), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', true],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', true],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', true]
+            ]);
+
+            // Wrapper false means no wrapper is allowed
+            Helper.validate(Joi.string().guid({ wrapper: false }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', true],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', false, '"value" must be a valid GUID'],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', false, '"value" must be a valid GUID'],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', false, '"value" must be a valid GUID']
+            ]);
+
+            // Wrapper true means a wrapper is enforced
+            Helper.validate(Joi.string().guid({ wrapper: true }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', true],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', true],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', true]
+            ]);
+
+            // Wrapper can be set to a specific value
+            Helper.validate(Joi.string().guid({ wrapper: '{' }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', true],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', false, '"value" must be a valid GUID'],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', false, '"value" must be a valid GUID']
+            ]);
+
+            // Wrapper can be set to a specific value
+            Helper.validate(Joi.string().guid({ wrapper: '(' }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', false, '"value" must be a valid GUID'],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', false, '"value" must be a valid GUID'],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', true]
+            ]);
+
+            // Wrapper can be set to a specific value
+            Helper.validate(Joi.string().guid({ wrapper: '[' }), [
+                ['69593D62-71EA-4548-85E4-04FC71357423', false, '"value" must be a valid GUID'],
+                ['{69593D62-71EA-4548-85E4-04FC71357423}', false, '"value" must be a valid GUID'],
+                ['[69593D62-71EA-4548-85E4-04FC71357423]', true],
+                ['(69593D62-71EA-4548-85E4-04FC71357423)', false, '"value" must be a valid GUID']
+            ]);
+
+        });
+
         it('validates combination of guid and min', () => {
 
             const rule = Joi.string().guid().min(36);

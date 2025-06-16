@@ -2801,24 +2801,32 @@ Possible validation errors: [`string.email`](#stringemail)
 
 Requires the string value to be a valid GUID.
 
-- `options` - optional settings:
-    - `version` - specifies one or more acceptable versions. Can be an Array or String with the following values:
-      `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, `uuidv5`, `uuidv6`, `uuidv7` or `uuidv8`. If no `version` is specified then it is assumed to be a generic `guid`
-      which will not validate the version or variant of the guid and just check for general structure format.
-    - `separator` - defines the allowed or required GUID separator where:
-        - `true` - a separator is required, can be either `:` or `-`.
-        - `false` - separator is not allowed.
-        - `'-'` - a dash separator is required.
-        - `':'` - a colon separator is required.
-        - defaults to optional `:` or `-` separator.
+-   `options` - optional settings:
+    -   `version` - specifies one or more acceptable versions. Can be an Array or String with the following values:
+        `uuidv1`, `uuidv2`, `uuidv3`, `uuidv4`, `uuidv5`. If no `version` is specified then it is assumed to be a generic `guid`
+        which will not validate the version or variant of the guid and just check for general structure format.
+    -   `separator` - defines the allowed or required GUID separator where:
+        -   `true` - a separator is required, can be either `:` or `-`.
+        -   `false` - separator is not allowed.
+        -   `'-'` - a dash separator is required.
+        -   `':'` - a colon separator is required.
+        -   defaults to optional `:` or `-` separator.
+    -   `wrapper` - defines the allowed or required GUID wrapper characters where:
+        -   `undefined` - (default) the GUID can be optionally wrapped with `{}`, `[]`, or `()`. The opening and closing characters must be a matching pair.
+        -   `true` - the GUID must be wrapped with `{}`, `[]`, or `()`. The opening and closing characters must be a matching pair.
+        -   `false` - wrapper characters are not allowed.
+        -   `'['`, `'{'`, or `'('` - a specific wrapper is required (e.g., if `wrapper` is `'['`, the GUID must be enclosed in square brackets).
+
 
 ```js
 const schema = Joi.string().guid({
     version: [
         'uuidv4',
         'uuidv5'
-    ]
+    ],
+     wrapper: false 
 });
+
 ```
 
 Possible validation errors: [`string.guid`](#stringguid)
