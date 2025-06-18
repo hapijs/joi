@@ -439,7 +439,7 @@ declare namespace Joi {
         domain?: DomainOptions;
         /**
          * Encode URI before validation.
-         * 
+         *
          * @default false
          */
         encodeUri?: boolean;
@@ -785,7 +785,8 @@ declare namespace Joi {
 
     type Primitives = string | number | boolean | bigint | symbol | null;
 
-    type SchemaLikeWithoutArray<TSchema = any> = TSchema extends any[] ? never :
+    type IsArray<T> = T extends any[] ? true : false;
+    type SchemaLikeWithoutArray<TSchema = any> = IsArray<TSchema> extends true ? never :
       (Primitives | Schema<TSchema> | SchemaMap<TSchema>);
     type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
 
