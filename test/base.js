@@ -4020,4 +4020,56 @@ describe('any', () => {
             expect(() => Joi.any().$_addRule({ name: 5 })).to.throw('Invalid rule name');
         });
     });
+
+    describe('~standard', () => {
+
+        it('returns the version number of the standard', () => {
+
+            const schema = Joi.number();
+            expect(schema['~standard'].version).to.equal(1);
+        });
+
+        it('returns the vendor name of the schema library', () => {
+
+            const schema = Joi.number();
+            expect(schema['~standard'].vendor).to.equal('joi');
+        });
+
+        describe('validate', () => {
+
+            it('return only value when passing', () => {
+
+                const schema = Joi.string();
+                expect(schema['~standard'].validate('3')).to.equal({
+                    value: '3'
+                });
+            });
+
+            it('return only issues when not passing', () => {
+
+                const schema = Joi.string();
+                expect(schema['~standard'].validate(3)).to.equal({
+                    issues: [{ message: '"value" must be a string', path: [] }]
+                });
+            });
+
+            it('return only issues when not passing (custom error is Error)', () => {
+
+                const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
+                expect(schema['~standard'].validate(3)).to.equal({
+                    issues: [{ message: 'Was REALLY expecting a string' }]
+                });
+            });
+
+            it('return only issues when not passing (custom error is validation error function that return string)', () => {
+
+                const schema = Joi.object({
+                    foo: Joi.number().min(0).error((errors) => new Error('"foo" requires a positive number'))
+                });
+                expect(schema['~standard'].validate({ foo: -2 })).to.equal({
+                    issues: [{ message: '"foo" requires a positive number' }]
+                });
+            });
+        });
+    });
 });
