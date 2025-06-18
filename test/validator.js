@@ -191,7 +191,10 @@ describe('Validator', () => {
             });
 
             expect(await schema.validateAsync({ id: 'valid' })).to.equal({ id: 'verified!' });
+            expect(await schema['~standard'].validate({ id: 'valid' })).to.equal({ value: { id: 'verified!' } });
+
             expect(await schema.validateAsync({ id: 'skip' })).to.equal({ id: 'skip!' });
+            expect(await schema['~standard'].validate({ id: 'skip' })).to.equal({ value: { id: 'skip!' } });
         });
 
         it('executes externals on nested object child', async () => {
@@ -228,9 +231,16 @@ describe('Validator', () => {
             });
 
             expect(await schema.validateAsync({ user: { id: 'valid' } })).to.equal({ user: { id: 'verified!' } });
+            expect(await schema['~standard'].validate({ user: { id: 'valid' } })).to.equal({ value: { user: { id: 'verified!' } } });
+
             expect(await schema.validateAsync({ user: { id: 'skip' } })).to.equal({ user: { id: 'skip!' } });
+            expect(await schema['~standard'].validate({ user: { id: 'skip' } })).to.equal({ value: { user: { id: 'skip!' } } });
+
             expect(await schema.validateAsync({ user: { id: 'unchanged' } })).to.equal({ user: { id: 'unchanged!' } });
+            expect(await schema['~standard'].validate({ user: { id: 'unchanged' } })).to.equal({ value: { user: { id: 'unchanged!' } } });
+
             await expect(schema.validateAsync({ user: { id: 'other' } })).to.reject('Invalid id (user.id)');
+            expect(await schema['~standard'].validate({ user: { id: 'other' } })).to.equal({ issues: [{ message: 'Invalid id (user.id)' }] });
         });
 
         it('executes externals on root', async () => {
@@ -255,6 +265,7 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync('valid');
             expect(result).to.equal('verified!');
+            expect(await schema['~standard'].validate('valid')).to.equal({ value: 'verified!' });
         });
 
         it('executes externals on array item', async () => {
@@ -283,7 +294,10 @@ describe('Validator', () => {
             const schema = Joi.array().items(Joi.string().external(check).external(append));
 
             expect(await schema.validateAsync(['valid'])).to.equal(['verified!']);
+            expect(await schema['~standard'].validate(['valid'])).to.equal({ value: ['verified!'] });
+
             expect(await schema.validateAsync(['skip'])).to.equal(['skip!']);
+            expect(await schema['~standard'].validate(['skip'])).to.equal({ value: ['skip!'] });
         });
 
         it('executes externals on array', async () => {
@@ -291,6 +305,7 @@ describe('Validator', () => {
             const schema = Joi.array().items(Joi.string()).external((value) => [...value, 'extra']);
 
             expect(await schema.validateAsync(['valid'])).to.equal(['valid', 'extra']);
+            expect(await schema['~standard'].validate(['valid'])).to.equal({ value: ['valid', 'extra'] });
         });
 
         it('skips externals when prefs is false', async () => {
@@ -305,6 +320,8 @@ describe('Validator', () => {
             });
 
             await expect(schema.validateAsync({ id: 'valid' })).to.reject('Invalid id (id)');
+            expect(await schema['~standard'].validate({ id: 'valid' })).to.equal({ issues: [{ message: 'Invalid id (id)' }] });
+
             expect(() => schema.validate({ id: 'valid' }, { externals: false })).to.not.throw();
             expect(() => schema.validate({ id: 'valid' })).to.throw('Schema with external rules must use validateAsync()');
         });
@@ -322,6 +339,7 @@ describe('Validator', () => {
             });
 
             await expect(schema.validateAsync({ id: 'valid' })).to.reject('"id" length must be at least 10 characters long');
+            expect(await schema['~standard'].validate({ id: 'valid' })).to.equal({ issues: [{ message: '"id" length must be at least 10 characters long', path: ['id'] }] });
             expect(called).to.be.false();
         });
 
@@ -350,6 +368,8 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync(['valid']);
             expect(result).to.equal(['valid']);
+            expect(await schema['~standard'].validate(['valid'])).to.equal({ value: ['valid'] });
+
             expect(called).to.be.false();
         });
 
@@ -365,6 +385,8 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync(input);
             expect(result).to.equal({ x: true });
+            expect(await schema['~standard'].validate(input)).to.equal({ value: { x: true } });
+
             expect(input).to.equal({ x: false });
         });
 
@@ -380,6 +402,8 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync(input);
             expect(result).to.equal({ a: { x: true } });
+            expect(await schema['~standard'].validate(input)).to.equal({ value: { a: { x: true } } });
+
             expect(input).to.equal({ a: { x: false } });
         });
 
@@ -395,6 +419,8 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync(input);
             expect(result).to.equal([1, 'x']);
+            expect(await schema['~standard'].validate(input)).to.equal({ value: [1, 'x'] });
+
             expect(input).to.equal([1]);
         });
 
@@ -410,6 +436,7 @@ describe('Validator', () => {
 
             const result = await schema.validateAsync(input);
             expect(result).to.equal([[1, 'x']]);
+            expect(await schema['~standard'].validate(input)).to.equal({ value: [[1, 'x']] });
             expect(input).to.equal([[1]]);
         });
 
@@ -559,6 +586,7 @@ describe('Validator', () => {
                     value: 'my stringmy string'
                 }
             }]);
+            expect(await schema['~standard'].validate(input)).to.equal({ issues: [{ message: '"value" length must be less than or equal to 10 characters long', path: [] }] });
         });
 
         it('should add multiple errors when errorsArray helper is used', async () => {
@@ -598,6 +626,7 @@ describe('Validator', () => {
                     value: 'my stringmy string'
                 }
             }]);
+            expect(await schema['~standard'].validate(input)).to.equal({ issues: [{ message: '"value" length must be less than or equal to 10 characters long', path: [] }, { message: '"value" length must be at least 1 characters long', path: [] }] });
         });
 
         it('should add a custom error when message helper is used', async () => {
@@ -621,6 +650,7 @@ describe('Validator', () => {
                     custom: 'denied'
                 }
             }]);
+            expect(await schema['~standard'].validate(input)).to.equal({ issues: [{ message: '"value" has an invalid value my string (denied)', path: [] }] });
         });
 
         it('should add warnings when warn helper is used on a link', async () => {
@@ -708,6 +738,7 @@ describe('Validator', () => {
                     sign: '>'
                 }
             }]);
+            expect(await schema['~standard'].validate({ a: 1, b: 4 })).to.equal({ issues: [{ message: '"b" should be > 4', path: ['b'] }] });
         });
 
         it('should call multiple externals when abortEarly is false and error helper is used', async () => {
