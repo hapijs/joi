@@ -402,6 +402,7 @@ let value1 = Joi.array().items(Joi.string(), Joi.boolean(), Joi.number(), Joi.ob
 expect.type<Joi.ArraySchema<(string | number | boolean | {key: string})[]>>(value1)
 
 expect.type<Joi.ArraySchema<boolean[]>>(Joi.array().items(Joi.boolean()));
+expect.type<Joi.ArraySchema<number[][]>>(Joi.array().items(Joi.array().items(Joi.number())));
 
 // - - - - - - - -
 

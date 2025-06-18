@@ -785,9 +785,10 @@ declare namespace Joi {
 
     type Primitives = string | number | boolean | bigint | symbol | null;
 
-    type IsArray<T> = T extends any[] ? true : false;
-    type SchemaLikeWithoutArray<TSchema = any> = IsArray<TSchema> extends true ? never :
-      (Primitives | Schema<TSchema> | SchemaMap<TSchema>);
+    type SchemaLikeWithoutArray<TSchema = any> = Exclude<
+      (Primitives | Schema<TSchema> | SchemaMap<TSchema>),
+      any[]
+    >;
     type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
 
     type NullableType<T> = undefined | null | T
