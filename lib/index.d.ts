@@ -1154,6 +1154,11 @@ declare namespace Joi {
         invalid(...values: any[]): this;
 
         /**
+         * Returns a boolean indicating whether this schema contains a rule that requires asynchronous validation.
+         */
+        isAsync(): boolean;
+
+        /**
          * Same as `rule({ keep: true })`.
          *
          * Note that `keep()` will terminate the current ruleset and cannot be followed by another rule option.
