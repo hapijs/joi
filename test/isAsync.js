@@ -72,6 +72,10 @@ describe('isAsync()', () => {
             otherwise: Joi.string().external(() => {})
         }).isAsync()).to.be.true();
         expect(Joi.any().when('a', {
+            is: 'b',
+            otherwise: Joi.string()
+        }).isAsync()).to.be.false();
+        expect(Joi.any().when('a', {
             switch: [
                 { is: 'b', then: Joi.string() },
                 { is: 'c', then: Joi.number().external(() => {}), otherwise: Joi.string() }
@@ -80,8 +84,20 @@ describe('isAsync()', () => {
         expect(Joi.any().when('a', {
             switch: [
                 { is: 'b', then: Joi.string() },
+                { is: 'c', then: Joi.number(), otherwise: Joi.string() }
+            ]
+        }).isAsync()).to.be.false();
+        expect(Joi.any().when('a', {
+            switch: [
+                { is: 'b', then: Joi.string() },
                 { is: 'c', then: Joi.string(), otherwise: Joi.number().external(() => {}) }
             ]
         }).isAsync()).to.be.true();
+        expect(Joi.any().when('a', {
+            switch: [
+                { is: 'b', then: Joi.string() },
+                { is: 'c', then: Joi.string(), otherwise: Joi.number() }
+            ]
+        }).isAsync()).to.be.false();
     });
 });
