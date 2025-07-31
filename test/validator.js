@@ -167,7 +167,7 @@ describe('Validator', () => {
 
             const check = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
 
                 if (id === 'valid') {
                     return 'verified';
@@ -182,7 +182,7 @@ describe('Validator', () => {
 
             const append = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 return id + '!';
             };
 
@@ -201,7 +201,7 @@ describe('Validator', () => {
 
             const check = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
 
                 if (id === 'valid') {
                     return 'verified';
@@ -220,7 +220,7 @@ describe('Validator', () => {
 
             const append = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 return id + '!';
             };
 
@@ -247,7 +247,7 @@ describe('Validator', () => {
 
             const check = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 if (id === 'valid') {
                     return 'verified';
                 }
@@ -257,7 +257,7 @@ describe('Validator', () => {
 
             const append = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 return id + '!';
             };
 
@@ -272,7 +272,7 @@ describe('Validator', () => {
 
             const check = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
 
                 if (id === 'valid') {
                     return 'verified';
@@ -287,7 +287,7 @@ describe('Validator', () => {
 
             const append = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 return id + '!';
             };
 
@@ -347,7 +347,7 @@ describe('Validator', () => {
 
             const append = async (id) => {
 
-                await Hoek.wait();
+                await Hoek.wait(0);
                 return id + '!';
             };
 
