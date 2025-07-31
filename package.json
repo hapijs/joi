@@ -26,7 +26,8 @@
         "@hapi/hoek": "^11.0.7",
         "@hapi/pinpoint": "^2.0.1",
         "@hapi/tlds": "^1.1.1",
-        "@hapi/topo": "^6.0.2"
+        "@hapi/topo": "^6.0.2",
+        "@standard-schema/spec": "^1.0.0"
     },
     "devDependencies": {
         "@hapi/bourne": "^3.0.0",

@@ -42,6 +42,11 @@ exports.validate = function (schema, prefs, tests) {
             }
 
             const { error: errord, value: valued } = schema.validate(input, Object.assign({ debug: true }, prefs));
+
+            if (prefs === null) {
+                internals.standardValidate(schema, test, { errord, valued });
+            }
+
             const { error, value } = schema.validate(input, prefs);
 
             expect(error).to.equal(errord);
@@ -113,4 +118,28 @@ internals.thrownAt = function () {
         line: at[2],
         column: at[3]
     };
+};
+
+
+internals.standardValidate = function (schema, test, { errord, valued }) {
+
+    const [input, pass] = test;
+    const { issues, value } = schema['~standard'].validate(input);
+
+    if (pass) {
+        expect(issues).to.equal(undefined);
+        expect(value).to.equal(valued);
+    }
+
+    if (!pass) {
+        expect(value).to.equal(undefined);
+    }
+
+    if (!pass && !errord.details) {
+        expect(issues.length).to.equal(1);
+    }
+
+    if (!pass && errord.details) {
+        expect(issues.length).to.equal(errord.details.length);
+    }
 };
