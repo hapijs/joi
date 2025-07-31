@@ -84,4 +84,16 @@ describe('isAsync()', () => {
             ]
         }).isAsync()).to.be.true();
     });
+
+    it('returns false for alternatives without switch', () => {
+
+        expect(Joi.object({
+            limit: Joi.any(),
+            arr: Joi.array(),
+            arr2: Joi.when('arr', {
+                is: Joi.array().min(Joi.ref('limit')),
+                then: Joi.array()
+            })
+        }).isAsync()).to.be.false();
+    });
 });
