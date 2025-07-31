@@ -876,6 +876,10 @@ const schema = {
 
 Possible validation errors: [`any.invalid`](#anyinvalid)
 
+#### `any.isAsync()`
+
+Returns a boolean indicating whether this schema contains a rule that requires asynchronous validation.
+
 #### `any.keep()`
 
 Same as [`rule({ keep: true })`](#anyruleoptions).
