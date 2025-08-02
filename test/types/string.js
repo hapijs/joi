@@ -3248,6 +3248,19 @@ describe('string', () => {
 
         });
 
+        it('errors on invalid wrapper', () => {
+
+            expect(() => {
+
+                Joi.string().guid({ wrapper: 1 });
+            }).to.throw('"wrapper" must be true, false, or one of "{", "[", "("');
+
+            expect(() => {
+
+                Joi.string().guid({ wrapper: '|' });
+            }).to.throw('"wrapper" must be true, false, or one of "{", "[", "("');
+        });
+
         it('validates combination of guid and min', () => {
 
             const rule = Joi.string().guid().min(36);
