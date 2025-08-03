@@ -407,6 +407,14 @@ declare namespace Joi {
     interface GuidOptions {
         version?: GuidVersions[] | GuidVersions;
         separator?: boolean | '-' | ':';
+        /**
+         * Defines the allowed or required GUID wrapper characters where:
+         * - `undefined` - (default) the GUID can be optionally wrapped with `{}`, `[]`, or `()`. The opening and closing characters must be a matching pair.
+         * - `true` - the GUID must be wrapped with `{}`, `[]`, or `()`. The opening and closing characters must be a matching pair.
+         * - `false` - wrapper characters are not allowed.
+         * - `'['`, `'{'`, or `'('` - a specific wrapper is required (e.g., if `wrapper` is `'['`, the GUID must be enclosed in square brackets).
+         */
+        wrapper?: true | false | '[' | '{' | '(' | undefined;
     }
 
     interface UriOptions {
