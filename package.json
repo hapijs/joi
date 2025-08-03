@@ -1,7 +1,7 @@
 {
     "name": "joi",
     "description": "Object schema validation",
-    "version": "17.13.3",
+    "version": "18.0.0",
     "repository": {
         "url": "git://github.com/hapijs/joi",
         "type": "git"
