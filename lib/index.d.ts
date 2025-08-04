@@ -845,15 +845,13 @@ declare namespace Joi {
         ? (StrictSchemaMap<T> | ObjectSchema<T>)
         : never
 
-    type PartialSchemaMap<TSchema = any> = {
-        [key in keyof TSchema]?: SchemaLike | SchemaLike[];
-    }
-
     type StrictSchemaMap<TSchema = any> =  {
         [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>
     };
 
-    type SchemaMap<TSchema = any, isStrict = false> = isStrict extends true ? StrictSchemaMap<TSchema> : PartialSchemaMap<TSchema>
+    type SchemaMap<TSchema = any> = {
+        [key in keyof TSchema]: Schema<TSchema[key]> | TSchema[key]
+    }
 
     type Schema<P = any> =
         | AnySchema<P>
@@ -1753,8 +1751,8 @@ declare namespace Joi {
         /**
          * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
          */
-        append(schema?: SchemaMap<TSchema>): this;
-        append<TSchemaExtended = any, T = TSchemaExtended>(schema?: SchemaMap<T>): ObjectSchema<T>
+        append<TSchemaExtended extends null | undefined>(schema?: TSchemaExtended): this;
+        append<TSchemaExtended = any>(schema?: SchemaMap<TSchemaExtended>): ObjectSchema<TSchemaExtended & TSchema>
 
         /**
          * Verifies an assertion where.
@@ -1773,7 +1771,8 @@ declare namespace Joi {
         /**
          * Sets or extends the allowed object keys.
          */
-        keys(schema?: SchemaMap<TSchema>): this;
+        keys<TSchemaExtended extends null | undefined>(schema?: TSchemaExtended): this;
+        keys<TSchemaExtended = any>(schema?: SchemaMap<TSchemaExtended>): ObjectSchema<TSchema & TSchemaExtended>;
 
         /**
          * Specifies the exact number of keys in the object.
@@ -1832,7 +1831,7 @@ declare namespace Joi {
         /**
          * Renames a key to another name (deletes the renamed key).
          */
-        rename(from: string | RegExp, to: string, options?: RenameOptions): this;
+        rename<From extends keyof TSchema, To extends string>(from: From | RegExp, to: To, options?: RenameOptions): ObjectSchema<Pick<TSchema, Exclude<keyof TSchema, From>> & {[P in To]: TSchema[From]}>;
 
         /**
          * Requires the object to be a Joi schema instance.
@@ -1847,12 +1846,12 @@ declare namespace Joi {
         /**
          * Requires the presence of other keys whenever the specified key is present.
          */
-        with(key: string, peers: string | string[], options?: DependencyOptions): this;
+        with<Key extends keyof TSchema>(key: Key, peers: Exclude<keyof TSchema, Key> | Exclude<keyof TSchema, Key>[], options?: DependencyOptions): this;
 
         /**
          * Forbids the presence of other keys whenever the specified is present.
          */
-        without(key: string, peers: string | string[], options?: DependencyOptions): this;
+        without<Key extends keyof TSchema>(key: Key, peers: Exclude<keyof TSchema, Key> | Exclude<keyof TSchema, Key>[], options?: DependencyOptions): this;
 
         /**
          * Defines an exclusive relationship between a set of keys. one of them is required but not at the same time.
@@ -2171,8 +2170,7 @@ declare namespace Joi {
         /**
          * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
          */
-        // tslint:disable-next-line:no-unnecessary-generics
-        object<TSchema = any, isStrict = false, T = TSchema>(schema?: SchemaMap<T, isStrict>): ObjectSchema<TSchema>;
+        object<TSchema = {}>(schema?: SchemaMap<TSchema>): ObjectSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow('').
