@@ -848,12 +848,22 @@ declare namespace Joi {
     type PartialSchemaMap<TSchema = any> = {
         [key in keyof TSchema]?: SchemaLike | SchemaLike[];
     }
+    
+    type PartialUnchangedSchemaMap<TSchema = any> = {
+        [key in keyof TSchema]: SchemaLike | SchemaLike[];
+    }
 
     type StrictSchemaMap<TSchema = any> =  {
         [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>
     };
 
-    type SchemaMap<TSchema = any, isStrict = false> = isStrict extends true ? StrictSchemaMap<TSchema> : PartialSchemaMap<TSchema>
+    type StrictUnchangedSchemaMap<TSchema = any> =  {
+        [key in keyof TSchema]: ObjectPropertiesSchema<TSchema[key]>
+    };
+
+    type SchemaMap<TSchema = any, isStrict = false, dontChangeOptional = false> = isStrict extends true 
+        ? (dontChangeOptional extends true ? StrictUnchangedSchemaMap<TSchema> : StrictSchemaMap<TSchema>)
+        : (dontChangeOptional extends true ? PartialUnchangedSchemaMap<TSchema> : PartialSchemaMap<TSchema>);
 
     type Schema<P = any> =
         | AnySchema<P>
@@ -2172,7 +2182,7 @@ declare namespace Joi {
          * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
          */
         // tslint:disable-next-line:no-unnecessary-generics
-        object<TSchema = any, isStrict = false, T = TSchema>(schema?: SchemaMap<T, isStrict>): ObjectSchema<TSchema>;
+        object<TSchema = any, isStrict = false, dontChangeOptional = false, T = TSchema>(schema?: SchemaMap<T, isStrict, dontChangeOptional>): ObjectSchema<TSchema>;
 
         /**
          * Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow('').
