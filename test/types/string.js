@@ -5464,7 +5464,7 @@ describe('string', () => {
         });
     });
 
-    describe('isoData()', () => {
+    describe('isoDate()', () => {
 
         it('validates isoDate', () => {
 
@@ -5639,6 +5639,24 @@ describe('string', () => {
                     path: [],
                     type: 'string.isoDate',
                     context: { value: '2013-1841', label: 'value' }
+                }],
+                ['2013-04-31', false, {
+                    message: '"value" must be in iso format',
+                    path: [],
+                    type: 'string.isoDate',
+                    context: { value: '2013-04-31', label: 'value' }
+                }],
+                ['2013-04-31T24:00', false, {
+                    message: '"value" must be in iso format',
+                    path: [],
+                    type: 'string.isoDate',
+                    context: { value: '2013-04-31T24:00', label: 'value' }
+                }],
+                ['2025-02-29T12:21', false, {
+                    message: '"value" must be in iso format',
+                    path: [],
+                    type: 'string.isoDate',
+                    context: { value: '2025-02-29T12:21', label: 'value' }
                 }]
             ]);
         });
