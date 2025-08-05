@@ -1001,7 +1001,7 @@ expr = Joi.expression('{{foo}}', { map: [['key', 'value']] });
 expr = Joi.expression('{{foo}}', { prefix: { local: '%' } });
 expr = Joi.expression('{{foo}}', { separator: '_' });
 expr = Joi.expression('{{foo}}', { functions: { foo: (...args) => 'return' } });
-expect.type<string>(Joi.expression('{{foo}}').render(42, {} as Joi.State, {}, {}))
+expect.type<string>({} as ReturnType<ReturnType<typeof Joi.expression>['render']>)
 
 expr = Joi.x('{{foo}}');
 expr = Joi.x('{{foo}}', { adjust: (value) => value });
@@ -1012,7 +1012,7 @@ expr = Joi.x('{{foo}}', { map: [['key', 'value']] });
 expr = Joi.x('{{foo}}', { prefix: { local: '%' } });
 expr = Joi.x('{{foo}}', { separator: '_' });
 expr = Joi.x('{{foo}}', { functions: { foo: (...args) => 'return' } });
-expect.type<string>(Joi.x('{{foo}}').render(42, {} as Joi.State, {}, {}))
+expect.type<string>({} as ReturnType<ReturnType<typeof Joi.x>['render']>)
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
