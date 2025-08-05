@@ -27,7 +27,7 @@ declare namespace Joi {
 
     type BasicType = boolean | number | string | any[] | object | null;
 
-    type LanguageMessages = Record<string, string | Record<string, string>>;
+    type LanguageMessages = Record<string, string | Template | Record<string, string | Template>>;
 
     type PresenceMode = 'optional' | 'required' | 'forbidden';
 
@@ -648,6 +648,10 @@ declare namespace Joi {
          * and template rendering. Defaults to false.
          */
         render?: boolean;
+    }
+
+    interface ExpressionOptions extends ReferenceOptions {
+        functions?: Record<string, (...args: unknown[]) => unknown>
     }
 
     interface StringRegexOptions {
@@ -2003,6 +2007,11 @@ declare namespace Joi {
         toString(): string;
     }
 
+    interface Template {
+        render(value: any, state: State, prefs: any, local: any, options?: any): string
+        toString(): string;
+    }
+
     type ExtensionBoundSchema = Schema & SchemaInternals;
 
     interface RuleArgs {
@@ -2276,7 +2285,7 @@ declare namespace Joi {
         /**
          * Generates a dynamic expression using a template string.
          */
-        expression(template: string, options?: ReferenceOptions): any;
+        expression(template: string, options?: ExpressionOptions): Template;
 
         /**
          * Creates a new Joi instance customized with the extension(s) you provide included.
@@ -2340,8 +2349,9 @@ declare namespace Joi {
 
         /**
          * Generates a dynamic expression using a template string.
+         * @see {@link Root.expression}
          */
-        x(template: string, options?: ReferenceOptions): any;
+        x(template: string, options?: ExpressionOptions): Template;
 
         // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
         // Below are undocumented APIs. use at your own risk
