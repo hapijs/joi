@@ -1705,6 +1705,12 @@ declare namespace Joi {
 
   type ComparatorFunction = (a: any, b: any) => boolean;
 
+  type UnwrapSchemaLikeWithoutArray<T> = T extends Joi.SchemaLikeWithoutArray<
+    infer U
+  >
+    ? U
+    : never;
+
   interface ArraySchema<TSchema = any[]> extends AnySchema<TSchema> {
     /**
      * Verifies that an assertion passes for at least one item in the array, where:
@@ -1723,38 +1729,82 @@ declare namespace Joi {
      *
      * @param type - a joi schema object to validate each array item against.
      */
-    items<A>(a: SchemaLikeWithoutArray<A>): ArraySchema<A[]>;
-    items<A, B>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>
-    ): ArraySchema<(A | B)[]>;
-    items<A, B, C>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>
-    ): ArraySchema<(A | B | C)[]>;
-    items<A, B, C, D>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>
-    ): ArraySchema<(A | B | C | D)[]>;
-    items<A, B, C, D, E>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>
-    ): ArraySchema<(A | B | C | D | E)[]>;
-    items<A, B, C, D, E, F>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>,
-      f: SchemaLikeWithoutArray<F>
-    ): ArraySchema<(A | B | C | D | E | F)[]>;
-    items<TItems>(...types: SchemaLikeWithoutArray<TItems>[]): this;
+    items<A, TA = SchemaLikeWithoutArray<A>>(
+      a: TA
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA>[]>;
+    items<A, B, TA = SchemaLikeWithoutArray<A>, TB = SchemaLikeWithoutArray<B>>(
+      a: TA,
+      b: TB
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA | TB>[]>;
+    items<
+      A,
+      B,
+      C,
+      TA = SchemaLikeWithoutArray<A>,
+      TB = SchemaLikeWithoutArray<B>,
+      TC = SchemaLikeWithoutArray<C>
+    >(
+      a: TA,
+      b: TB,
+      c: TC
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA | TB | TC>[]>;
+    items<
+      A,
+      B,
+      C,
+      D,
+      TA = SchemaLikeWithoutArray<A>,
+      TB = SchemaLikeWithoutArray<B>,
+      TC = SchemaLikeWithoutArray<C>,
+      TD = SchemaLikeWithoutArray<D>
+    >(
+      a: TA,
+      b: TB,
+      c: TC,
+      d: TD
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA | TB | TC | TD>[]>;
+    items<
+      A,
+      B,
+      C,
+      D,
+      E,
+      TA = SchemaLikeWithoutArray<A>,
+      TB = SchemaLikeWithoutArray<B>,
+      TC = SchemaLikeWithoutArray<C>,
+      TD = SchemaLikeWithoutArray<D>,
+      TE = SchemaLikeWithoutArray<E>
+    >(
+      a: TA,
+      b: TB,
+      c: TC,
+      d: TD,
+      e: TE
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA | TB | TC | TD | TE>[]>;
+    items<
+      A,
+      B,
+      C,
+      D,
+      E,
+      F,
+      TA = SchemaLikeWithoutArray<A>,
+      TB = SchemaLikeWithoutArray<B>,
+      TC = SchemaLikeWithoutArray<C>,
+      TD = SchemaLikeWithoutArray<D>,
+      TE = SchemaLikeWithoutArray<E>,
+      TF = SchemaLikeWithoutArray<F>
+    >(
+      a: TA,
+      b: TB,
+      c: TC,
+      d: TD,
+      e: TE,
+      f: TF
+    ): ArraySchema<UnwrapSchemaLikeWithoutArray<TA | TB | TC | TD | TE | TF>[]>;
+    items<TItems extends any[]>(
+      ...types: { [I in keyof TItems]: TItems[I] }
+    ): ArraySchema<{ [I in keyof TItems]: UnwrapSchemaLikeWithoutArray<TItems[I]> }[number][]>;
 
     /**
      * Specifies the exact number of items in the array.
