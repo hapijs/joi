@@ -403,6 +403,17 @@ expect.type<Joi.ArraySchema<(string | number | boolean | {key: string})[]>>(valu
 
 expect.type<Joi.ArraySchema<boolean[]>>(Joi.array().items(Joi.boolean()));
 expect.type<Joi.ArraySchema<number[][]>>(Joi.array().items(Joi.array().items(Joi.number())));
+expect.type<Joi.ArraySchema<(string | number)[]>(Joi.array().items(process.env.NODE_ENV ? Joi.string() : Joi.number()));
+expect.type<Joi.ArraySchema<(string | number | boolean | Date)[]>(Joi.array().items(process.env.NODE_ENV ? Joi.string() : Joi.number(), process.env.NODE_ENV ? Joi.boolean() : Joi.date()));
+const arraySchema = Joi.array().items(
+  Joi.binary(),
+  Joi.boolean(),
+  Joi.date(),
+  Joi.function(),
+  Joi.number(),
+  Joi.object<Record<string,string>>(),
+  Joi.string(),
+);
 
 // - - - - - - - -
 
