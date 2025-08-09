@@ -1705,6 +1705,19 @@ declare namespace Joi {
 
   type ComparatorFunction = (a: any, b: any) => boolean;
 
+  type UnwrapSchemaLikeWithoutArray<T> = T extends SchemaLikeWithoutArray<
+    infer U
+  >
+    ? U
+    : never;
+
+  type NoNestedArrays<T extends readonly unknown[]> = Extract<
+    T[number],
+    readonly unknown[]
+  > extends never
+    ? T
+    : never;
+
   interface ArraySchema<TSchema = any[]> extends AnySchema<TSchema> {
     /**
      * Verifies that an assertion passes for at least one item in the array, where:
@@ -1754,7 +1767,16 @@ declare namespace Joi {
       e: SchemaLikeWithoutArray<E>,
       f: SchemaLikeWithoutArray<F>
     ): ArraySchema<(A | B | C | D | E | F)[]>;
-    items<TItems>(...types: SchemaLikeWithoutArray<TItems>[]): this;
+    items<
+      TItems,
+      TTItems extends SchemaLikeWithoutArray<TItems>[] = SchemaLikeWithoutArray<TItems>[]
+    >(
+      ...types: NoNestedArrays<TTItems>
+    ): ArraySchema<
+      {
+        [I in keyof TTItems]: UnwrapSchemaLikeWithoutArray<TTItems[I]>;
+      }[number][]
+    >;
 
     /**
      * Specifies the exact number of items in the array.
