@@ -401,8 +401,32 @@ expect.error(arrSchema.items([schemaMap, schemaMap, schemaLike]));
 let value1 = Joi.array().items(Joi.string(), Joi.boolean(), Joi.number(), Joi.object({key: Joi.string()}));
 expect.type<Joi.ArraySchema<(string | number | boolean | {key: string})[]>>(value1)
 
-expect.type<Joi.ArraySchema<boolean[]>>(Joi.array().items(Joi.boolean()));
-expect.type<Joi.ArraySchema<number[][]>>(Joi.array().items(Joi.array().items(Joi.number())));
+const arr1 = Joi.array().items(Joi.boolean());
+expect.type<Joi.ArraySchema<boolean[]>>(arr1);
+const arr2 = Joi.array().items<boolean>(Joi.boolean());
+expect.type<Joi.ArraySchema<boolean[]>>(arr2);
+const arr3 = Joi.array().items<number>(Joi.number());
+expect.type<Joi.ArraySchema<number[]>>(arr3);
+const arr4 = Joi.array().items(Joi.array().items(Joi.number()));
+expect.type<Joi.ArraySchema<number[][]>>(arr4);
+const arr5 = Joi.array().items(Joi.number(), Joi.string());
+expect.type<Joi.ArraySchema<(number | string)[]>>(arr5);
+const arr6 = Joi.array().items(Joi.number(), Joi.string(), Joi.boolean());
+expect.type<Joi.ArraySchema<(number | string | boolean)[]>>(arr6);
+const arr7 = Joi.array().items(process.env.NODE_ENV ? Joi.string() : Joi.number());
+expect.type<Joi.ArraySchema<(string | number)[]>>(arr7);
+const arr8 = Joi.array().items(process.env.NODE_ENV ? Joi.string() : Joi.number(), process.env.NODE_ENV ? Joi.boolean() : Joi.date());
+expect.type<Joi.ArraySchema<(string | number | boolean | Date)[]>>(arr8);
+const arr9 = Joi.array().items(
+  Joi.binary(),
+  Joi.boolean(),
+  Joi.date(),
+  Joi.function(),
+  Joi.number(),
+  Joi.object<Record<string,string>>(),
+  Joi.string(),
+);
+expect.type<Joi.ArraySchema<(Buffer | boolean | Date | Function | number | Record<string, string> | string)[]>>(arr9);
 
 // - - - - - - - -
 
