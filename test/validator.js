@@ -687,6 +687,30 @@ describe('Validator', () => {
             });
         });
 
+        it('should include warnings in rejected error for async validation', async () => {
+
+            const schema = Joi.object({
+                a: Joi.number().max(10).warning('number.max', { limit: 10 }),
+                b: Joi.number().max(1)
+            });
+
+            const error = await expect(schema.validateAsync({ a: 5, b: 10 }, { warnings: true })).to.reject('"b" must be less than or equal to 1');
+            expect(error.warning).to.equal({
+                message: '"a" must be less than or equal to 10',
+                details: [{
+                    context: {
+                        key: 'a',
+                        label: 'a',
+                        limit: 10,
+                        value: 5
+                    },
+                    message: '"a" must be less than or equal to 10',
+                    path: ['a'],
+                    type: 'number.max'
+                }]
+            });
+        });
+
         it('should add errors when error helper is used on a link', async () => {
 
             const schema = Joi.object({
