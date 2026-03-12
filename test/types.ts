@@ -4,6 +4,8 @@ import { StandardSchemaV1 } from "@standard-schema/spec";
 
 const { expect } = Lab.types;
 
+type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;
+
 // The following was copied (almost) as-is from:
 // https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/hapi__joi
 
@@ -1044,17 +1046,18 @@ expect.error(Joi.alternatives().try(schemaArr));
 schema = Joi.alternatives().try(schema, schema);
 
 expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives([Joi.string(), Joi.number(), Joi.boolean()]));
+expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives(Joi.string(), Joi.number(), Joi.boolean()));
 
 schema = Joi.alternatives(schemaArr);
 schema = Joi.alternatives(schema, anySchema, boolSchema);
 
 schema = Joi.alt();
+schema = Joi.alt([Joi.string(), Joi.number()]);
 expect.error(Joi.alt().try(schemaArr));
 schema = Joi.alt().try(schema, schema);
 
-expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alt([Joi.string(), Joi.number(), Joi.boolean()]));
+expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alt(Joi.string(), Joi.number(), Joi.boolean()));
 
-schema = Joi.alt(schemaArr);
 schema = Joi.alt(schema, anySchema, boolSchema);
 
 expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean()));
@@ -1077,16 +1080,15 @@ schema = Joi.link(str);
         .pattern(/^[a-zA-Z0-9]{3,255}$/)
         .required(),
     });
-    let result: Joi.ValidationResult;
     let asyncResult: Promise<TResult>;
 
-    result = schema.validate(value);
-    if (result.error) {
+    const result1 = schema.validate(value);
+    if (result1.error) {
       throw Error('error should not be set');
     } else {
-      expect.type<TResult>(result.value);
+      expect.type<TResult>(result1.value);
     }
-    result = schema.validate(value, validOpts);
+    const result2 = schema.validate(value, validOpts);
     asyncResult = schema.validateAsync(value);
     asyncResult = schema.validateAsync(value, validOpts);
 
@@ -1132,8 +1134,8 @@ schema = Joi.link(str);
     }));
 
     const falsyValue = { username: 'example' };
-    result = schema.validate(falsyValue);
-    if (!result.error) {
+    const result3 = schema.validate(falsyValue);
+    if (!result3.error) {
       throw Error('error should be set');
     }
   }
@@ -1346,21 +1348,37 @@ anyObject = anyObject.keys({
   length: Joi.string(),
 });
 
-// test with keys
-Joi.object()
-  .keys({
-    name: Joi.string().required(),
-    family: Joi.string(),
-  })
-  .append({
-    age: Joi.number(),
-  })
-  .append({
-    height: Joi.number(),
-  })
-  .keys({
-    length: Joi.string(),
-  });
+{
+  // test with keys
+  const schemaWithKeysAndAppends = Joi.object()
+    .keys({
+      name: Joi.string().required(),
+      family: Joi.string()
+    })
+    .append({
+      age: Joi.number()
+    })
+    .append({
+      height: Joi.number()
+    })
+    .keys({
+      length: Joi.string()
+    });
+
+  type Inferred = Joi.extractType<typeof schemaWithKeysAndAppends>;
+
+  const isInferredAny: IsAny<Inferred> = false;
+  const isInferredNameAny: IsAny<Inferred['name']> = false;
+  const isInferredFamilyAny: IsAny<Inferred['family']> = false;
+  const isInferredHeightAny: IsAny<Inferred['height']> = false;
+  const isInferredLengthAny: IsAny<Inferred['length']> = false;
+
+  expect.type<string>(({} as Inferred).name);
+  expect.type<string>(({} as Inferred).family);
+  expect.type<number>(({} as Inferred).age);
+  expect.type<number>(({} as Inferred).height);
+  expect.type<string>(({} as Inferred).length);
+}
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // Test generic types
@@ -1401,11 +1419,17 @@ interface Comment {
   isNew: boolean;
 }
 
-const commentSchemaObject = Joi.object<Comment, true>({
+const commentSchemaObject = Joi.object({
   text: Joi.string().required(),
   user: userSchemaObject,
   isNew: Joi.boolean().required(),
 });
+
+type ExtractedCommentSchemaObject = Joi.extractType<typeof commentSchemaObject>;
+expect.type<Comment>({} as ExtractedCommentSchemaObject);
+expect.type<string>(({} as ExtractedCommentSchemaObject).text);
+expect.type<User>(({} as ExtractedCommentSchemaObject).user);
+expect.type<boolean>(({} as ExtractedCommentSchemaObject).isNew);
 
 interface Comment2 {
   text: string;
@@ -1414,7 +1438,7 @@ interface Comment2 {
   };
 }
 
-const commentSchemaObject2 = Joi.object<Comment2, true>({
+const commentSchemaObject2 = Joi.object<Comment2>({
   text: Joi.string().required(),
   user: {
     name: Joi.string().required(),
@@ -1429,8 +1453,7 @@ interface CommentWithAlternatives {
 }
 
 const commentWithAlternativesSchemaObject = Joi.object<
-  CommentWithAlternatives,
-  true
+  CommentWithAlternatives
 >({
   text: Joi.string().required(),
   user: Joi.alternatives(Joi.string(), userSchemaObject),
@@ -1438,7 +1461,84 @@ const commentWithAlternativesSchemaObject = Joi.object<
   reported: Joi.alternatives(Joi.boolean(), Joi.number()),
 });
 
-expect.error(userSchema2.keys({ height: Joi.number() }));
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test inference
+
+function testInference() {
+  const inferenceSchema = Joi.object({
+    a: Joi.string(),
+    b: Joi.number(),
+    c: Joi.object({
+      d: Joi.boolean(),
+    }),
+  });
+
+  type Inferred = Joi.extractType<typeof inferenceSchema>;
+
+  expect.type<string>(({} as Inferred).a);
+  expect.type<number>(({} as Inferred).b);
+  expect.type<boolean>(({} as Inferred).c.d);
+  expect.error(({} as Inferred).c.e);
+  expect.error(({} as Inferred).e);
+
+  const isInferredAny: IsAny<Inferred> = false;
+
+  const inferenceArraySchema = Joi.array().items(Joi.string());
+  type InferredArray = Joi.extractType<typeof inferenceArraySchema>;
+  expect.type<string[]>(({} as InferredArray));
+
+  const isInferredArrayAny: IsAny<InferredArray> = false;
+
+  const inferenceAltSchema = Joi.alternatives().try(Joi.string(), Joi.number());
+  type InferredAlt = Joi.extractType<typeof inferenceAltSchema>;
+  expect.type<string | number>(({} as InferredAlt));
+
+  const isInferredAltAny: IsAny<InferredAlt> = false;
+
+  const validateSchema = Joi.object({
+    a: Joi.string().required(),
+    b: Joi.number()
+  });
+
+  const validateResult = validateSchema.validate({ a: 'foo', b: 123 });
+
+  if (!validateResult.error) {
+    type ValidateValue = typeof validateResult.value;
+    expect.type<{ a: string; b: number }>(({} as ValidateValue));
+
+    const isValidateAny: IsAny<ValidateValue> = false;
+    expect.type<true>(!isValidateAny);
+
+    const isAValidateAny: IsAny<ValidateValue['a']> = false;
+    expect.type<true>(!isAValidateAny);
+
+    const isBValidateAny: IsAny<ValidateValue['b']> = false;
+    expect.type<true>(!isBValidateAny);
+  }
+}
+
+async function testAsyncInference() {
+  const validateSchema = Joi.object({
+    a: Joi.string().required(),
+    b: Joi.number()
+  });
+
+  const validateAsyncValue = await validateSchema.validateAsync({ a: 'foo', b: 123 });
+  type ValidateAsyncValue = typeof validateAsyncValue;
+  expect.type<{ a: string; b: number }>(({} as ValidateAsyncValue));
+
+  const isValidateAsyncAny: IsAny<ValidateAsyncValue> = false;
+  expect.type<true>(!isValidateAsyncAny);
+
+  const validateAsyncResultWithWarn = await validateSchema.validateAsync({ a: 'foo', b: 123 }, { warnings: true });
+  type ValidateAsyncWarnValue = typeof validateAsyncResultWithWarn.value;
+  expect.type<{ a: string; b: number }>(({} as ValidateAsyncWarnValue));
+
+  const isValidateAsyncWarnAny: IsAny<ValidateAsyncWarnValue> = false;
+  expect.type<true>(!isValidateAsyncWarnAny);
+}
+
+userSchema2.keys({ height: Joi.number() });
 
 expect.error(Joi.string('x'));
 
@@ -1452,12 +1552,16 @@ expect.error(Joi.string('x'));
     // Standard Validate
     let value = { username: 'example', password: 'example' };
     type TResult = { username: string; password: string };
-    const schema = Joi.object<TResult>().keys({
+    const schema = Joi.object().keys({
       username: Joi.string().max(255).required(),
       password: Joi.string()
           .pattern(/^[a-zA-Z0-9]{3,255}$/)
           .required(),
     });
+
+    type SchemaType = Joi.extractType<typeof schema>;
+    expect.type<TResult>({} as SchemaType);
+
     let result: StandardSchemaV1.Result<TResult> | Promise<StandardSchemaV1.Result<TResult>>;
 
     result = schema['~standard'].validate(value);

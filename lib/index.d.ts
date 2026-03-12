@@ -755,7 +755,7 @@ declare namespace Joi {
     | {
         error: ValidationError;
         warning?: ValidationError;
-        value: any;
+        value: TSchema;
       };
 
   interface CreateErrorOptions {
@@ -812,11 +812,11 @@ declare namespace Joi {
 
   type Primitives = string | number | boolean | bigint | symbol | null;
 
-  type SchemaLikeWithoutArray<TSchema = any> = Exclude<
-    Primitives | Schema<TSchema> | SchemaMap<TSchema>,
-    any[]
-  >;
-  type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object;
+  type SchemaLikeWithoutArray<TSchema = any> =
+    | Primitives
+    | Schema<TSchema>
+    | (SchemaMap<TSchema> & { length?: never });
+  type SchemaLike<TSchema = any> = SchemaLikeWithoutArray<TSchema> | object | any[];
 
   type NullableType<T> = undefined | null | T;
 
@@ -871,16 +871,14 @@ declare namespace Joi {
     : never;
 
   type PartialSchemaMap<TSchema = any> = {
-    [key in keyof TSchema]?: SchemaLike | SchemaLike[];
+    [key in keyof TSchema]?: SchemaLike<TSchema[key]>;
   };
 
   type StrictSchemaMap<TSchema = any> = {
     [key in keyof TSchema]-?: ObjectPropertiesSchema<TSchema[key]>;
   };
 
-  type SchemaMap<TSchema = any, isStrict = false> = isStrict extends true
-    ? StrictSchemaMap<TSchema>
-    : PartialSchemaMap<TSchema>;
+  type SchemaMap<TSchema = any> = PartialSchemaMap<TSchema>;
 
   type Schema<P = any> =
     | AnySchema<P>
@@ -1004,6 +1002,10 @@ declare namespace Joi {
   interface AnySchema<TSchema = any>
     extends SchemaInternals,
       StandardSchemaV1<TSchema> {
+    /**
+     * Internal property to help with type inference.
+     */
+    readonly _type: TSchema;
     /**
      * Flags of current schema.
      */
@@ -1382,12 +1384,18 @@ declare namespace Joi {
     /**
      * Converts the type into an alternatives type where the conditions are merged into the type definition where:
      */
-    when(ref: string | Reference, options: WhenOptions | WhenOptions[]): this;
+    when<ThenSchema = any, OtherwiseSchema = any>(
+      ref: string | Reference,
+      options: WhenOptions<ThenSchema, OtherwiseSchema> | WhenOptions<ThenSchema, OtherwiseSchema>[]
+    ): AlternativesSchema<TSchema | ThenSchema | OtherwiseSchema> & this;
 
     /**
      * Converts the type into an alternatives type where the conditions are merged into the type definition where:
      */
-    when(ref: Schema, options: WhenSchemaOptions): this;
+    when<ThenSchema = any, OtherwiseSchema = any>(
+      ref: Schema,
+      options: WhenSchemaOptions<ThenSchema, OtherwiseSchema>
+    ): AlternativesSchema<TSchema | ThenSchema | OtherwiseSchema> & this;
   }
 
   interface Description {
@@ -1711,6 +1719,23 @@ declare namespace Joi {
     ? U
     : never;
 
+  /**
+   * Helper type to extract the type from a joi schema.
+   */
+  type extractType<T> = T extends AnySchema<infer P>
+    ? P
+    : T extends Primitives
+    ? T
+    : T extends any[]
+    ? { [K in keyof T]: extractType<T[K]> }[number]
+    : T extends object
+    ? { [K in keyof T]: extractType<T[K]> }
+    : any;
+
+  type inferObject<T> = {
+    [K in keyof T]: extractType<T[K]>;
+  };
+
   type NoNestedArrays<T extends readonly unknown[]> = Extract<
     T[number],
     readonly unknown[]
@@ -1837,7 +1862,7 @@ declare namespace Joi {
     matches: SchemaLike | Reference;
   }
 
-  interface ObjectSchema<TSchema = any> extends AnySchema<TSchema> {
+  interface ObjectSchema<TSchema = {}> extends AnySchema<TSchema> {
     /**
      * Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as well.
      *
@@ -1848,10 +1873,7 @@ declare namespace Joi {
     /**
      * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
      */
-    append(schema?: SchemaMap<TSchema>): this;
-    append<TSchemaExtended = any, T = TSchemaExtended>(
-      schema?: SchemaMap<T>
-    ): ObjectSchema<T>;
+    append<T>(schema?: T): ObjectSchema<TSchema & inferObject<T>>;
 
     /**
      * Verifies an assertion where.
@@ -1870,7 +1892,7 @@ declare namespace Joi {
     /**
      * Sets or extends the allowed object keys.
      */
-    keys(schema?: SchemaMap<TSchema>): this;
+    keys<T>(schema?: T): ObjectSchema<TSchema & inferObject<T>>;
 
     /**
      * Specifies the exact number of keys in the object.
@@ -2064,59 +2086,27 @@ declare namespace Joi {
   }
 
   interface AlternativesSchema<TSchema = any> extends AnySchema<TSchema> {
+    try<T extends any[]>(
+      ...types: { [K in keyof T]: T[K] extends any[] ? never : T[K] }
+    ): AlternativesSchema<TSchema | extractType<T[number]>>;
+
     /**
      * Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value.
      */
     conditional<ThenSchema, OtherwiseSchema>(
       ref: string | Reference,
-      options: WhenOptions | WhenOptions[]
-    ): AlternativesSchema<ThenSchema | OtherwiseSchema>;
+      options: WhenOptions<ThenSchema, OtherwiseSchema> | WhenOptions<ThenSchema, OtherwiseSchema>[]
+    ): AlternativesSchema<TSchema | ThenSchema | OtherwiseSchema>;
     conditional<ThenSchema, OtherwiseSchema>(
       ref: Schema,
       options: WhenSchemaOptions<ThenSchema, OtherwiseSchema>
-    ): AlternativesSchema<ThenSchema | OtherwiseSchema>;
+    ): AlternativesSchema<TSchema | ThenSchema | OtherwiseSchema>;
 
     /**
      * Requires the validated value to match a specific set of the provided alternative.try() schemas.
      * Cannot be combined with `alternatives.conditional()`.
      */
     match(mode: "any" | "all" | "one"): this;
-
-    /**
-     * Adds an alternative schema type for attempting to match against the validated value.
-     */
-    try<A>(a: SchemaLikeWithoutArray<A>): AlternativesSchema<A>;
-    try<A, B>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>
-    ): AlternativesSchema<A | B>;
-    try<A, B, C>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>
-    ): AlternativesSchema<A | B | C>;
-    try<A, B, C, D>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>
-    ): AlternativesSchema<A | B | C | D>;
-    try<A, B, C, D, E>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>
-    ): AlternativesSchema<A | B | C | D | E>;
-    try<A, B, C, D, E, F>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>,
-      f: SchemaLikeWithoutArray<F>
-    ): AlternativesSchema<A | B | C | D | E | F>;
-    try(...types: SchemaLikeWithoutArray[]): this;
   }
 
   interface LinkSchema<TSchema = any> extends AnySchema<TSchema> {
@@ -2309,28 +2299,11 @@ declare namespace Joi {
      * Generates a schema object that matches a function type.
      */
     func<TSchema = Function>(): FunctionSchema<TSchema>;
-
-    /**
-     * Generates a schema object that matches a function type.
-     */
     function<TSchema = Function>(): FunctionSchema<TSchema>;
-
-    /**
-     * Generates a schema object that matches a number data type (as well as strings that can be converted to numbers).
-     */
     number<TSchema = number>(): NumberSchema<TSchema>;
-
-    /**
-     * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
-     */
-    // tslint:disable-next-line:no-unnecessary-generics
-    object<TSchema = any, isStrict = false, T = TSchema>(
-      schema?: SchemaMap<T, isStrict>
-    ): ObjectSchema<TSchema>;
-
-    /**
-     * Generates a schema object that matches a string data type. Note that empty strings are not allowed by default and must be enabled with allow('').
-     */
+    object<T = {}>(
+      schema?: SchemaMap<T> | T
+    ): ObjectSchema<extractType<T>>;
     string<TSchema = string>(): StringSchema<TSchema>;
 
     /**
@@ -2341,95 +2314,22 @@ declare namespace Joi {
     /**
      * Generates a type that will match one of the provided alternative schemas
      */
-    alternatives<A, B>(
-      params: [SchemaLike<A>, SchemaLike<B>]
-    ): AlternativesSchema<A | B>;
-    alternatives<A, B, C>(
-      params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>]
-    ): AlternativesSchema<A | B | C>;
-    alternatives<A, B, C, D>(
-      params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>, SchemaLike<D>]
-    ): AlternativesSchema<A | B | C | D>;
-    alternatives<A, B, C, D, E>(
-      params: [
-        SchemaLike<A>,
-        SchemaLike<B>,
-        SchemaLike<C>,
-        SchemaLike<D>,
-        SchemaLike<E>
-      ]
-    ): AlternativesSchema<A | B | C | D | E>;
-    alternatives<A, B>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>
-    ): AlternativesSchema<A | B>;
-    alternatives<A, B, C>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>
-    ): AlternativesSchema<A | B | C>;
-    alternatives<A, B, C, D>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>,
-      d: SchemaLike<D>
-    ): AlternativesSchema<A | B | C | D>;
-    alternatives<A, B, C, D, E>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>,
-      d: SchemaLike<D>,
-      e: SchemaLike<E>
-    ): AlternativesSchema<A | B | C | D | E>;
-    alternatives<TSchema = any>(
-      types: SchemaLike<TSchema>[]
-    ): AlternativesSchema<TSchema>;
-    alternatives<TSchema = any>(
-      ...types: SchemaLike<TSchema>[]
-    ): AlternativesSchema<TSchema>;
+    alternatives<T extends any[]>(
+      ...types: T
+    ): AlternativesSchema<extractType<T[number]>>;
+    alternatives<T extends any[]>(
+      types: T
+    ): AlternativesSchema<extractType<T[number]>>;
 
     /**
      * Alias for `alternatives`
      */
-    alt<A, B>(
-      params: [SchemaLike<A>, SchemaLike<B>]
-    ): AlternativesSchema<A | B>;
-    alt<A, B, C>(
-      params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>]
-    ): AlternativesSchema<A | B | C>;
-    alt<A, B, C, D>(
-      params: [SchemaLike<A>, SchemaLike<B>, SchemaLike<C>, SchemaLike<D>]
-    ): AlternativesSchema<A | B | C | D>;
-    alt<A, B, C, D, E>(
-      params: [
-        SchemaLike<A>,
-        SchemaLike<B>,
-        SchemaLike<C>,
-        SchemaLike<D>,
-        SchemaLike<E>
-      ]
-    ): AlternativesSchema<A | B | C | D | E>;
-    alt<A, B>(a: SchemaLike<A>, b: SchemaLike<B>): AlternativesSchema<A | B>;
-    alt<A, B, C>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>
-    ): AlternativesSchema<A | B | C>;
-    alt<A, B, C, D>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>,
-      d: SchemaLike<D>
-    ): AlternativesSchema<A | B | C | D>;
-    alt<A, B, C, D, E>(
-      a: SchemaLike<A>,
-      b: SchemaLike<B>,
-      c: SchemaLike<C>,
-      d: SchemaLike<D>,
-      e: SchemaLike<E>
-    ): AlternativesSchema<A | B | C | D | E>;
-    alt<TSchema = any>(types: SchemaLike[]): AlternativesSchema<TSchema>;
-    alt<TSchema = any>(...types: SchemaLike[]): AlternativesSchema<TSchema>;
+    alt<T extends any[]>(
+      ...types: T
+    ): AlternativesSchema<extractType<T[number]>>;
+    alt<T extends any[]>(
+      types: T
+    ): AlternativesSchema<extractType<T[number]>>;
 
     /**
      * Links to another schema node and reuses it for validation, typically for creative recursive schemas.
