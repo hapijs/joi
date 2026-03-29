@@ -1300,6 +1300,24 @@ schema = Joi.forbidden();
 
 schema = Joi.preferences(validOpts);
 
+// Root shorthand methods return AnySchema, enabling method chaining
+
+anySchema = Joi.allow(x).required();
+anySchema = Joi.valid(x).optional();
+anySchema = Joi.equal(x).strip();
+anySchema = Joi.invalid(x).required();
+anySchema = Joi.disallow(x).forbidden();
+anySchema = Joi.not(x).optional();
+anySchema = Joi.required().allow(x);
+anySchema = Joi.exist().valid(x);
+anySchema = Joi.optional().invalid(x);
+anySchema = Joi.forbidden().allow(x);
+anySchema = Joi.preferences(validOpts).required();
+anySchema = Joi.prefs(validOpts).required();
+anySchema = Joi.only().valid(x);
+anySchema = Joi.strip().allow(x);
+anySchema = Joi.custom((value) => value).required();
+
 schema = Joi.when(str, whenOpts);
 schema = Joi.when(ref, whenOpts);
 schema = Joi.when(schema, whenSchemaOpts);
