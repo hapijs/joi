@@ -201,6 +201,55 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('represents examples', () => {
+
+            Helper.validateJsonSchema(Joi.string().example('a').example('b'), {
+                type: 'string',
+                minLength: 1,
+                examples: ['a', 'b']
+            });
+        });
+
+        it('represents supported meta keywords', () => {
+
+            Helper.validateJsonSchema(Joi.string().meta({
+                title: 'Greeting',
+                format: 'banana',
+                contentEncoding: 'base64',
+                contentMediaType: 'text/plain',
+                readOnly: true,
+                writeOnly: true,
+                deprecated: true,
+                examples: ['hi'],
+                $comment: 'schema note'
+            }), {
+                type: 'string',
+                minLength: 1,
+                title: 'Greeting',
+                format: 'banana',
+                contentEncoding: 'base64',
+                contentMediaType: 'text/plain',
+                readOnly: true,
+                writeOnly: true,
+                deprecated: true,
+                examples: ['hi'],
+                $comment: 'schema note'
+            });
+        });
+
+        it('merges meta examples without overriding validator-derived schema keywords', () => {
+
+            Helper.validateJsonSchema(Joi.string().email().example('a@example.com').meta({
+                format: 'banana',
+                examples: ['b@example.com']
+            }), {
+                type: 'string',
+                minLength: 1,
+                format: 'email',
+                examples: ['a@example.com', 'b@example.com']
+            });
+        });
+
         it('represents description with null allowed', () => {
 
             Helper.validateJsonSchema(Joi.allow(null).description('foobar'), {
@@ -1033,6 +1082,16 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.binary().min(1).max(10).length(5).custom(() => {}), { type: 'string', format: 'binary', minLength: 5, maxLength: 5 });
         });
+
+        it('represents binary encoding', () => {
+
+            Helper.validateJsonSchema(Joi.binary().encoding('base64').min(3), {
+                type: 'string',
+                format: 'binary',
+                contentEncoding: 'base64',
+                minLength: 3
+            });
+        });
     });
 
     describe('boolean', () => {
@@ -1478,6 +1537,24 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('merges repeated with() dependencies for the same key', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).with('a', 'b').with('a', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b', 'c'] }
+            });
+        });
+
         it('represents multiple with() dependencies', () => {
 
             Helper.validateJsonSchema(Joi.object({
@@ -1527,6 +1604,31 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('merges repeated and() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).and('a', 'b').and('a', 'c', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: {
+                    a: ['b', 'c', 'd'],
+                    b: ['a'],
+                    c: ['a', 'd'],
+                    d: ['a', 'c']
+                }
+            });
+        });
+
         it('represents nand() dependency', () => {
 
             Helper.validateJsonSchema(Joi.object({
@@ -1540,6 +1642,27 @@ describe('jsonSchema', () => {
                 },
                 additionalProperties: false,
                 not: { properties: { a: true, b: true }, required: ['a', 'b'] }
+            });
+        });
+
+        it('represents multiple nand() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).nand('a', 'b').nand('a', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
+                    { not: { properties: { a: true, c: true }, required: ['a', 'c'] } }
+                ]
             });
         });
 
@@ -1558,6 +1681,39 @@ describe('jsonSchema', () => {
                 anyOf: [
                     { properties: { a: true }, required: ['a'] },
                     { properties: { b: true }, required: ['b'] }
+                ]
+            });
+        });
+
+        it('represents multiple or() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).or('a', 'b').or('c', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        anyOf: [
+                            { properties: { a: true }, required: ['a'] },
+                            { properties: { b: true }, required: ['b'] }
+                        ]
+                    },
+                    {
+                        anyOf: [
+                            { properties: { c: true }, required: ['c'] },
+                            { properties: { d: true }, required: ['d'] }
+                        ]
+                    }
                 ]
             });
         });
@@ -1581,6 +1737,39 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('represents multiple xor() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).xor('a', 'b').xor('c', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        oneOf: [
+                            { properties: { a: true }, required: ['a'] },
+                            { properties: { b: true }, required: ['b'] }
+                        ]
+                    },
+                    {
+                        oneOf: [
+                            { properties: { c: true }, required: ['c'] },
+                            { properties: { d: true }, required: ['d'] }
+                        ]
+                    }
+                ]
+            });
+        });
+
         it('represents oxor() dependency', () => {
 
             Helper.validateJsonSchema(Joi.object({
@@ -1597,6 +1786,41 @@ describe('jsonSchema', () => {
                     { not: { anyOf: [{ properties: { a: true }, required: ['a'] }, { properties: { b: true }, required: ['b'] }] } },
                     { properties: { a: true }, required: ['a'] },
                     { properties: { b: true }, required: ['b'] }
+                ]
+            });
+        });
+
+        it('represents multiple oxor() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).oxor('a', 'b').oxor('c', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        oneOf: [
+                            { not: { anyOf: [{ properties: { a: true }, required: ['a'] }, { properties: { b: true }, required: ['b'] }] } },
+                            { properties: { a: true }, required: ['a'] },
+                            { properties: { b: true }, required: ['b'] }
+                        ]
+                    },
+                    {
+                        oneOf: [
+                            { not: { anyOf: [{ properties: { c: true }, required: ['c'] }, { properties: { d: true }, required: ['d'] }] } },
+                            { properties: { c: true }, required: ['c'] },
+                            { properties: { d: true }, required: ['d'] }
+                        ]
+                    }
                 ]
             });
         });
@@ -1676,6 +1900,26 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('merges repeated without() dependencies for the same key', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).without('a', 'b').without('a', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentSchemas: {
+                    a: { properties: { b: false, c: false } }
+                }
+            });
+        });
+
         it('excludes stripped keys in output mode', () => {
 
             const schema = Joi.object({
@@ -1698,6 +1942,47 @@ describe('jsonSchema', () => {
                 },
                 required: ['a'],
                 additionalProperties: false
+            });
+        });
+
+        it('merges invalid() with other not-based object constraints', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).nand('a', 'b').invalid({ foo: 'bar' }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
+                    { not: { enum: [{ foo: 'bar' }] } }
+                ]
+            });
+        });
+
+        it('merges invalid() with existing allOf-based object constraints', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).nand('a', 'b').nand('a', 'c').invalid({ foo: 'bar' }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
+                    { not: { properties: { a: true, c: true }, required: ['a', 'c'] } },
+                    { not: { enum: [{ foo: 'bar' }] } }
+                ]
             });
         });
 
@@ -1877,41 +2162,124 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().isoDate(), { type: 'string', minLength: 1, format: 'date-time' });
             Helper.validateJsonSchema(Joi.string().isoDuration(), { type: 'string', minLength: 1, format: 'duration' });
             Helper.validateJsonSchema(Joi.string().token(), { type: 'string', minLength: 1, format: 'token' });
-            Helper.validateJsonSchema(Joi.string().domain(), {
-                type: 'string',
-                minLength: 1,
-                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}$'
-            });
-
-            Helper.validateJsonSchema(Joi.string().domain({ minDomainSegments: 3 }), {
-                type: 'string',
-                minLength: 1,
-                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){2,}[a-zA-Z]{2,}$'
-            });
-
-            Helper.validateJsonSchema(Joi.string().domain({ maxDomainSegments: 3 }), {
-                type: 'string',
-                minLength: 1,
-                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,2}[a-zA-Z]{2,}$'
-            });
-
-            Helper.validateJsonSchema(Joi.string().domain({ allowUnderscore: true }), {
-                type: 'string',
-                minLength: 1,
-                pattern: '^(_?[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}$'
-            });
-
-            Helper.validateJsonSchema(Joi.string().domain({ allowFullyQualified: true }), {
-                type: 'string',
-                minLength: 1,
-                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}\\.?$'
-            });
-
             Helper.validateJsonSchema(Joi.string().domain({ tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z][a-zA-Z0-9]*$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
             });
+            Helper.validateJsonSchema(Joi.string().domain({ allowUnicode: false, tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z](?:[A-Za-z0-9-]*[A-Za-z0-9])?$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ minDomainSegments: 3, tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){2,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ maxDomainSegments: 3, tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,2}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ allowUnderscore: true, tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9_\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ allowFullyQualified: true, tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}(?:\\.?$))[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.?$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ tlds: { allow: ['com'] } }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)(?:[cC][oO][mM])$'
+            });
+            Helper.validateJsonSchema(Joi.string().domain({ tlds: { deny: ['com'] } }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?!(?:[cC][oO][mM])$)(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+            });
+
+            const defaultDomain = Joi.string().domain()['~standard'].jsonSchema.input();
+            expect(defaultDomain.type).to.equal('string');
+            expect(defaultDomain.minLength).to.equal(1);
+            expect(defaultDomain.pattern).to.be.a.string();
+            Helper.validateJsonSchemaValues(defaultDomain, [
+                ['example.com', true],
+                ['ä.com', true],
+                ['localhost', false],
+                ['example.local', false],
+                [`${'a'.repeat(63)}.com`, true],
+                [`${'a'.repeat(64)}.com`, false],
+                [`${Array(50).fill('abcd').join('.')}.com`, true],
+                [`${Array(51).fill('abcd').join('.')}.com`, false]
+            ]);
+
+            const asciiDomain = Joi.string().domain({ allowUnicode: false })['~standard'].jsonSchema.input();
+            expect(asciiDomain.type).to.equal('string');
+            expect(asciiDomain.minLength).to.equal(1);
+            expect(asciiDomain.pattern).to.be.a.string();
+            Helper.validateJsonSchemaValues(asciiDomain, [
+                ['example.com', true],
+                ['ä.com', false]
+            ]);
+
+            const minSegmentsDomain = Joi.string().domain({ minDomainSegments: 3 })['~standard'].jsonSchema.input();
+            expect(minSegmentsDomain.type).to.equal('string');
+            expect(minSegmentsDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(minSegmentsDomain, [
+                ['a.b.com', true],
+                ['a.com', false]
+            ]);
+
+            const maxSegmentsDomain = Joi.string().domain({ maxDomainSegments: 3 })['~standard'].jsonSchema.input();
+            expect(maxSegmentsDomain.type).to.equal('string');
+            expect(maxSegmentsDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(maxSegmentsDomain, [
+                ['a.b.com', true],
+                ['a.b.c.com', false]
+            ]);
+
+            const underscoreDomain = Joi.string().domain({ allowUnderscore: true })['~standard'].jsonSchema.input();
+            expect(underscoreDomain.type).to.equal('string');
+            expect(underscoreDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(underscoreDomain, [
+                ['_sip._tcp.example.com', true]
+            ]);
+
+            const fqdnDomain = Joi.string().domain({ allowFullyQualified: true })['~standard'].jsonSchema.input();
+            expect(fqdnDomain.type).to.equal('string');
+            expect(fqdnDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(fqdnDomain, [
+                ['example.com.', true]
+            ]);
+
+            const anyTldDomain = Joi.string().domain({ tlds: false })['~standard'].jsonSchema.input();
+            expect(anyTldDomain.type).to.equal('string');
+            expect(anyTldDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(anyTldDomain, [
+                ['example.local', true]
+            ]);
+
+            const allowedTldDomain = Joi.string().domain({ tlds: { allow: ['com'] } })['~standard'].jsonSchema.input();
+            expect(allowedTldDomain.type).to.equal('string');
+            expect(allowedTldDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(allowedTldDomain, [
+                ['example.com', true],
+                ['example.net', false],
+                ['example.COM', true]
+            ]);
+
+            const deniedTldDomain = Joi.string().domain({ tlds: { deny: ['com'] } })['~standard'].jsonSchema.input();
+            expect(deniedTldDomain.type).to.equal('string');
+            expect(deniedTldDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(deniedTldDomain, [
+                ['example.com', false],
+                ['example.net', true]
+            ]);
         });
 
         it('represents string with various options', () => {
@@ -2598,6 +2966,50 @@ describe('jsonSchema', () => {
                 type: 'object',
                 properties: {
                     a: { type: 'string', minLength: 1 },
+                    b: { $ref: '#/$defs/aSchema' }
+                },
+                additionalProperties: false,
+                $defs: {
+                    aSchema: { type: 'string', minLength: 1 }
+                }
+            });
+        });
+
+        it('keeps defs for stripped child schemas referenced by links', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string().id('aSchema').strip(),
+                b: Joi.link('#aSchema')
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { $ref: '#/$defs/aSchema' }
+                },
+                additionalProperties: false,
+                $defs: {
+                    aSchema: { type: 'string', minLength: 1 }
+                }
+            }, {
+                type: 'object',
+                properties: {
+                    b: { $ref: '#/$defs/aSchema' }
+                },
+                additionalProperties: false,
+                $defs: {
+                    aSchema: { type: 'string', minLength: 1 }
+                }
+            });
+        });
+
+        it('keeps defs for forbidden child schemas referenced by links', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string().id('aSchema').forbidden(),
+                b: Joi.link('#aSchema')
+            }), {
+                type: 'object',
+                properties: {
                     b: { $ref: '#/$defs/aSchema' }
                 },
                 additionalProperties: false,

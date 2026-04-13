@@ -152,6 +152,29 @@ exports.validateJsonSchema = function (schema, expectedInput, expectedOutput) {
     }
 };
 
+
+exports.validateJsonSchemaValues = function (schema, tests) {
+
+    try {
+        const validate = internals.ajvValidator.compile(schema);
+
+        for (const [value, pass] of tests) {
+            const result = validate(value);
+
+            if (result !== pass) {
+                console.log({ value, errors: validate.errors });
+            }
+
+            expect(result).to.equal(pass);
+        }
+    }
+    catch (err) {
+        console.error(err.stack);
+        err.at = internals.thrownAt();      // Adjust error location to test
+        throw err;
+    }
+};
+
 internals.thrownAt = function () {
 
     const error = new Error();
