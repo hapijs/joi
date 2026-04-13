@@ -1805,6 +1805,45 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('moves an existing top-level composite keyword into allOf when appending another dependency', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).nand('a', 'b').or('a', 'b').or('c', 'd').nand('c', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        anyOf: [
+                            { properties: { a: true }, required: ['a'] },
+                            { properties: { b: true }, required: ['b'] }
+                        ]
+                    },
+                    {
+                        anyOf: [
+                            { properties: { c: true }, required: ['c'] },
+                            { properties: { d: true }, required: ['d'] }
+                        ]
+                    },
+                    {
+                        not: { properties: { a: true, b: true }, required: ['a', 'b'] }
+                    },
+                    {
+                        not: { properties: { c: true, d: true }, required: ['c', 'd'] }
+                    }
+                ]
+            });
+        });
+
         it('represents xor() dependency', () => {
 
             Helper.validateJsonSchema(Joi.object({
@@ -2069,6 +2108,45 @@ describe('jsonSchema', () => {
                     { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
                     { not: { properties: { a: true, c: true }, required: ['a', 'c'] } },
                     { not: { enum: [{ foo: 'bar' }] } }
+                ]
+            });
+        });
+
+        it('moves an existing top-level not into allOf when invalid() is appended after allOf exists', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).nand('a', 'b').or('a', 'b').or('c', 'd').invalid({ foo: 'bar' }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        anyOf: [
+                            { properties: { a: true }, required: ['a'] },
+                            { properties: { b: true }, required: ['b'] }
+                        ]
+                    },
+                    {
+                        anyOf: [
+                            { properties: { c: true }, required: ['c'] },
+                            { properties: { d: true }, required: ['d'] }
+                        ]
+                    },
+                    {
+                        not: { properties: { a: true, b: true }, required: ['a', 'b'] }
+                    },
+                    {
+                        not: { enum: [{ foo: 'bar' }] }
+                    }
                 ]
             });
         });
@@ -2445,6 +2523,18 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchemaValues(esszettDomain, [
                 ['example.xn--gro-7ka', true],
                 ['example.groß', true],
+                ['example.com', false]
+            ]);
+
+            // IDN TLD with uppercase dotted I (multi-char lowercase: İ → i̇)
+            const dottedIDomain = Joi.string().domain({
+                tlds: { allow: ['xn--i-9bb'] }
+            })['~standard'].jsonSchema.input();
+            expect(dottedIDomain.type).to.equal('string');
+            expect(dottedIDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(dottedIDomain, [
+                ['example.xn--i-9bb', true],
+                ['example.İ', true],
                 ['example.com', false]
             ]);
         });
