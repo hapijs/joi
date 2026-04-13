@@ -250,6 +250,44 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('ignores non-object meta values', () => {
+
+            Helper.validateJsonSchema(Joi.string().meta(null).meta('string').meta([1, 2]), {
+                type: 'string',
+                minLength: 1
+            });
+        });
+
+        it('ignores unsupported and undefined meta keys', () => {
+
+            Helper.validateJsonSchema(Joi.string().meta({ unknownKey: 'value', title: undefined }), {
+                type: 'string',
+                minLength: 1
+            });
+        });
+
+        it('ignores non-array and empty meta examples', () => {
+
+            Helper.validateJsonSchema(Joi.string().meta({ examples: 'not-an-array' }), {
+                type: 'string',
+                minLength: 1
+            });
+
+            Helper.validateJsonSchema(Joi.string().meta({ examples: [] }), {
+                type: 'string',
+                minLength: 1
+            });
+        });
+
+        it('deduplicates meta examples with existing examples', () => {
+
+            Helper.validateJsonSchema(Joi.string().example('hello').meta({ examples: ['hello', 'world'] }), {
+                type: 'string',
+                minLength: 1,
+                examples: ['hello', 'world']
+            });
+        });
+
         it('represents description with null allowed', () => {
 
             Helper.validateJsonSchema(Joi.allow(null).description('foobar'), {
@@ -1629,6 +1667,31 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('deduplicates overlapping and() dependency peers', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).and('a', 'b', 'c').and('a', 'b', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: {
+                    a: ['b', 'c', 'd'],
+                    b: ['a', 'c', 'd'],
+                    c: ['a', 'b'],
+                    d: ['a', 'b']
+                }
+            });
+        });
+
         it('represents nand() dependency', () => {
 
             Helper.validateJsonSchema(Joi.object({
@@ -1662,6 +1725,30 @@ describe('jsonSchema', () => {
                 allOf: [
                     { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
                     { not: { properties: { a: true, c: true }, required: ['a', 'c'] } }
+                ]
+            });
+        });
+
+        it('represents three nand() dependencies via allOf', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string(),
+                d: Joi.string()
+            }).nand('a', 'b').nand('a', 'c').nand('a', 'd'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 },
+                    d: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                allOf: [
+                    { not: { properties: { a: true, b: true }, required: ['a', 'b'] } },
+                    { not: { properties: { a: true, c: true }, required: ['a', 'c'] } },
+                    { not: { properties: { a: true, d: true }, required: ['a', 'd'] } }
                 ]
             });
         });
@@ -2290,6 +2377,75 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchemaValues(unicodeAllowedAsciiDomain, [
                 ['example.कॉम', false],
                 ['example.xn--11b4c3d', false]
+            ]);
+
+            const deniedFqdnDomain = Joi.string().domain({
+                tlds: { deny: ['com'] },
+                allowFullyQualified: true
+            })['~standard'].jsonSchema.input();
+            expect(deniedFqdnDomain.type).to.equal('string');
+            expect(deniedFqdnDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(deniedFqdnDomain, [
+                ['example.com', false],
+                ['example.com.', false],
+                ['example.net', true],
+                ['example.net.', true]
+            ]);
+
+            const idnTldDomain = Joi.string().domain({
+                tlds: { allow: ['xn--11b4c3d'] }
+            })['~standard'].jsonSchema.input();
+            expect(idnTldDomain.type).to.equal('string');
+            expect(idnTldDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(idnTldDomain, [
+                ['example.xn--11b4c3d', true],
+                ['example.कॉम', true],
+                ['example.com', false]
+            ]);
+
+            // Uppercase TLD values are filtered out (canonical form is lowercase)
+            const upperTldDomain = Joi.string().domain({
+                tlds: { allow: ['COM'] }
+            })['~standard'].jsonSchema.input();
+            expect(upperTldDomain.type).to.equal('string');
+            expect(upperTldDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(upperTldDomain, [
+                ['example.com', false],
+                ['example.COM', false]
+            ]);
+
+            // Uppercase deny TLD is filtered, producing no denied lookahead
+            const upperDenyDomain = Joi.string().domain({
+                tlds: { deny: ['COM'] }
+            })['~standard'].jsonSchema.input();
+            expect(upperDenyDomain.type).to.equal('string');
+            expect(upperDenyDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(upperDenyDomain, [
+                ['example.com', true],
+                ['example.net', true]
+            ]);
+
+            // Invalid punycode TLD where domainToUnicode returns empty string
+            const invalidPunycodeDomain = Joi.string().domain({
+                tlds: { allow: ['xn--abc'] }
+            })['~standard'].jsonSchema.input();
+            expect(invalidPunycodeDomain.type).to.equal('string');
+            expect(invalidPunycodeDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(invalidPunycodeDomain, [
+                ['example.xn--abc', true],
+                ['example.com', false]
+            ]);
+
+            // IDN TLD with ß (multi-char uppercase: ß → SS)
+            const esszettDomain = Joi.string().domain({
+                tlds: { allow: ['xn--gro-7ka'] }
+            })['~standard'].jsonSchema.input();
+            expect(esszettDomain.type).to.equal('string');
+            expect(esszettDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(esszettDomain, [
+                ['example.xn--gro-7ka', true],
+                ['example.groß', true],
+                ['example.com', false]
             ]);
         });
 
