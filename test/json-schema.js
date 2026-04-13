@@ -486,6 +486,24 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.any().valid('a', 1, {}), { type: ['string', 'number'], enum: ['a', 1, {}] });
         });
+
+        it('represents invalid values as not enum', () => {
+
+            Helper.validateJsonSchema(Joi.string().invalid('foo', 'bar'), {
+                type: 'string',
+                minLength: 1,
+                not: { enum: ['foo', 'bar'] }
+            });
+
+            Helper.validateJsonSchema(Joi.number().invalid(0), {
+                type: 'number',
+                not: { enum: [0] }
+            });
+
+            Helper.validateJsonSchema(Joi.number().invalid(null), {
+                type: 'number'
+            });
+        });
     });
 
     describe('alternatives', () => {
@@ -665,6 +683,38 @@ describe('jsonSchema', () => {
         it('represents match one as oneOf', () => {
 
             Helper.validateJsonSchema(Joi.alternatives().try(Joi.string(), Joi.number()).match('one'), { oneOf: [{ type: 'string', minLength: 1 }, { type: 'number' }] });
+        });
+
+        it('represents match all as allOf', () => {
+
+            Helper.validateJsonSchema(
+                Joi.alternatives().try(
+                    Joi.object({ a: Joi.string() }).unknown(true),
+                    Joi.object({ b: Joi.number() }).unknown(true)
+                ).match('all'),
+                {
+                    allOf: [
+                        { type: 'object', properties: { a: { type: 'string', minLength: 1 } } },
+                        { type: 'object', properties: { b: { type: 'number' } } }
+                    ]
+                }
+            );
+        });
+
+        it('represents match all as allOf with strict objects', () => {
+
+            Helper.validateJsonSchema(
+                Joi.alternatives().try(
+                    Joi.object({ a: Joi.string() }),
+                    Joi.object({ b: Joi.number() })
+                ).match('all'),
+                {
+                    allOf: [
+                        { type: 'object', properties: { a: { type: 'string', minLength: 1 } }, additionalProperties: false },
+                        { type: 'object', properties: { b: { type: 'number' } }, additionalProperties: false }
+                    ]
+                }
+            );
         });
 
         it('represents empty schema when no alternatives provided', () => {
@@ -881,6 +931,21 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.array().min(1).max(10).length(5).unique(), { type: 'array', minItems: 5, maxItems: 5, uniqueItems: true });
         });
 
+        it('skips array constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.array().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'array' }
+                },
+                additionalProperties: false
+            });
+        });
+
         it('omits items: false when unevaluatedItems is used', () => {
 
             Helper.validateJsonSchema(Joi.array().ordered(Joi.string()), {
@@ -1028,6 +1093,33 @@ describe('jsonSchema', () => {
                 enum: [new Date(1741708800000)]
             });
         });
+
+        it('represents javascript timestamp', () => {
+
+            Helper.validateJsonSchema(Joi.date().timestamp('javascript'), {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,     // 100 million days in ms (ECMA-262 §21.4.1.1)
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+        });
+
+        it('represents unix timestamp', () => {
+
+            Helper.validateJsonSchema(Joi.date().timestamp('unix'), {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60,            // 100 million days in seconds
+                maximum: 100e6 * 24 * 60 * 60
+            });
+        });
+
+        it('represents timestamp() default as javascript', () => {
+
+            Helper.validateJsonSchema(Joi.date().timestamp(), {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,     // 100 million days in ms (ECMA-262 §21.4.1.1)
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+        });
     });
 
     describe('number', () => {
@@ -1102,6 +1194,64 @@ describe('jsonSchema', () => {
                 type: 'integer',
                 minimum: 0,
                 maximum: 65535
+            });
+        });
+
+        it('represents number.precision() as multipleOf', () => {
+
+            Helper.validateJsonSchema(Joi.number().precision(2), { type: 'number', multipleOf: 0.01 });
+            Helper.validateJsonSchema(Joi.number().precision(0), { type: 'number', multipleOf: 1 });
+            Helper.validateJsonSchema(Joi.number().precision(3), { type: 'number', multipleOf: 0.001 });
+        });
+
+        it('skips number constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().max(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().greater(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().less(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
             });
         });
 
@@ -1275,6 +1425,278 @@ describe('jsonSchema', () => {
                     a: { type: 'string', minLength: 1 }
                 },
                 required: ['a', 'z'],
+                additionalProperties: false
+            });
+        });
+
+        it('excludes forbidden keys from properties', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string().required(),
+                secret: Joi.any().forbidden()
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                },
+                required: ['a'],
+                additionalProperties: false
+            });
+        });
+
+        it('represents with() dependency as dependentRequired', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).with('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b'] }
+            });
+        });
+
+        it('represents with() dependency with multiple peers', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).with('a', ['b', 'c']), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b', 'c'] }
+            });
+        });
+
+        it('represents multiple with() dependencies', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).with('a', 'b').with('b', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b'], b: ['c'] }
+            });
+        });
+
+        it('represents and() dependency as bidirectional dependentRequired', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).and('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b'], b: ['a'] }
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).and('a', 'b', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b', 'c'], b: ['a', 'c'], c: ['a', 'b'] }
+            });
+        });
+
+        it('represents nand() dependency', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).nand('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                not: { properties: { a: true, b: true }, required: ['a', 'b'] }
+            });
+        });
+
+        it('represents or() dependency', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).or('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                anyOf: [
+                    { properties: { a: true }, required: ['a'] },
+                    { properties: { b: true }, required: ['b'] }
+                ]
+            });
+        });
+
+        it('represents xor() dependency', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).xor('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                oneOf: [
+                    { properties: { a: true }, required: ['a'] },
+                    { properties: { b: true }, required: ['b'] }
+                ]
+            });
+        });
+
+        it('represents oxor() dependency', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).oxor('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                oneOf: [
+                    { not: { anyOf: [{ properties: { a: true }, required: ['a'] }, { properties: { b: true }, required: ['b'] }] } },
+                    { properties: { a: true }, required: ['a'] },
+                    { properties: { b: true }, required: ['b'] }
+                ]
+            });
+        });
+
+        it('represents with() and and() dependencies together', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).with('a', 'b').and('b', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b'], b: ['c'], c: ['b'] }
+            });
+        });
+
+        it('represents with() and without() dependencies together', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).with('a', 'b').without('a', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentRequired: { a: ['b'] },
+                dependentSchemas: {
+                    a: { properties: { c: false } }
+                }
+            });
+        });
+
+        it('represents without() dependency as dependentSchemas', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string()
+            }).without('a', 'b'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentSchemas: {
+                    a: { properties: { b: false } }
+                }
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string(),
+                b: Joi.string(),
+                c: Joi.string()
+            }).without('a', 'b').without('b', 'c'), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { type: 'string', minLength: 1 },
+                    c: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false,
+                dependentSchemas: {
+                    a: { properties: { b: false } },
+                    b: { properties: { c: false } }
+                }
+            });
+        });
+
+        it('excludes stripped keys in output mode', () => {
+
+            const schema = Joi.object({
+                a: Joi.string().required(),
+                password: Joi.string().strip()
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    password: { type: 'string', minLength: 1 }
+                },
+                required: ['a'],
+                additionalProperties: false
+            }, {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                },
+                required: ['a'],
                 additionalProperties: false
             });
         });
@@ -1455,11 +1877,46 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().isoDate(), { type: 'string', minLength: 1, format: 'date-time' });
             Helper.validateJsonSchema(Joi.string().isoDuration(), { type: 'string', minLength: 1, format: 'duration' });
             Helper.validateJsonSchema(Joi.string().token(), { type: 'string', minLength: 1, format: 'token' });
+            Helper.validateJsonSchema(Joi.string().domain(), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}$'
+            });
+
+            Helper.validateJsonSchema(Joi.string().domain({ minDomainSegments: 3 }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){2,}[a-zA-Z]{2,}$'
+            });
+
+            Helper.validateJsonSchema(Joi.string().domain({ maxDomainSegments: 3 }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,2}[a-zA-Z]{2,}$'
+            });
+
+            Helper.validateJsonSchema(Joi.string().domain({ allowUnderscore: true }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(_?[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}$'
+            });
+
+            Helper.validateJsonSchema(Joi.string().domain({ allowFullyQualified: true }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z]{2,}\\.?$'
+            });
+
+            Helper.validateJsonSchema(Joi.string().domain({ tlds: false }), {
+                type: 'string',
+                minLength: 1,
+                pattern: '^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\\.){1,}[a-zA-Z][a-zA-Z0-9]*$'
+            });
         });
 
         it('represents string with various options', () => {
 
-            Helper.validateJsonSchema(Joi.string().alphanum(), { type: 'string', minLength: 1 });
+            Helper.validateJsonSchema(Joi.string().alphanum(), { type: 'string', minLength: 1, pattern: '^[a-zA-Z0-9]+$' });
             Helper.validateJsonSchema(Joi.string().allow(''), { type: 'string' });
             Helper.validateJsonSchema(Joi.string().min(0), { type: 'string' });
             Helper.validateJsonSchema(Joi.string().length(0), { type: 'string', minLength: 0, maxLength: 0 });
@@ -1474,9 +1931,178 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().allow('a'), { type: 'string', minLength: 1 });
         });
 
+        it('skips string constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().max(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().length(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+        });
+
         it('represents nullable string', () => {
 
             Helper.validateJsonSchema(Joi.string().allow(null), { type: ['string', 'null'], minLength: 1 });
+        });
+    });
+
+    describe('preferences', () => {
+
+        it('respects allowUnknown preference', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({ a: Joi.string() }).prefs({ allowUnknown: true }),
+                {
+                    type: 'object',
+                    properties: { a: { type: 'string', minLength: 1 } }
+                }
+            );
+        });
+
+        it('propagates allowUnknown preference to nested objects', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({
+                    nested: Joi.object({ x: Joi.string() })
+                }).prefs({ allowUnknown: true }),
+                {
+                    type: 'object',
+                    properties: {
+                        nested: {
+                            type: 'object',
+                            properties: { x: { type: 'string', minLength: 1 } }
+                        }
+                    }
+                }
+            );
+        });
+
+        it('explicit unknown(false) overrides allowUnknown preference', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({ a: Joi.string() }).unknown(false).prefs({ allowUnknown: true }),
+                {
+                    type: 'object',
+                    properties: { a: { type: 'string', minLength: 1 } },
+                    additionalProperties: false
+                }
+            );
+        });
+
+        it('respects stripUnknown preference in output mode', () => {
+
+            const schema = Joi.object({ a: Joi.string() }).prefs({ stripUnknown: true });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: { a: { type: 'string', minLength: 1 } }
+            }, {
+                type: 'object',
+                properties: { a: { type: 'string', minLength: 1 } },
+                additionalProperties: false
+            });
+        });
+
+        it('respects presence: required preference', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({
+                    a: Joi.string(),
+                    b: Joi.number()
+                }).prefs({ presence: 'required' }),
+                {
+                    type: 'object',
+                    properties: {
+                        a: { type: 'string', minLength: 1 },
+                        b: { type: 'number' }
+                    },
+                    required: ['a', 'b'],
+                    additionalProperties: false
+                }
+            );
+        });
+
+        it('respects presence: forbidden preference', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({
+                    a: Joi.string(),
+                    b: Joi.number()
+                }).prefs({ presence: 'forbidden' }),
+                {
+                    type: 'object',
+                    properties: {},
+                    additionalProperties: false
+                }
+            );
+        });
+
+        it('explicit presence flag overrides presence preference', () => {
+
+            Helper.validateJsonSchema(
+                Joi.object({
+                    a: Joi.string().optional(),
+                    b: Joi.number()
+                }).prefs({ presence: 'required' }),
+                {
+                    type: 'object',
+                    properties: {
+                        a: { type: 'string', minLength: 1 },
+                        b: { type: 'number' }
+                    },
+                    required: ['b'],
+                    additionalProperties: false
+                }
+            );
+        });
+
+        it('respects noDefaults preference in output mode', () => {
+
+            const schema = Joi.object({
+                a: Joi.string().default('foo'),
+                b: Joi.number()
+            }).prefs({ noDefaults: true });
+
+            const expected = {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1, default: 'foo' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            };
+
+            Helper.validateJsonSchema(schema, expected, expected);
         });
     });
 
@@ -1960,6 +2586,24 @@ describe('jsonSchema', () => {
                     }
                 },
                 additionalProperties: false
+            });
+        });
+
+        it('represents Joi.link() to a child schema with id but without shared', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string().id('aSchema'),
+                b: Joi.link('#aSchema')
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { $ref: '#/$defs/aSchema' }
+                },
+                additionalProperties: false,
+                $defs: {
+                    aSchema: { type: 'string', minLength: 1 }
+                }
             });
         });
 
