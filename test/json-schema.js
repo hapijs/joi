@@ -2165,7 +2165,7 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().domain({ tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ allowUnicode: false, tlds: false }), {
                 type: 'string',
@@ -2175,32 +2175,32 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().domain({ minDomainSegments: 3, tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){2,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){2,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ maxDomainSegments: 3, tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,2}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,2}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ allowUnderscore: true, tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9_\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9_\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ allowFullyQualified: true, tlds: false }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}(?:\\.?$))[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,}(?=[^.]{1,63}(?:\\.?$))[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.?$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ tlds: { allow: ['com'] } }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?=[^.]{1,63}$)(?:[cC][oO][mM])$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,}(?=[^.]{1,63}$)(?:[cC][oO][mM])$'
             });
             Helper.validateJsonSchema(Joi.string().domain({ tlds: { deny: ['com'] } }), {
                 type: 'string',
                 minLength: 1,
-                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?\\.){1,}(?!(?:[cC][oO][mM])$)(?=[^.]{1,63}$)[A-Za-z\\u0080-\\uFFFF](?:[A-Za-z0-9\\u0080-\\uFFFF-]*[A-Za-z0-9\\u0080-\\uFFFF])?$'
+                pattern: '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){1,}(?!(?:[cC][oO][mM])$)(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$'
             });
 
             const defaultDomain = Joi.string().domain()['~standard'].jsonSchema.input();
@@ -2210,6 +2210,9 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchemaValues(defaultDomain, [
                 ['example.com', true],
                 ['ä.com', true],
+                ['𐍈.com', true],
+                ['🦄.com', true],
+                ['example.КОМ', true],
                 ['localhost', false],
                 ['example.local', false],
                 [`${'a'.repeat(63)}.com`, true],
@@ -2279,6 +2282,14 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchemaValues(deniedTldDomain, [
                 ['example.com', false],
                 ['example.net', true]
+            ]);
+
+            const unicodeAllowedAsciiDomain = Joi.string().domain({ allowUnicode: false, tlds: { allow: ['कॉम'] } })['~standard'].jsonSchema.input();
+            expect(unicodeAllowedAsciiDomain.type).to.equal('string');
+            expect(unicodeAllowedAsciiDomain.minLength).to.equal(1);
+            Helper.validateJsonSchemaValues(unicodeAllowedAsciiDomain, [
+                ['example.कॉम', false],
+                ['example.xn--11b4c3d', false]
             ]);
         });
 
@@ -2398,6 +2409,16 @@ describe('jsonSchema', () => {
                 type: 'object',
                 properties: { a: { type: 'string', minLength: 1 } },
                 additionalProperties: false
+            });
+        });
+
+        it('does not strip unknown object keys in output mode when only array stripping is enabled', () => {
+
+            const schema = Joi.object({ a: Joi.string() }).prefs({ allowUnknown: true, stripUnknown: { arrays: true } });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: { a: { type: 'string', minLength: 1 } }
             });
         });
 
