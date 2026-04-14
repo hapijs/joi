@@ -591,6 +591,29 @@ describe('jsonSchema', () => {
                 type: 'number'
             });
         });
+
+        it('represents invalid(null) for unconstrained schemas', () => {
+
+            const schema = Joi.any().invalid(null);
+
+            Helper.validate(schema, [
+                [null, false, '"value" contains an invalid value'],
+                [1, true],
+                ['x', true],
+                [{ a: true }, true]
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                not: { enum: [null] }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [null, false],
+                [1, true],
+                ['x', true],
+                [{ a: true }, true]
+            ]);
+        });
     });
 
     describe('alternatives', () => {
@@ -1526,7 +1549,7 @@ describe('jsonSchema', () => {
             });
         });
 
-        it('excludes forbidden keys from properties', () => {
+        it('represents forbidden keys as false schemas', () => {
 
             Helper.validateJsonSchema(Joi.object({
                 a: Joi.string().required(),
@@ -1534,11 +1557,38 @@ describe('jsonSchema', () => {
             }), {
                 type: 'object',
                 properties: {
-                    a: { type: 'string', minLength: 1 }
+                    a: { type: 'string', minLength: 1 },
+                    secret: false
                 },
                 required: ['a'],
                 additionalProperties: false
             });
+        });
+
+        it('forbids declared forbidden keys while allowing unknown keys', () => {
+
+            const schema = Joi.object({
+                a: Joi.string().forbidden()
+            }).prefs({ allowUnknown: true });
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ a: 'x' }, false, '"a" is not allowed'],
+                [{ c: true }, true]
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    a: false
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{}, true],
+                [{ a: 'x' }, false],
+                [{ c: true }, true]
+            ]);
         });
 
         it('represents with() dependency as dependentRequired', () => {
@@ -2046,7 +2096,7 @@ describe('jsonSchema', () => {
             });
         });
 
-        it('excludes stripped keys in output mode', () => {
+        it('represents stripped keys as false schemas in output mode', () => {
 
             const schema = Joi.object({
                 a: Joi.string().required(),
@@ -2064,11 +2114,44 @@ describe('jsonSchema', () => {
             }, {
                 type: 'object',
                 properties: {
-                    a: { type: 'string', minLength: 1 }
+                    a: { type: 'string', minLength: 1 },
+                    password: false
                 },
                 required: ['a'],
                 additionalProperties: false
             });
+        });
+
+        it('forbids stripped declared keys in output mode while allowing unknown keys', () => {
+
+            const schema = Joi.object({
+                a: Joi.string().strip()
+            }).prefs({ allowUnknown: true });
+
+            Helper.validate(schema, [
+                [{ a: 'x', c: true }, true, { c: true }],
+                [{ a: 'x' }, true, {}],
+                [{ c: true }, true]
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                }
+            }, {
+                type: 'object',
+                properties: {
+                    a: false
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.output(), [
+                [{}, true],
+                [{ a: 'x' }, false],
+                [{ c: true }, true],
+                [{ a: 'x', c: true }, false]
+            ]);
         });
 
         it('merges invalid() with other not-based object constraints', () => {
@@ -2668,6 +2751,77 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('strips unknown object keys in output mode when object stripping is enabled', () => {
+
+            const schema = Joi.object({ a: Joi.string() }).prefs({ stripUnknown: { objects: true } });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: { a: { type: 'string', minLength: 1 } }
+            }, {
+                type: 'object',
+                properties: { a: { type: 'string', minLength: 1 } },
+                additionalProperties: false
+            });
+        });
+
+        it('does not add array-level stripping when only object stripping is enabled', () => {
+
+            const schema = Joi.object({
+                items: Joi.array().items(Joi.string())
+            }).prefs({ stripUnknown: { objects: true } });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    items: { type: 'array', items: { type: 'string', minLength: 1 } }
+                }
+            }, {
+                type: 'object',
+                properties: {
+                    items: { type: 'array', items: { type: 'string', minLength: 1 } }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('still strips nested object keys inside arrays when object stripping is enabled', () => {
+
+            const schema = Joi.object({
+                items: Joi.array().items(Joi.object({ a: Joi.string() }))
+            }).prefs({ stripUnknown: { objects: true } });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    items: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                a: { type: 'string', minLength: 1 }
+                            }
+                        }
+                    }
+                }
+            }, {
+                type: 'object',
+                properties: {
+                    items: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                a: { type: 'string', minLength: 1 }
+                            },
+                            additionalProperties: false
+                        }
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
         it('respects presence: required preference', () => {
 
             Helper.validateJsonSchema(
@@ -2687,19 +2841,114 @@ describe('jsonSchema', () => {
             );
         });
 
-        it('respects presence: forbidden preference', () => {
+        it('represents root presence: forbidden preference as false', () => {
 
-            Helper.validateJsonSchema(
-                Joi.object({
-                    a: Joi.string(),
-                    b: Joi.number()
-                }).prefs({ presence: 'forbidden' }),
-                {
-                    type: 'object',
-                    properties: {},
-                    additionalProperties: false
-                }
-            );
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.number()
+            }).prefs({ presence: 'forbidden' });
+
+            Helper.validate(schema, [
+                [{}, false, '"value" is not allowed'],
+                [{ a: 'x' }, false, '"value" is not allowed'],
+                [{ c: true }, false, '"value" is not allowed']
+            ]);
+
+            Helper.validateJsonSchema(schema, false);
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{}, false],
+                [{ a: 'x' }, false],
+                [{ c: true }, false]
+            ]);
+        });
+
+        it('represents root presence: forbidden preference as false even when unknown keys are allowed', () => {
+
+            const schema = Joi.object({
+                a: Joi.string(),
+                b: Joi.number()
+            }).prefs({ presence: 'forbidden', allowUnknown: true });
+
+            Helper.validate(schema, [
+                [{}, false, '"value" is not allowed'],
+                [{ a: 'x' }, false, '"value" is not allowed'],
+                [{ b: 1 }, false, '"value" is not allowed'],
+                [{ c: true }, false, '"value" is not allowed']
+            ]);
+
+            Helper.validateJsonSchema(schema, false);
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{}, false],
+                [{ a: 'x' }, false],
+                [{ b: 1 }, false],
+                [{ c: true }, false]
+            ]);
+        });
+
+        it('forbids a nested object when the nested schema has presence: forbidden preference', () => {
+
+            const schema = Joi.object({
+                nested: Joi.object({
+                    a: Joi.string()
+                }).prefs({ presence: 'forbidden' })
+            });
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ nested: {} }, false, '"nested" is not allowed'],
+                [{ nested: { a: 'x' } }, false, '"nested" is not allowed']
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    nested: false
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{}, true],
+                [{ nested: {} }, false],
+                [{ nested: { a: 'x' } }, false]
+            ]);
+        });
+
+        it('lets explicit nested presence override nested forbidden preference while forbidding inherited child keys', () => {
+
+            const schema = Joi.object({
+                nested: Joi.object({
+                    a: Joi.string()
+                }).prefs({ presence: 'forbidden' }).optional()
+            });
+
+            Helper.validate(schema, [
+                [{}, true],
+                [{ nested: {} }, true],
+                [{ nested: { a: 'x' } }, false, '"nested.a" is not allowed']
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    nested: {
+                        type: 'object',
+                        properties: {
+                            a: false
+                        },
+                        additionalProperties: false
+                    }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{}, true],
+                [{ nested: {} }, true],
+                [{ nested: { a: 'x' } }, false]
+            ]);
         });
 
         it('explicit presence flag overrides presence preference', () => {
@@ -3260,6 +3509,7 @@ describe('jsonSchema', () => {
             }, {
                 type: 'object',
                 properties: {
+                    a: false,
                     b: { $ref: '#/$defs/aSchema' }
                 },
                 additionalProperties: false,
@@ -3277,6 +3527,7 @@ describe('jsonSchema', () => {
             }), {
                 type: 'object',
                 properties: {
+                    a: false,
                     b: { $ref: '#/$defs/aSchema' }
                 },
                 additionalProperties: false,
