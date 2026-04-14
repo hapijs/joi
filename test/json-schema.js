@@ -3117,6 +3117,106 @@ describe('jsonSchema', () => {
                 ]
             });
         });
+
+        it('inherits json schema type from custom string extensions', () => {
+
+            const custom = Joi.extend({
+                type: 'myString',
+                base: Joi.string()
+            });
+
+            Helper.validateJsonSchema(custom.myString(), {
+                type: 'string',
+                minLength: 1
+            });
+        });
+
+        it('inherits json schema type from custom number extensions', () => {
+
+            const custom = Joi.extend({
+                type: 'myNumber',
+                base: Joi.number()
+            });
+
+            Helper.validateJsonSchema(custom.myNumber(), {
+                type: 'number'
+            });
+        });
+
+        it('inherits json schema type from custom object extensions', () => {
+
+            const custom = Joi.extend({
+                type: 'myObject',
+                base: Joi.object({ a: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(custom.myObject(), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('represents nested custom object extensions with inherited json schema type', () => {
+
+            const custom = Joi.extend({
+                type: 'myObject',
+                base: Joi.object({ a: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                child: custom.myObject().required()
+            }), {
+                type: 'object',
+                properties: {
+                    child: {
+                        type: 'object',
+                        properties: {
+                            a: { type: 'string', minLength: 1 }
+                        },
+                        additionalProperties: false
+                    }
+                },
+                required: ['child'],
+                additionalProperties: false
+            });
+        });
+
+        it('applies object preferences to custom object extensions', () => {
+
+            const custom = Joi.extend({
+                type: 'myObject',
+                base: Joi.object({ a: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(custom.myObject().prefs({ allowUnknown: true, stripUnknown: true }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                }
+            }, {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('inherits json schema type from custom array extensions', () => {
+
+            const custom = Joi.extend({
+                type: 'myArray',
+                base: Joi.array().items(Joi.string())
+            });
+
+            Helper.validateJsonSchema(custom.myArray(), {
+                type: 'array',
+                items: { type: 'string', minLength: 1 }
+            });
+        });
     });
 
     describe('object', () => {
