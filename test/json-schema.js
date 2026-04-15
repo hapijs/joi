@@ -614,6 +614,85 @@ describe('jsonSchema', () => {
                 [{ a: true }, true]
             ]);
         });
+
+        it('filters invalid(null) according to whether the emitted schema can match null', () => {
+
+            const custom = Joi.extend(
+                {
+                    type: 'nothing',
+                    base: Joi.any(),
+                    jsonSchema() {
+
+                        return false;
+                    }
+                },
+                {
+                    type: 'anything',
+                    base: Joi.any(),
+                    jsonSchema() {
+
+                        return true;
+                    }
+                },
+                {
+                    type: 'nullableEnum',
+                    base: Joi.any(),
+                    jsonSchema(schema, res) {
+
+                        res.enum = [null, 'x'];
+                        return res;
+                    }
+                }
+            );
+
+            Helper.validateJsonSchema(custom.nothing().invalid(null), false);
+            Helper.validateJsonSchema(custom.nothing().invalid('x'), false);
+
+            Helper.validateJsonSchema(custom.anything().invalid(null), {
+                not: { enum: [null] }
+            });
+
+            Helper.validateJsonSchema(custom.nullableEnum().invalid(null), {
+                enum: [null, 'x'],
+                not: { enum: [null] }
+            });
+
+            Helper.validateJsonSchema(Joi.valid(null, 'a').invalid(null), {
+                enum: ['a'],
+                type: 'string'
+            });
+
+            Helper.validateJsonSchema(Joi.string().allow(1).invalid(null), {
+                anyOf: [
+                    { type: 'string', minLength: 1 },
+                    { enum: [1] }
+                ]
+            });
+
+            Helper.validateJsonSchema(Joi.alternatives().try(Joi.string().allow(null), Joi.number()).invalid(null), {
+                anyOf: [
+                    { type: ['string', 'null'], minLength: 1 },
+                    { type: 'number' }
+                ],
+                not: { enum: [null] }
+            });
+
+            Helper.validateJsonSchema(Joi.alternatives().try(Joi.string().allow(null), Joi.number()).match('one').invalid(null), {
+                oneOf: [
+                    { type: ['string', 'null'], minLength: 1 },
+                    { type: 'number' }
+                ],
+                not: { enum: [null] }
+            });
+
+            Helper.validateJsonSchema(Joi.alternatives().try(Joi.any().allow(null), Joi.string().allow(null)).match('all').invalid(null), {
+                allOf: [
+                    {},
+                    { type: ['string', 'null'], minLength: 1 },
+                    { not: { enum: [null] } }
+                ]
+            });
+        });
     });
 
     describe('alternatives', () => {
