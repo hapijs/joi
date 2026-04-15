@@ -2,6 +2,7 @@
 
 const Code = require('@hapi/code');
 const Ajv = require('ajv/dist/2020');
+const AjvFormats = require('ajv-formats');
 
 const internals = {};
 
@@ -9,28 +10,20 @@ const internals = {};
 const { expect } = Code;
 
 
-internals.ajvValidator = new Ajv({
+internals.ajvOptions = {
     strict: true,
     allowUnionTypes: true,
     formats: {
         banana: true,
         base64: true,
-        binary: true,
         'data-uri': true,
-        'date-time': true,
-        duration: true,
-        email: true,
         hex: true,
-        hostname: true,
         ip: true,
-        ipv4: true,
-        token: true,
-        uri: true,
-        uuid: true
+        token: true
     },
     keywords: ['x-constraint', 'foo'],
     strictTuples: true
-});
+};
 
 
 exports.skip = Symbol('skip');
@@ -132,18 +125,19 @@ exports.validate = function (schema, prefs, tests) {
 };
 
 
-exports.validateJsonSchema = function (schema, expectedInput, expectedOutput) {
+exports.validateJsonSchema = function (schema, expectedInput, expectedOutput, ajvOptionsOverride) {
 
     try {
+        const validator = internals.ajv(ajvOptionsOverride);
         const js = schema['~standard'].jsonSchema;
         const input = js.input();
         expect(input).to.equal(expectedInput);
-        internals.ajvValidator.compile(input);
+        validator.compile(input);
 
         // If we don't have an expected output, it must mean it should be identical to the input
         const output = js.output();
         expect(output).to.equal(expectedOutput ?? expectedInput);
-        internals.ajvValidator.compile(output);
+        validator.compile(output);
     }
     catch (err) {
         console.error(err.stack);
@@ -151,6 +145,42 @@ exports.validateJsonSchema = function (schema, expectedInput, expectedOutput) {
         throw err;
     }
 };
+
+
+exports.validateJsonSchemaValues = function (schema, tests, ajvOptionsOverride) {
+
+    try {
+        const validator = internals.ajv(ajvOptionsOverride);
+        const validate = validator.compile(schema);
+
+        for (const [value, pass] of tests) {
+            const result = validate(value);
+
+            if (result !== pass) {
+                console.log({ value, errors: validate.errors });
+            }
+
+            expect(result).to.equal(pass);
+        }
+    }
+    catch (err) {
+        console.error(err.stack);
+        err.at = internals.thrownAt();      // Adjust error location to test
+        throw err;
+    }
+};
+
+
+internals.ajv = function (options) {
+
+    const validator = new Ajv(options ? { ...internals.ajvOptions, ...options } : internals.ajvOptions);
+    AjvFormats(validator);
+    return validator;
+};
+
+
+internals.ajvValidator = internals.ajv();
+
 
 internals.thrownAt = function () {
 
