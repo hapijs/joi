@@ -9,7 +9,7 @@ const internals = {};
 const { expect } = Code;
 
 
-internals.ajvValidator = new Ajv({
+internals.ajvOptions = {
     strict: true,
     allowUnionTypes: true,
     formats: {
@@ -30,7 +30,9 @@ internals.ajvValidator = new Ajv({
     },
     keywords: ['x-constraint', 'foo'],
     strictTuples: true
-});
+};
+
+internals.ajvValidator = new Ajv(internals.ajvOptions);
 
 
 exports.skip = Symbol('skip');
@@ -132,18 +134,19 @@ exports.validate = function (schema, prefs, tests) {
 };
 
 
-exports.validateJsonSchema = function (schema, expectedInput, expectedOutput) {
+exports.validateJsonSchema = function (schema, expectedInput, expectedOutput, ajvOptionsOverride) {
 
     try {
+        const validator = internals.ajv(ajvOptionsOverride);
         const js = schema['~standard'].jsonSchema;
         const input = js.input();
         expect(input).to.equal(expectedInput);
-        internals.ajvValidator.compile(input);
+        validator.compile(input);
 
         // If we don't have an expected output, it must mean it should be identical to the input
         const output = js.output();
         expect(output).to.equal(expectedOutput ?? expectedInput);
-        internals.ajvValidator.compile(output);
+        validator.compile(output);
     }
     catch (err) {
         console.error(err.stack);
@@ -153,10 +156,11 @@ exports.validateJsonSchema = function (schema, expectedInput, expectedOutput) {
 };
 
 
-exports.validateJsonSchemaValues = function (schema, tests) {
+exports.validateJsonSchemaValues = function (schema, tests, ajvOptionsOverride) {
 
     try {
-        const validate = internals.ajvValidator.compile(schema);
+        const validator = internals.ajv(ajvOptionsOverride);
+        const validate = validator.compile(schema);
 
         for (const [value, pass] of tests) {
             const result = validate(value);
@@ -174,6 +178,13 @@ exports.validateJsonSchemaValues = function (schema, tests) {
         throw err;
     }
 };
+
+
+internals.ajv = function (options) {
+
+    return options ? new Ajv({ ...internals.ajvOptions, ...options }) : internals.ajvValidator;
+};
+
 
 internals.thrownAt = function () {
 
