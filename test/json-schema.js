@@ -947,6 +947,41 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('skips uniqueItems for custom unique comparators', () => {
+
+            const schema = Joi.array().unique(() => false);
+
+            Helper.validateJsonSchema(schema, {
+                type: 'array'
+            });
+
+            Helper.validate(schema, [
+                [[1, 1], true]
+            ]);
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [[1, 1], true]
+            ]);
+        });
+
+        it('skips uniqueItems for path unique comparators', () => {
+
+            const schema = Joi.array().unique('id', { ignoreUndefined: true });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'array'
+            });
+
+            Helper.validate(schema, [
+                [[{}, {}], true],
+                [[{ id: 1 }, { id: 1 }], false, '"[1]" contains a duplicate value']
+            ]);
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [[{}, {}], true]
+            ]);
+        });
+
         it('represents array with multiple items types', () => {
 
             Helper.validateJsonSchema(Joi.array().items(Joi.string(), Joi.number()), {
@@ -989,6 +1024,22 @@ describe('jsonSchema', () => {
                     }
                 ]
             });
+        });
+
+        it('skips contains for has schemas with refs', () => {
+
+            const schema = Joi.array().items(Joi.number()).has(Joi.number().greater(Joi.ref('..0')));
+
+            Helper.validateJsonSchema(schema, {
+                type: 'array',
+                items: { type: 'number' }
+            });
+
+            Helper.validate(schema, [
+                [[10, 1, 11], true],
+                [[10, 1, 2], false, '"value" does not contain at least one required match'],
+                [[10], false, '"value" does not contain at least one required match']
+            ]);
         });
 
         // Optional ordered positions are valid JSON Schema,
