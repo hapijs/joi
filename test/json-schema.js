@@ -1286,6 +1286,7 @@ describe('jsonSchema', () => {
                 type: 'array'
             });
         });
+
     });
 
     describe('binary', () => {
