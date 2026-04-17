@@ -128,8 +128,8 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.string().valid('a', 'b').when('c', { is: 1, then: Joi.string().description('d') }), {
                 anyOf: [
-                    { enum: ['a', 'b'], type: 'string', description: 'd' },
-                    { enum: ['a', 'b'], type: 'string' }
+                    { enum: ['a', 'b'], type: 'string', description: 'd', minLength: 1 },
+                    { enum: ['a', 'b'], type: 'string', minLength: 1 }
                 ]
             });
         });
@@ -148,8 +148,8 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.string().valid('a').when('c', { is: 1, then: Joi.string().valid('b') }), {
                 anyOf: [
-                    { type: 'string', enum: ['a', 'b'] },
-                    { type: 'string', enum: ['a'] }
+                    { type: 'string', minLength: 1, enum: ['a', 'b'] },
+                    { type: 'string', minLength: 1, enum: ['a'] }
                 ]
             });
         });
@@ -355,7 +355,7 @@ describe('jsonSchema', () => {
 
         it('avoids duplicate types when merging null and valid', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid('a').allow(null), { type: ['string', 'null'], enum: ['a'] });
+            Helper.validateJsonSchema(Joi.string().valid('a').allow(null), { type: ['string', 'null'], minLength: 1, enum: ['a', null] });
         });
 
         it('represents valids with multiple types', () => {
@@ -441,7 +441,151 @@ describe('jsonSchema', () => {
 
         it('represents inferred mixed string and null valids', () => {
 
-            Helper.validateJsonSchema(Joi.valid('foo', null), { type: ['string', 'null'], enum: ['foo'] });
+            Helper.validateJsonSchema(Joi.valid('foo', null), { type: ['string', 'null'], enum: ['foo', null] });
+        });
+
+        it('retains null in exclusive valid enums', () => {
+
+            const schema = Joi.string().valid('a', 'b', null);
+            const tests = [
+                ['a', true],
+                ['b', true],
+                [null, true],
+                ['c', false, '"value" must be one of [a, b, null]'],
+                [1, false, '"value" must be one of [a, b, null]'],
+                [true, false, '"value" must be one of [a, b, null]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, { type: ['string', 'null'], minLength: 1, enum: ['a', 'b', null] });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('retains null in numeric exclusive valid enums', () => {
+
+            const schema = Joi.number().valid(1, 2, null);
+            const tests = [
+                [1, true],
+                [2, true],
+                [null, true],
+                [3, false, '"value" must be one of [1, 2, null]'],
+                [true, false, '"value" must be one of [1, 2, null]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, { type: ['number', 'null'], enum: [1, 2, null] });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('flattens exclusive valid type unions when null is mixed with multiple primitives', () => {
+
+            const schema = Joi.valid('a', 1, null);
+            const tests = [
+                ['a', true],
+                [1, true],
+                [null, true],
+                [true, false, '"value" must be one of [a, 1, null]'],
+                [{}, false, '"value" must be one of [a, 1, null]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, { type: ['string', 'number', 'null'], enum: ['a', 1, null] });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('retains null in exclusive valid enums inside objects', () => {
+
+            const schema = Joi.object({
+                status: Joi.string().valid('active', 'inactive', null)
+            });
+            const tests = [
+                [{}, true],
+                [{ status: 'active' }, true],
+                [{ status: 'inactive' }, true],
+                [{ status: null }, true],
+                [{ status: 'paused' }, false, '"status" must be one of [active, inactive, null]'],
+                [{ status: 1 }, false, '"status" must be one of [active, inactive, null]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    status: { type: ['string', 'null'], minLength: 1, enum: ['active', 'inactive', null] }
+                },
+                additionalProperties: false
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('lets exclusive valids override conflicting string rules', () => {
+
+            const schema = Joi.string().min(5).valid('abc');
+            const tests = [
+                ['abc', true],
+                ['abcde', false, '"value" must be [abc]'],
+                ['ab', false, '"value" must be [abc]'],
+                [1, false, '"value" must be [abc]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                enum: ['abc']
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('lets exclusive valids override conflicting object rules', () => {
+
+            const schema = Joi.object().min(1).valid({});
+            const tests = [
+                [{}, true],
+                [{ a: 1 }, false, '"value" must be [[object Object]]'],
+                [null, false, '"value" must be [[object Object]]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                enum: [{}]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('lets exclusive valids override conflicting date rules', () => {
+
+            const value = new Date('2019-01-01T00:00:00.000Z');
+            const schema = Joi.date().min('2020-01-01').valid(value);
+            const tests = [
+                [value.toISOString(), true, value],
+                ['2020-01-01T00:00:00.000Z', false, '"value" must be [2019-01-01T00:00:00.000Z]'],
+                [null, false, '"value" must be [2019-01-01T00:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                enum: [value.toISOString()]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('does not narrow mixed exclusive valids with object members', () => {
+
+            const schema = Joi.any().valid({ a: 1 }, 'a', null);
+            const tests = [
+                [{ a: 1 }, true],
+                ['a', true],
+                [null, true],
+                [{ a: 2 }, false, '"value" must be one of [[object Object], a, null]'],
+                [1, false, '"value" must be one of [[object Object], a, null]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                enum: [{ a: 1 }, 'a', null]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('represents string schema with number valid as number type', () => {
@@ -451,7 +595,7 @@ describe('jsonSchema', () => {
 
         it('represents string schema with mixed number and string valids', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid(1, 'a'), { type: ['number', 'string'], enum: [1, 'a'] });
+            Helper.validateJsonSchema(Joi.string().valid(1, 'a'), { type: ['number', 'string'], minLength: 1, enum: [1, 'a'] });
         });
 
         it('represents string schema with min length and number valid', () => {
@@ -501,7 +645,7 @@ describe('jsonSchema', () => {
 
         it('represents string schema with multiple number and string valids', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid(1, 2, 'a'), { type: ['number', 'string'], enum: [1, 2, 'a'] });
+            Helper.validateJsonSchema(Joi.string().valid(1, 2, 'a'), { type: ['number', 'string'], minLength: 1, enum: [1, 2, 'a'] });
         });
 
         it('represents string schema with mixed number and boolean valids', () => {
@@ -511,7 +655,7 @@ describe('jsonSchema', () => {
 
         it('represents string schema with mixed number and string valids (reordered)', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid(1, 'a', 2), { type: ['number', 'string'], enum: [1, 'a', 2] });
+            Helper.validateJsonSchema(Joi.string().valid(1, 'a', 2), { type: ['number', 'string'], minLength: 1, enum: [1, 'a', 2] });
         });
 
         it('represents string schema with mixed number and boolean valids (reordered)', () => {
@@ -521,12 +665,12 @@ describe('jsonSchema', () => {
 
         it('represents string schema with mixed number and object valids', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid(1, {}), { type: 'number', enum: [1, {}] });
+            Helper.validateJsonSchema(Joi.string().valid(1, {}), { enum: [1, {}] });
         });
 
         it('represents string schema with multiple numbers and object valid', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid(1, 2, {}), { type: 'number', enum: [1, 2, {}] });
+            Helper.validateJsonSchema(Joi.string().valid(1, 2, {}), { enum: [1, 2, {}] });
         });
 
         it('represents string only with number valid', () => {
@@ -536,7 +680,7 @@ describe('jsonSchema', () => {
 
         it('represents string only with allowed string', () => {
 
-            Helper.validateJsonSchema(Joi.string().valid('a'), { type: 'string', enum: ['a'] });
+            Helper.validateJsonSchema(Joi.string().valid('a'), { type: 'string', minLength: 1, enum: ['a'] });
         });
 
         it('represents empty any valids', () => {
@@ -566,12 +710,38 @@ describe('jsonSchema', () => {
 
         it('represents valids with string and object', () => {
 
-            Helper.validateJsonSchema(Joi.any().valid('a', {}), { type: 'string', enum: ['a', {}] });
+            Helper.validateJsonSchema(Joi.any().valid('a', {}), { enum: ['a', {}] });
         });
 
         it('represents valids with string, number and object', () => {
 
-            Helper.validateJsonSchema(Joi.any().valid('a', 1, {}), { type: ['string', 'number'], enum: ['a', 1, {}] });
+            const schema = Joi.any().valid('a', 1, {});
+            const tests = [
+                ['a', true],
+                [1, true],
+                [{}, true],
+                [true, false],
+                [null, false]
+            ];
+
+            Helper.validateJsonSchema(schema, { enum: ['a', 1, {}] });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests);
+        });
+
+        it('preserves annotations and shared defs when exclusive valids fall back to enum-only output', () => {
+
+            const schema = Joi.any()
+                .shared(Joi.string().id('shared'))
+                .description('annotated')
+                .valid({ a: 1 });
+
+            Helper.validateJsonSchema(schema, {
+                $defs: {
+                    shared: { type: 'string', minLength: 1 }
+                },
+                description: 'annotated',
+                enum: [{ a: 1 }]
+            });
         });
 
         it('represents invalid values as not enum', () => {
@@ -1466,11 +1636,131 @@ describe('jsonSchema', () => {
 
         it('represents date with valid rule', () => {
 
-            Helper.validateJsonSchema(Joi.date().valid(new Date(1741708800000)), {
+            const value = new Date(1741708800000);
+            const schema = Joi.date().valid(value);
+            const tests = [
+                [value.toISOString(), true, value],
+                ['2025-03-12T16:00:00.000Z', false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [null, false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
                 type: 'string',
                 format: 'date-time',
-                enum: [new Date(1741708800000)]
+                enum: [value.toISOString()]
             });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('represents iso date with valid rule', () => {
+
+            const value = new Date(1741708800000);
+            const schema = Joi.date().iso().valid(value);
+            const tests = [
+                [value.toISOString(), true, value],
+                ['2025-03-12T16:00:00.000Z', false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [null, false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                format: 'date-time',
+                enum: [value.toISOString()]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('represents javascript timestamp with valid rule', () => {
+
+            const value = new Date(1741708800000);
+            const schema = Joi.date().timestamp('javascript').valid(value);
+            const tests = [
+                [value.getTime(), true, value],
+                [value.getTime() + 1, false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [null, false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                enum: [value.getTime()]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('represents unix timestamp with valid rule', () => {
+
+            const value = new Date(1741708800000);
+            const unix = value.getTime() / 1000;
+            const schema = Joi.date().timestamp('unix').valid(value);
+            const tests = [
+                [unix, true, value],
+                [unix + 1, false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [null, false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60,
+                maximum: 100e6 * 24 * 60 * 60,
+                enum: [unix]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('represents allowed dates using canonical JSON values', () => {
+
+            const value = new Date(1741708800000);
+            Helper.validateJsonSchema(Joi.date().allow(value), {
+                anyOf: [
+                    { type: 'string', format: 'date-time' },
+                    { enum: [value.toISOString()] }
+                ]
+            });
+        });
+
+        it('represents invalid dates using canonical JSON values', () => {
+
+            const value = new Date(1741708800000);
+            const schema = Joi.date().invalid(value);
+            const tests = [
+                [value.toISOString(), false, '"value" contains an invalid value'],
+                ['2025-03-12T16:00:00.000Z', true, new Date('2025-03-12T16:00:00.000Z')],
+                [null, false, '"value" must be a valid date']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                format: 'date-time',
+                not: { enum: [value.toISOString()] }
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
+        });
+
+        it('represents invalid javascript timestamps using canonical JSON values', () => {
+
+            const value = new Date(1741708800000);
+            const schema = Joi.date().timestamp('javascript').invalid(value);
+            const tests = [
+                [value.getTime(), false, '"value" contains an invalid value'],
+                [value.getTime() + 1, true, new Date(value.getTime() + 1)],
+                [null, false, '"value" must be a valid date']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                not: { enum: [value.getTime()] }
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
         });
 
         it('represents javascript timestamp', () => {
@@ -2582,6 +2872,7 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.string().valid('a', 'b'), {
                 type: 'string',
+                minLength: 1,
                 enum: ['a', 'b']
             });
 
@@ -2610,6 +2901,7 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().max(5).valid('abcde'), {
                 type: 'string',
                 enum: ['abcde'],
+                minLength: 1,
                 maxLength: 5
             });
 
@@ -2623,28 +2915,32 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().pattern(/abc/).valid('abc'), {
                 type: 'string',
                 enum: ['abc'],
+                minLength: 1,
                 pattern: 'abc'
             });
 
             Helper.validateJsonSchema(Joi.string().email().valid('a@b.com'), {
                 type: 'string',
                 enum: ['a@b.com'],
+                minLength: 1,
                 format: 'email'
             });
 
             Helper.validateJsonSchema(Joi.string().guid().valid('550e8400-e29b-41d4-a716-446655440000'), {
                 type: 'string',
                 enum: ['550e8400-e29b-41d4-a716-446655440000'],
+                minLength: 1,
                 format: 'uuid'
             });
 
             Helper.validateJsonSchema(Joi.string().ip().valid('127.0.0.1'), {
                 type: 'string',
                 format: 'ip',
+                minLength: 1,
                 enum: ['127.0.0.1']
             });
 
-            Helper.validateJsonSchema(Joi.string().valid('a'), { enum: ['a'], type: 'string' });
+            Helper.validateJsonSchema(Joi.string().valid('a'), { enum: ['a'], type: 'string', minLength: 1 });
         });
 
         it('represents string with formats', () => {
@@ -3374,6 +3670,78 @@ describe('jsonSchema', () => {
                     { type: 'null' },
                     { description: 'foo' }
                 ]
+            });
+        });
+
+        it('deduplicates null when custom jsonSchema already emits a null type', () => {
+
+            const custom = Joi.extend({
+                type: 'nullable',
+                base: Joi.any(),
+                jsonSchema(schema, res) {
+
+                    res.type = 'null';
+                    return res;
+                }
+            });
+
+            Helper.validateJsonSchema(custom.nullable().allow(null), {
+                type: 'null'
+            });
+        });
+
+        it('drops boolean custom jsonSchema output when exclusive valids supply the full schema', () => {
+
+            const custom = Joi.extend({
+                type: 'object',
+                base: Joi.any(),
+                jsonSchema() {
+
+                    return false;
+                }
+            });
+
+            Helper.validateJsonSchema(custom.object().valid({ foo: 'bar' }), {
+                enum: [{ foo: 'bar' }]
+            });
+        });
+
+        it('appends null to custom union types and narrows exclusive valids against them', () => {
+
+            const custom = Joi.extend({
+                type: 'either',
+                base: Joi.any(),
+                jsonSchema(schema, res) {
+
+                    res.type = ['string', 'number'];
+                    return res;
+                }
+            });
+
+            Helper.validateJsonSchema(custom.either().allow(null), {
+                type: ['string', 'number', 'null']
+            });
+
+            Helper.validateJsonSchema(custom.either().valid('a'), {
+                type: 'string',
+                enum: ['a']
+            });
+        });
+
+        it('normalizes retained boolean custom jsonSchema output before applying exclusive valids', () => {
+
+            const custom = Joi.extend({
+                type: 'string',
+                base: Joi.any(),
+                jsonSchema() {
+
+                    return false;
+                }
+            });
+
+            Helper.validateJsonSchema(custom.string().valid('a'), {
+                type: 'string',
+                enum: ['a']
             });
         });
 
