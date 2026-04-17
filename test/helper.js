@@ -14,17 +14,13 @@ internals.ajvOptions = {
     allowUnionTypes: true,
     formats: {
         banana: true,
-        base64: true,
         binary: true,
-        'data-uri': true,
         'date-time': true,
         duration: true,
         email: true,
-        hex: true,
         hostname: true,
         ip: true,
         ipv4: true,
-        token: true,
         uri: true,
         uuid: true
     },

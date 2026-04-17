@@ -1,6 +1,7 @@
 'use strict';
 
 const Joi = require('..');
+const { ipRegex } = require('@hapi/address');
 const Code = require('@hapi/code');
 const Lab = require('@hapi/lab');
 const Helper = require('./helper');
@@ -417,6 +418,76 @@ describe('jsonSchema', () => {
         it('represents string with allowed null and min length', () => {
 
             Helper.validateJsonSchema(Joi.string().allow(null).min(5), { type: ['string', 'null'], minLength: 5 });
+        });
+
+        it('represents inclusive allow exceptions for conflicting string rules', () => {
+
+            const schema = Joi.string().min(5).allow('abc');
+            const tests = [
+                ['abc', true],
+                ['abcde', true],
+                ['ab', false, '"value" length must be at least 5 characters long'],
+                [1, false, '"value" must be a string']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                anyOf: [
+                    { type: 'string', minLength: 5 },
+                    { enum: ['abc'] }
+                ]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('keeps explicit empty-string exceptions when other string constraints still reject them', () => {
+
+            Helper.validateJsonSchema(Joi.string().pattern(/abc/).allow(''), {
+                anyOf: [
+                    { type: 'string', pattern: 'abc' },
+                    { enum: [''] }
+                ]
+            });
+        });
+
+        it('represents inclusive allow exceptions for conflicting number rules', () => {
+
+            const schema = Joi.number().greater(10).allow(5);
+            const tests = [
+                [5, true],
+                [11, true],
+                [10, false, '"value" must be greater than 10'],
+                [1, false, '"value" must be greater than 10']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                anyOf: [
+                    { type: 'number', exclusiveMinimum: 10 },
+                    { enum: [5] }
+                ]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('represents inclusive allow exceptions for conflicting object rules', () => {
+
+            const schema = Joi.object().min(1).allow({});
+            const tests = [
+                [{}, true],
+                [{ a: 1 }, true],
+                [null, false, '"value" must be of type object'],
+                [1, false, '"value" must be of type object']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                anyOf: [
+                    { type: 'object', minProperties: 1 },
+                    { enum: [{}] }
+                ]
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('represents inferred types for valids', () => {
@@ -2847,6 +2918,16 @@ describe('jsonSchema', () => {
 
     describe('string', () => {
 
+        const expectedIpPattern = (options) => ipRegex(options).regex.source.replace(/\[\\w-\\\./g, '[\\w.\\-');
+        const unanchoredPattern = (pattern) => pattern.replace(/^\^/, '').replace(/\$$/, '');
+        const expectedHostnamePattern = () => {
+
+            const domain = '^(?=.{1,256}$)(?:(?=[^.]{1,63}\\.)[A-Za-z0-9\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?\\.){0,}(?=[^.]{1,63}$)[A-Za-z\\u0080-\\u{10FFFF}](?:[A-Za-z0-9\\u0080-\\u{10FFFF}-]*[A-Za-z0-9\\u0080-\\u{10FFFF}])?$';
+            const ip = expectedIpPattern({ cidr: 'forbidden' });
+
+            return `^(?:${unanchoredPattern(domain)}|${unanchoredPattern(ip)})$`;
+        };
+
         it('represents basic string', () => {
 
             Helper.validateJsonSchema(Joi.string().description('A string').default('foo'), {
@@ -2889,7 +2970,10 @@ describe('jsonSchema', () => {
             });
 
             Helper.validateJsonSchema(Joi.string().allow(''), {
-                type: 'string'
+                anyOf: [
+                    { type: 'string' },
+                    { enum: [''] }
+                ]
             });
 
             Helper.validateJsonSchema(Joi.string().min(5).valid('abcde'), {
@@ -2935,7 +3019,7 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.string().ip().valid('127.0.0.1'), {
                 type: 'string',
-                format: 'ip',
+                pattern: expectedIpPattern(),
                 minLength: 1,
                 enum: ['127.0.0.1']
             });
@@ -2949,22 +3033,25 @@ describe('jsonSchema', () => {
                 type: 'string',
                 minLength: 5,
                 maxLength: 5,
-                pattern: 'foo',
+                allOf: [
+                    { pattern: 'foo' },
+                    { pattern: expectedHostnamePattern() }
+                ],
                 format: 'uuid'
             });
 
-            Helper.validateJsonSchema(Joi.string().ip(), { type: 'string', minLength: 1, format: 'ip' });
-            Helper.validateJsonSchema(Joi.string().ip({ version: 'ipv4' }), { type: 'string', minLength: 1, format: 'ipv4' });
-            Helper.validateJsonSchema(Joi.string().ip({ version: ['ipv4', 'ipv6'] }), { type: 'string', minLength: 1, format: 'ip' });
-            Helper.validateJsonSchema(Joi.string().base64(), { type: 'string', minLength: 1, format: 'base64' });
-            Helper.validateJsonSchema(Joi.string().dataUri(), { type: 'string', minLength: 1, format: 'data-uri' });
+            Helper.validateJsonSchema(Joi.string().ip(), { type: 'string', minLength: 1, pattern: expectedIpPattern() });
+            Helper.validateJsonSchema(Joi.string().ip({ version: 'ipv4' }), { type: 'string', minLength: 1, pattern: expectedIpPattern({ version: 'ipv4' }) });
+            Helper.validateJsonSchema(Joi.string().ip({ version: ['ipv4', 'ipv6'] }), { type: 'string', minLength: 1, pattern: expectedIpPattern({ version: ['ipv4', 'ipv6'] }) });
+            Helper.validateJsonSchema(Joi.string().base64(), { type: 'string', minLength: 1, pattern: '^(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$' });
+            Helper.validateJsonSchema(Joi.string().dataUri(), { type: 'string', minLength: 1, pattern: '^data:[\\w+.-]+\\/[\\w+.-]+;(?:base64,(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?|(?!base64,).*)$' });
             Helper.validateJsonSchema(Joi.string().email(), { type: 'string', minLength: 1, format: 'email' });
             Helper.validateJsonSchema(Joi.string().guid(), { type: 'string', minLength: 1, format: 'uuid' });
-            Helper.validateJsonSchema(Joi.string().hex(), { type: 'string', minLength: 1, format: 'hex' });
-            Helper.validateJsonSchema(Joi.string().hostname(), { type: 'string', minLength: 1, format: 'hostname' });
+            Helper.validateJsonSchema(Joi.string().hex(), { type: 'string', minLength: 1, pattern: '^[0-9A-Fa-f]+$' });
+            Helper.validateJsonSchema(Joi.string().hostname(), { type: 'string', minLength: 1, pattern: expectedHostnamePattern() });
             Helper.validateJsonSchema(Joi.string().isoDate(), { type: 'string', minLength: 1, format: 'date-time' });
             Helper.validateJsonSchema(Joi.string().isoDuration(), { type: 'string', minLength: 1, format: 'duration' });
-            Helper.validateJsonSchema(Joi.string().token(), { type: 'string', minLength: 1, format: 'token' });
+            Helper.validateJsonSchema(Joi.string().token(), { type: 'string', minLength: 1, pattern: '^[A-Za-z0-9_]+$' });
             Helper.validateJsonSchema(Joi.string().domain({ tlds: false }), {
                 type: 'string',
                 minLength: 1,
@@ -3177,10 +3264,367 @@ describe('jsonSchema', () => {
             ]);
         });
 
+        it('represents token with a validating pattern', () => {
+
+            const schema = Joi.string().token();
+            const tests = [
+                ['abc_123', true],
+                ['abc-123', false],
+                ['', false]
+            ];
+
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^[A-Za-z0-9_]+$'
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests);
+
+            for (const [value, pass] of tests) {
+                expect(!schema.validate(value).error).to.equal(pass);
+            }
+        });
+
+        it('represents ip with validating patterns', () => {
+
+            const anyIp = Joi.string().ip();
+            const ipv4 = Joi.string().ip({ version: 'ipv4' });
+            const ipv6 = Joi.string().ip({ version: 'ipv6' });
+            const mixedIp = Joi.string().ip({ version: ['ipv4', 'ipv6'] });
+            const requiredCidr = Joi.string().ip({ cidr: 'required' });
+            const forbiddenCidr = Joi.string().ip({ cidr: 'forbidden' });
+
+            Helper.validateJsonSchema(anyIp, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern()
+            });
+            Helper.validateJsonSchemaValues(anyIp['~standard'].jsonSchema.input(), [
+                ['127.0.0.1', true],
+                ['::1', true],
+                ['1.2.3.4/24', true],
+                ['2001:db8::/32', true],
+                ['v1.a:1', true],
+                ['example.com', false]
+            ]);
+
+            Helper.validateJsonSchema(ipv4, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern({ version: 'ipv4' })
+            });
+            Helper.validateJsonSchemaValues(ipv4['~standard'].jsonSchema.input(), [
+                ['127.0.0.1', true],
+                ['1.2.3.4/24', true],
+                ['::1', false],
+                ['v1.a:1', false]
+            ]);
+
+            Helper.validateJsonSchema(ipv6, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern({ version: 'ipv6' })
+            });
+            Helper.validateJsonSchemaValues(ipv6['~standard'].jsonSchema.input(), [
+                ['::1', true],
+                ['2001:db8::/32', true],
+                ['127.0.0.1', false],
+                ['v1.a:1', false]
+            ]);
+
+            Helper.validateJsonSchema(mixedIp, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern({ version: ['ipv4', 'ipv6'] })
+            });
+            Helper.validateJsonSchemaValues(mixedIp['~standard'].jsonSchema.input(), [
+                ['127.0.0.1', true],
+                ['::1', true],
+                ['v1.a:1', false],
+                ['example.com', false]
+            ]);
+
+            Helper.validateJsonSchema(requiredCidr, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern({ cidr: 'required' })
+            });
+            Helper.validateJsonSchemaValues(requiredCidr['~standard'].jsonSchema.input(), [
+                ['127.0.0.1', false],
+                ['1.2.3.4/24', true],
+                ['::1', false],
+                ['2001:db8::/32', true]
+            ]);
+
+            Helper.validateJsonSchema(forbiddenCidr, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedIpPattern({ cidr: 'forbidden' })
+            });
+            Helper.validateJsonSchemaValues(forbiddenCidr['~standard'].jsonSchema.input(), [
+                ['127.0.0.1', true],
+                ['1.2.3.4/24', false],
+                ['::1', true],
+                ['2001:db8::/32', false],
+                ['v1.a:1', true]
+            ]);
+        });
+
+        it('represents hostname with a hostname-or-ip pattern', () => {
+
+            const schema = Joi.string().hostname();
+
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                minLength: 1,
+                pattern: expectedHostnamePattern()
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                ['example.com', true],
+                ['localhost', true],
+                ['bücher', true],
+                ['127.0.0.1', true],
+                ['::1', true],
+                ['v1.a:1', true],
+                ['bad host', false],
+                ['1.2.3.4/24', false]
+            ]);
+        });
+
+        it('appends inherited string patterns onto existing allOf branches', () => {
+
+            const custom = Joi.extend({
+                type: 'patterned',
+                base: Joi.string(),
+                jsonSchema(schema, res) {
+
+                    res.allOf = [{ minLength: 2 }];
+                    res.pattern = '^base$';
+                    return res;
+                }
+            });
+
+            Helper.validateJsonSchema(custom.patterned().token(), {
+                type: 'string',
+                allOf: [
+                    { minLength: 2 },
+                    { pattern: '^base$' },
+                    { pattern: '^[A-Za-z0-9_]+$' }
+                ]
+            });
+        });
+
+        it('represents hex with option-aware patterns', () => {
+
+            const hex = Joi.string().hex();
+            const hexPrefix = Joi.string().hex({ prefix: true });
+            const hexOptionalPrefix = Joi.string().hex({ prefix: 'optional' });
+            const hexByteAligned = Joi.string().hex({ byteAligned: true });
+            const hexPrefixByteAligned = Joi.string().hex({ prefix: true, byteAligned: true });
+            const hexOptionalPrefixByteAligned = Joi.string().hex({ prefix: 'optional', byteAligned: true });
+
+            Helper.validateJsonSchema(hex, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^[0-9A-Fa-f]+$'
+            });
+            Helper.validateJsonSchemaValues(hex['~standard'].jsonSchema.input(), [
+                ['deadBEEF', true],
+                ['0xdeadBEEF', false],
+                ['xyz', false]
+            ]);
+
+            Helper.validateJsonSchema(hexPrefix, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^0[xX][0-9A-Fa-f]+$'
+            });
+            Helper.validateJsonSchemaValues(hexPrefix['~standard'].jsonSchema.input(), [
+                ['0xdeadBEEF', true],
+                ['0XdeadBEEF', true],
+                ['deadBEEF', false],
+                ['xyz', false]
+            ]);
+
+            Helper.validateJsonSchema(hexOptionalPrefix, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:0[xX])?[0-9A-Fa-f]+$'
+            });
+            Helper.validateJsonSchemaValues(hexOptionalPrefix['~standard'].jsonSchema.input(), [
+                ['deadBEEF', true],
+                ['0xdeadBEEF', true],
+                ['0XdeadBEEF', true],
+                ['xyz', false]
+            ]);
+
+            Helper.validateJsonSchema(hexByteAligned, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^[0-9A-Fa-f]+$'
+            }, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[0-9A-Fa-f]{2})+$'
+            });
+            Helper.validateJsonSchemaValues(hexByteAligned['~standard'].jsonSchema.input(), [
+                ['a', true],
+                ['0a', true],
+                ['abc', true],
+                ['0abc', true],
+                ['0xabc', false]
+            ]);
+            Helper.validateJsonSchemaValues(hexByteAligned['~standard'].jsonSchema.output(), [
+                ['a', false],
+                ['0a', true],
+                ['abc', false],
+                ['0abc', true]
+            ]);
+
+            Helper.validateJsonSchema(hexPrefixByteAligned, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^0[xX](?:[0-9A-Fa-f]{2})+$'
+            });
+            Helper.validateJsonSchemaValues(hexPrefixByteAligned['~standard'].jsonSchema.input(), [
+                ['0x0a', true],
+                ['0X0A', true],
+                ['0xa', false],
+                ['0xabc', false],
+                ['0x0abc', true]
+            ]);
+
+            Helper.validateJsonSchema(hexOptionalPrefixByteAligned, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[0-9A-Fa-f]+|0[xX](?:[0-9A-Fa-f]{2})+)$'
+            }, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:(?:[0-9A-Fa-f]{2})+|0[xX](?:[0-9A-Fa-f]{2})+)$'
+            });
+            Helper.validateJsonSchemaValues(hexOptionalPrefixByteAligned['~standard'].jsonSchema.input(), [
+                ['a', true],
+                ['0a', true],
+                ['0xa', false],
+                ['0x0a', true],
+                ['0xabc', false]
+            ]);
+            Helper.validateJsonSchemaValues(hexOptionalPrefixByteAligned['~standard'].jsonSchema.output(), [
+                ['a', false],
+                ['0a', true],
+                ['0xa', false],
+                ['0x0a', true]
+            ]);
+        });
+
+        it('represents base64 with option-aware patterns', () => {
+
+            const base64 = Joi.string().base64();
+            const base64NoPadding = Joi.string().base64({ paddingRequired: false });
+            const base64UrlSafe = Joi.string().base64({ urlSafe: true });
+            const base64NoPaddingUrlSafe = Joi.string().base64({ paddingRequired: false, urlSafe: true });
+
+            Helper.validateJsonSchema(base64, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?$'
+            });
+            Helper.validateJsonSchemaValues(base64['~standard'].jsonSchema.input(), [
+                ['YWJjZA==', true],
+                ['YWJjZA', false],
+                ['YWJjZA=', false],
+                ['YWJjZA--', false]
+            ]);
+
+            Helper.validateJsonSchema(base64NoPadding, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}(==)?|[A-Za-z0-9+\\/]{3}=?)?$'
+            });
+            Helper.validateJsonSchemaValues(base64NoPadding['~standard'].jsonSchema.input(), [
+                ['YWJjZA==', true],
+                ['YWJjZA', true],
+                ['YWJjZA=', false],
+                ['YQ', true]
+            ]);
+
+            Helper.validateJsonSchema(base64UrlSafe, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[\\w\\-]{2}[\\w\\-]{2})*(?:[\\w\\-]{2}==|[\\w\\-]{3}=)?$'
+            });
+            Helper.validateJsonSchemaValues(base64UrlSafe['~standard'].jsonSchema.input(), [
+                ['YWJjZA==', true],
+                ['YWJjZA--', true],
+                ['YWJjZA++', false],
+                ['YWJjZA__', true]
+            ]);
+
+            Helper.validateJsonSchema(base64NoPaddingUrlSafe, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^(?:[\\w\\-]{2}[\\w\\-]{2})*(?:[\\w\\-]{2}(==)?|[\\w\\-]{3}=?)?$'
+            });
+            Helper.validateJsonSchemaValues(base64NoPaddingUrlSafe['~standard'].jsonSchema.input(), [
+                ['YWJjZA==', true],
+                ['YWJjZA', true],
+                ['YWJjZA=', false],
+                ['YWJjZA__', true],
+                ['YWJjZA++', false]
+            ]);
+        });
+
+        it('represents dataUri with validating patterns', () => {
+
+            const dataUri = Joi.string().dataUri();
+            const dataUriNoPadding = Joi.string().dataUri({ paddingRequired: false });
+
+            Helper.validateJsonSchema(dataUri, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^data:[\\w+.-]+\\/[\\w+.-]+;(?:base64,(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}==|[A-Za-z0-9+\\/]{3}=)?|(?!base64,).*)$'
+            });
+            Helper.validateJsonSchemaValues(dataUri['~standard'].jsonSchema.input(), [
+                ['data:text/plain;base64,YWJjZA==', true],
+                ['data:text/plain;base64,YWJjZA', false],
+                ['data:text/plain;base64,', true],
+                ['data:text/plain;hello', true],
+                ['data:text/plain;', true],
+                ['data:text/plain;charset=utf-8,hello', true],
+                ['data:text/plain;charset=utf-8;base64,YQ==', true],
+                ['data:text/plain;BASE64,%', true],
+                ['data:text/plain;base64x,%', true],
+                ['data:text/plain,hello', false],
+                ['data:;base64,aGVsbG8=', false],
+                ['data:application/json,{}', false],
+                ['data:text/plain;base64,%%', false]
+            ]);
+
+            Helper.validateJsonSchema(dataUriNoPadding, {
+                type: 'string',
+                minLength: 1,
+                pattern: '^data:[\\w+.-]+\\/[\\w+.-]+;(?:base64,(?:[A-Za-z0-9+\\/]{2}[A-Za-z0-9+\\/]{2})*(?:[A-Za-z0-9+\\/]{2}(==)?|[A-Za-z0-9+\\/]{3}=?)?|(?!base64,).*)$'
+            });
+            Helper.validateJsonSchemaValues(dataUriNoPadding['~standard'].jsonSchema.input(), [
+                ['data:text/plain;base64,YWJjZA==', true],
+                ['data:text/plain;base64,YWJjZA', true],
+                ['data:text/plain;base64,', true],
+                ['data:text/plain;hello', true],
+                ['data:text/plain;charset=utf-8,hello', true],
+                ['data:text/plain;base64,%%', false]
+            ]);
+        });
+
         it('represents string with various options', () => {
 
             Helper.validateJsonSchema(Joi.string().alphanum(), { type: 'string', minLength: 1, pattern: '^[a-zA-Z0-9]+$' });
-            Helper.validateJsonSchema(Joi.string().allow(''), { type: 'string' });
+            Helper.validateJsonSchema(Joi.string().allow(''), {
+                anyOf: [
+                    { type: 'string' },
+                    { enum: [''] }
+                ]
+            });
             Helper.validateJsonSchema(Joi.string().min(0), { type: 'string' });
             Helper.validateJsonSchema(Joi.string().length(0), { type: 'string', minLength: 0, maxLength: 0 });
 
