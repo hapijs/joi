@@ -3578,6 +3578,19 @@ describe('jsonSchema', () => {
             ]);
         });
 
+        it('validates standard formats with Ajv formats', () => {
+
+            Helper.validateJsonSchemaValues(Joi.string().email()['~standard'].jsonSchema.input(), [
+                ['person@example.com', true],
+                ['not-an-email', false]
+            ]);
+
+            Helper.validateJsonSchemaValues(Joi.string().guid()['~standard'].jsonSchema.input(), [
+                ['550e8400-e29b-41d4-a716-446655440000', true],
+                ['not-a-uuid', false]
+            ]);
+        });
+
         it('represents token with a validating pattern', () => {
 
             const schema = Joi.string().token();
