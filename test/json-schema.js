@@ -1895,6 +1895,32 @@ describe('jsonSchema', () => {
                 minLength: 3
             });
         });
+
+        it('represents base64url binary encoding', () => {
+
+            Helper.validateJsonSchema(Joi.binary().encoding('base64url').min(3), {
+                type: 'string',
+                contentEncoding: 'base64url',
+                minLength: 3
+            });
+        });
+
+        it('represents hex binary encoding as base16', () => {
+
+            Helper.validateJsonSchema(Joi.binary().encoding('hex').min(2), {
+                type: 'string',
+                contentEncoding: 'base16',
+                minLength: 2
+            });
+        });
+
+        it('omits non-transfer binary encodings from JSON Schema annotations', () => {
+
+            Helper.validateJsonSchema(Joi.binary().encoding('utf8').min(3), {
+                type: 'string',
+                minLength: 3
+            });
+        });
     });
 
     describe('boolean', () => {
