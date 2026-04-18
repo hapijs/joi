@@ -211,6 +211,100 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('represents Date defaults using canonical JSON values', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+
+            Helper.validateJsonSchema(Joi.any().default(value), {
+                default: value.toISOString()
+            });
+
+            Helper.validateJsonSchema(Joi.date().default(value), {
+                default: value.toISOString(),
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+
+            Helper.validateJsonSchema(Joi.date().timestamp('javascript').default(value), {
+                default: value.getTime(),
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+
+            Helper.validateJsonSchema(Joi.date().timestamp('unix').default(value), {
+                default: value.getTime() / 1000,
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60,
+                maximum: 100e6 * 24 * 60 * 60
+            });
+        });
+
+        it('omits date default("now") from JSON Schema output', () => {
+
+            const schema = Joi.date().default('now');
+
+            Helper.validate(schema, [
+                [undefined, true, 'now']
+            ]);
+
+            Helper.validateJsonSchema(schema, {
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+        });
+
+        it('omits date function defaults from JSON Schema output', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const schema = Joi.date().default(() => value);
+
+            const result = schema.validate(undefined);
+            expect(result.error).to.not.exist();
+            expect(result.value).to.equal(value);
+
+            Helper.validateJsonSchema(schema, {
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+        });
+
+        it('represents Date examples using canonical JSON values', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+
+            Helper.validateJsonSchema(Joi.any().example(value), {
+                examples: [value.toISOString()]
+            });
+
+            Helper.validateJsonSchema(Joi.date().example(value), {
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                examples: [value.toISOString()]
+            });
+
+            Helper.validateJsonSchema(Joi.date().timestamp('javascript').example(value), {
+                type: 'number',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                examples: [value.getTime()]
+            });
+
+            Helper.validateJsonSchema(Joi.any().example({ createdAt: value }).meta({
+                examples: [{ createdAt: value }]
+            }), {
+                examples: [{ createdAt: value.toISOString() }]
+            });
+        });
+
         it('represents supported meta keywords', () => {
 
             Helper.validateJsonSchema(Joi.string().meta({
@@ -235,6 +329,28 @@ describe('jsonSchema', () => {
                 deprecated: true,
                 examples: ['hi'],
                 $comment: 'schema note'
+            });
+        });
+
+        it('canonicalizes Date values inside null-prototype meta objects', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const contentSchema = Object.assign(Object.create(null), {
+                type: 'string',
+                default: value,
+                examples: [null, value]
+            });
+
+            Helper.validateJsonSchema(Joi.any().meta({
+                title: 'Greeting',
+                contentSchema
+            }), {
+                title: 'Greeting',
+                contentSchema: {
+                    type: 'string',
+                    default: value.toISOString(),
+                    examples: [null, value.toISOString()]
+                }
             });
         });
 
@@ -629,14 +745,16 @@ describe('jsonSchema', () => {
             const schema = Joi.date().min('2020-01-01').valid(value);
             const tests = [
                 [value.toISOString(), true, value],
+                [value.getTime(), true, value],
                 ['2020-01-01T00:00:00.000Z', false, '"value" must be [2019-01-01T00:00:00.000Z]'],
+                [new Date('2020-01-01T00:00:00.000Z').getTime(), false, '"value" must be [2019-01-01T00:00:00.000Z]'],
                 [null, false, '"value" must be [2019-01-01T00:00:00.000Z]']
             ];
 
             Helper.validate(schema, tests);
             Helper.validateJsonSchema(schema, {
-                type: 'string',
-                enum: [value.toISOString()]
+                type: ['string', 'number'],
+                enum: [value.toISOString(), value.getTime()]
             });
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
         });
@@ -684,14 +802,92 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.string().ip().valid(1), { type: 'number', enum: [1] });
         });
 
-        it('represents date schema with number valid', () => {
+        it('represents convert:true date schema with numeric valid literal as false', () => {
 
-            Helper.validateJsonSchema(Joi.date().valid(1), { type: 'number', enum: [1] });
+            const schema = Joi.date().valid(1);
+            const tests = [
+                [1, false, '"value" must be [1]'],
+                ['1970-01-01T00:00:00.001Z', false, '"value" must be [1]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, false);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
-        it('represents date schema with min and number valid', () => {
+        it('represents convert:true date schema with min and numeric valid literal as false', () => {
 
-            Helper.validateJsonSchema(Joi.date().min('2020-01-01').valid(1), { type: 'number', enum: [1] });
+            const schema = Joi.date().min('2020-01-01').valid(1);
+            const tests = [
+                [1, false, '"value" must be [1]'],
+                ['2025-03-11T16:00:00.000Z', false, '"value" must be [1]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, false);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('represents convert:true iso date schema with string valid literal as false', () => {
+
+            const schema = Joi.date().iso().valid('2025-03-11T16:00:00.000Z');
+            const tests = [
+                ['2025-03-11T16:00:00.000Z', false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [1741708800000, false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, false);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('drops generic Date object valids from any-only schemas', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const schema = Joi.any().valid(value);
+            const tests = [
+                [value, true],
+                [new Date(value.getTime()), true],
+                [value.toISOString(), false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [value.getTime(), false, '"value" must be [2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, false);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                // Joi runtime above covers live Date instances. JSON Schema below
+                // only asserts behavior for JSON-serializable values.
+                ...tests
+                    .filter(([testValue]) => !(testValue instanceof Date))
+                    .map(([testValue, pass]) => [testValue, pass]),
+                [null, false]
+            ]);
+        });
+
+        it('drops generic Date object valids from mixed any-only schemas', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const schema = Joi.any().valid('a', value);
+            const tests = [
+                ['a', true],
+                [value, true],
+                [new Date(value.getTime()), true],
+                [value.toISOString(), false, '"value" must be one of [a, 2025-03-11T16:00:00.000Z]']
+            ];
+
+            Helper.validate(schema, tests);
+            Helper.validateJsonSchema(schema, {
+                type: 'string',
+                enum: ['a']
+            });
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                // Joi runtime above covers live Date instances. JSON Schema below
+                // only asserts behavior for JSON-serializable values.
+                ...tests
+                    .filter(([testValue]) => !(testValue instanceof Date))
+                    .map(([testValue, pass]) => [testValue, pass]),
+                [value.getTime(), false]
+            ]);
         });
 
         it('represents null only valid', () => {
@@ -836,24 +1032,72 @@ describe('jsonSchema', () => {
         it('represents invalid(null) for unconstrained schemas', () => {
 
             const schema = Joi.any().invalid(null);
-
-            Helper.validate(schema, [
+            const tests = [
                 [null, false, '"value" contains an invalid value'],
                 [1, true],
                 ['x', true],
                 [{ a: true }, true]
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, {
                 not: { enum: [null] }
             });
 
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
+        });
+
+        it('drops generic Date object invalids from unconstrained schemas', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const schema = Joi.any().invalid(value);
+            const tests = [
+                [value, false, '"value" contains an invalid value'],
+                [new Date(value.getTime()), false, '"value" contains an invalid value'],
+                [value.toISOString(), true],
+                [value.getTime(), true],
+                [null, true]
+            ];
+
+            Helper.validate(schema, tests);
+
+            Helper.validateJsonSchema(schema, {});
+
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [null, false],
-                [1, true],
-                ['x', true],
+                // Joi runtime above covers live Date instances. JSON Schema below
+                // only asserts behavior for JSON-serializable values.
+                ...tests
+                    .filter(([testValue]) => !(testValue instanceof Date))
+                    .map(([testValue, pass]) => [testValue, pass]),
                 [{ a: true }, true]
             ]);
+        });
+
+        it('drops generic Date object invalids while preserving JSON invalids', () => {
+
+            const value = new Date('2025-03-11T16:00:00.000Z');
+            const schema = Joi.any().invalid('a', value);
+            const tests = [
+                ['a', false, '"value" contains an invalid value'],
+                [value, false, '"value" contains an invalid value'],
+                [new Date(value.getTime()), false, '"value" contains an invalid value'],
+                [value.toISOString(), true],
+                [value.getTime(), true],
+                [null, true]
+            ];
+
+            Helper.validate(schema, tests);
+
+            Helper.validateJsonSchema(schema, {
+                not: { enum: ['a'] }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests
+                // Joi runtime above covers live Date instances. JSON Schema below
+                // only asserts behavior for JSON-serializable values.
+                .filter(([testValue]) => !(testValue instanceof Date))
+                .map(([testValue, pass]) => [testValue, pass]));
         });
 
         it('filters invalid(null) according to whether the emitted schema can match null', () => {
@@ -1665,11 +1909,41 @@ describe('jsonSchema', () => {
 
     describe('date', () => {
 
+        const expectedIsoDatePattern = () => '^(?:[-+]\\d{2})?(?:\\d{4}(?!\\d{2}\\b))(?:(-?)(?:(?:0[1-9]|1[0-2])(?:\\1(?:[12]\\d|0[1-9]|3[01]))?|W(?:[0-4]\\d|5[0-2])(?:-?[1-7])?|(?:00[1-9]|0[1-9]\\d|[12]\\d{2}|3(?:[0-5]\\d|6[1-6])))(?![T]$|[T][\\d]+Z$)(?:[T\\s](?:(?:(?:[01]\\d|2[0-3])(?:(:?)[0-5]\\d)?|24:?00)(?:[.,]\\d+(?!:))?)(?:\\2[0-5]\\d(?:[.,]\\d+)?)?(?:[Z]|(?:[+-])(?:[01]\\d|2[0-3])(?::?[0-5]\\d)?)?)?)?$';
+
         it('represents basic date', () => {
 
-            const expected = { format: 'date-time', type: 'string' };
-            Helper.validateJsonSchema(Joi.date(), expected);
-            Helper.validateJsonSchema(Joi.date().iso(), expected);
+            const timestamp = 1741708800000;
+
+            Helper.validateJsonSchema(Joi.date(), {
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
+            });
+            Helper.validateJsonSchemaValues(Joi.date()['~standard'].jsonSchema.input(), [
+                ['2025-03-11T16:00:00.000Z', true],
+                [0, true],
+                [1, true],
+                [-1, true],
+                [timestamp, true],
+                [100e6 * 24 * 60 * 60 * 1000 + 1, false],
+                [-(100e6 * 24 * 60 * 60 * 1000) - 1, false],
+                [true, false],
+                [null, false],
+                [{}, false],
+                [[], false]
+            ]);
+
+            Helper.validateJsonSchema(Joi.date().iso(), { type: 'string', pattern: expectedIsoDatePattern() });
+            Helper.validateJsonSchemaValues(Joi.date().iso()['~standard'].jsonSchema.input(), [
+                ['2025-03-11T16:00:00.000Z', true],
+                ['2025-03-11', true],
+                ['2025-03-11T16:00', true],
+                ['2025-03-11T17:00:00+0100', true],
+                ['2025-03-11T23:59:60Z', false],
+                [timestamp, false]
+            ]);
         });
 
         it('represents date with constraints', () => {
@@ -1678,8 +1952,10 @@ describe('jsonSchema', () => {
             const d2 = new Date(1741795200000);
 
             Helper.validateJsonSchema(Joi.date().min(d1).max(d2).greater(d1).less(d2), {
-                type: 'string',
+                type: ['string', 'number'],
                 format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
                 'x-constraint': {
                     min: d1.toISOString(),
                     max: d2.toISOString(),
@@ -1689,8 +1965,10 @@ describe('jsonSchema', () => {
             });
 
             Helper.validateJsonSchema(Joi.date().min(d1).max(d2).greater(d1).less(d2).only(), {
-                type: 'string',
+                type: ['string', 'number'],
                 format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
                 'x-constraint': {
                     greater: d1.toISOString(),
                     less: d2.toISOString(),
@@ -1700,8 +1978,10 @@ describe('jsonSchema', () => {
             });
 
             Helper.validateJsonSchema(Joi.date().min('now').max('now').greater('now').less('now'), {
-                type: 'string',
-                format: 'date-time'
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
             });
         });
 
@@ -1711,15 +1991,19 @@ describe('jsonSchema', () => {
             const schema = Joi.date().valid(value);
             const tests = [
                 [value.toISOString(), true, value],
+                [value.getTime(), true, value],
                 ['2025-03-12T16:00:00.000Z', false, '"value" must be [2025-03-11T16:00:00.000Z]'],
+                [value.getTime() + 1, false, '"value" must be [2025-03-11T16:00:00.000Z]'],
                 [null, false, '"value" must be [2025-03-11T16:00:00.000Z]']
             ];
 
             Helper.validate(schema, tests);
             Helper.validateJsonSchema(schema, {
-                type: 'string',
+                type: ['string', 'number'],
                 format: 'date-time',
-                enum: [value.toISOString()]
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                enum: [value.toISOString(), value.getTime()]
             });
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
         });
@@ -1737,7 +2021,7 @@ describe('jsonSchema', () => {
             Helper.validate(schema, tests);
             Helper.validateJsonSchema(schema, {
                 type: 'string',
-                format: 'date-time',
+                pattern: expectedIsoDatePattern(),
                 enum: [value.toISOString()]
             });
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
@@ -1788,10 +2072,10 @@ describe('jsonSchema', () => {
 
             const value = new Date(1741708800000);
             Helper.validateJsonSchema(Joi.date().allow(value), {
-                anyOf: [
-                    { type: 'string', format: 'date-time' },
-                    { enum: [value.toISOString()] }
-                ]
+                type: ['string', 'number'],
+                format: 'date-time',
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000
             });
         });
 
@@ -1801,15 +2085,19 @@ describe('jsonSchema', () => {
             const schema = Joi.date().invalid(value);
             const tests = [
                 [value.toISOString(), false, '"value" contains an invalid value'],
+                [value.getTime(), false, '"value" contains an invalid value'],
                 ['2025-03-12T16:00:00.000Z', true, new Date('2025-03-12T16:00:00.000Z')],
+                [value.getTime() + 1, true, new Date(value.getTime() + 1)],
                 [null, false, '"value" must be a valid date']
             ];
 
             Helper.validate(schema, tests);
             Helper.validateJsonSchema(schema, {
-                type: 'string',
+                type: ['string', 'number'],
                 format: 'date-time',
-                not: { enum: [value.toISOString()] }
+                minimum: -100e6 * 24 * 60 * 60 * 1000,
+                maximum: 100e6 * 24 * 60 * 60 * 1000,
+                not: { enum: [value.toISOString(), value.getTime()] }
             });
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([testValue, pass]) => [testValue, pass]));
         });
@@ -1841,6 +2129,11 @@ describe('jsonSchema', () => {
                 minimum: -100e6 * 24 * 60 * 60 * 1000,     // 100 million days in ms (ECMA-262 §21.4.1.1)
                 maximum: 100e6 * 24 * 60 * 60 * 1000
             });
+            Helper.validateJsonSchemaValues(Joi.date().timestamp('javascript')['~standard'].jsonSchema.input(), [
+                [1741708800000, true],
+                [100e6 * 24 * 60 * 60 * 1000 + 1, false],
+                ['2025-03-11T16:00:00.000Z', false]
+            ]);
         });
 
         it('represents unix timestamp', () => {
@@ -2190,12 +2483,13 @@ describe('jsonSchema', () => {
             const schema = Joi.object({
                 a: Joi.string().forbidden()
             }).prefs({ allowUnknown: true });
-
-            Helper.validate(schema, [
+            const tests = [
                 [{}, true],
                 [{ a: 'x' }, false, '"a" is not allowed'],
                 [{ c: true }, true]
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, {
                 type: 'object',
@@ -2204,11 +2498,7 @@ describe('jsonSchema', () => {
                 }
             });
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [{}, true],
-                [{ a: 'x' }, false],
-                [{ c: true }, true]
-            ]);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('represents with() dependency as dependentRequired', () => {
@@ -3846,20 +4136,17 @@ describe('jsonSchema', () => {
                 a: Joi.string(),
                 b: Joi.number()
             }).prefs({ presence: 'forbidden' });
-
-            Helper.validate(schema, [
+            const tests = [
                 [{}, false, '"value" is not allowed'],
                 [{ a: 'x' }, false, '"value" is not allowed'],
                 [{ c: true }, false, '"value" is not allowed']
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, false);
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [{}, false],
-                [{ a: 'x' }, false],
-                [{ c: true }, false]
-            ]);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('represents root presence: forbidden preference as false even when unknown keys are allowed', () => {
@@ -3868,22 +4155,18 @@ describe('jsonSchema', () => {
                 a: Joi.string(),
                 b: Joi.number()
             }).prefs({ presence: 'forbidden', allowUnknown: true });
-
-            Helper.validate(schema, [
+            const tests = [
                 [{}, false, '"value" is not allowed'],
                 [{ a: 'x' }, false, '"value" is not allowed'],
                 [{ b: 1 }, false, '"value" is not allowed'],
                 [{ c: true }, false, '"value" is not allowed']
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, false);
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [{}, false],
-                [{ a: 'x' }, false],
-                [{ b: 1 }, false],
-                [{ c: true }, false]
-            ]);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('forbids a nested object when the nested schema has presence: forbidden preference', () => {
@@ -3893,12 +4176,13 @@ describe('jsonSchema', () => {
                     a: Joi.string()
                 }).prefs({ presence: 'forbidden' })
             });
-
-            Helper.validate(schema, [
+            const tests = [
                 [{}, true],
                 [{ nested: {} }, false, '"nested" is not allowed'],
                 [{ nested: { a: 'x' } }, false, '"nested" is not allowed']
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, {
                 type: 'object',
@@ -3908,11 +4192,7 @@ describe('jsonSchema', () => {
                 additionalProperties: false
             });
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [{}, true],
-                [{ nested: {} }, false],
-                [{ nested: { a: 'x' } }, false]
-            ]);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('lets explicit nested presence override nested forbidden preference while forbidding inherited child keys', () => {
@@ -3922,12 +4202,13 @@ describe('jsonSchema', () => {
                     a: Joi.string()
                 }).prefs({ presence: 'forbidden' }).optional()
             });
-
-            Helper.validate(schema, [
+            const tests = [
                 [{}, true],
                 [{ nested: {} }, true],
                 [{ nested: { a: 'x' } }, false, '"nested.a" is not allowed']
-            ]);
+            ];
+
+            Helper.validate(schema, tests);
 
             Helper.validateJsonSchema(schema, {
                 type: 'object',
@@ -3943,11 +4224,7 @@ describe('jsonSchema', () => {
                 additionalProperties: false
             });
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
-                [{}, true],
-                [{ nested: {} }, true],
-                [{ nested: { a: 'x' } }, false]
-            ]);
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests.map(([value, pass]) => [value, pass]));
         });
 
         it('explicit presence flag overrides presence preference', () => {
@@ -4060,6 +4337,21 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(custom.banana(), {
                 type: 'string',
                 format: 'banana'
+            });
+        });
+
+        it('represents custom type allow values when the base schema has no type', () => {
+
+            const custom = Joi.extend({
+                type: 'mystery',
+                base: Joi.any()
+            });
+
+            Helper.validateJsonSchema(custom.mystery().allow('a'), {
+                anyOf: [
+                    {},
+                    { enum: ['a'] }
+                ]
             });
         });
 
@@ -4503,6 +4795,16 @@ describe('jsonSchema', () => {
         it('represents empty schema for Joi.symbol()', () => {
 
             Helper.validateJsonSchema(Joi.symbol(), {});
+        });
+
+        it('represents symbol().allow() string exceptions as anyOf', () => {
+
+            Helper.validateJsonSchema(Joi.symbol().allow('a'), {
+                anyOf: [
+                    {},
+                    { enum: ['a'] }
+                ]
+            });
         });
 
         it('represents anyOf for Joi.symbol().map()', () => {
