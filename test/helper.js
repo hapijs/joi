@@ -2,6 +2,7 @@
 
 const Code = require('@hapi/code');
 const Ajv = require('ajv/dist/2020');
+const AjvFormats = require('ajv-formats');
 
 const internals = {};
 
@@ -13,22 +14,11 @@ internals.ajvOptions = {
     strict: true,
     allowUnionTypes: true,
     formats: {
-        banana: true,
-        binary: true,
-        'date-time': true,
-        duration: true,
-        email: true,
-        hostname: true,
-        ip: true,
-        ipv4: true,
-        uri: true,
-        uuid: true
+        banana: true
     },
     keywords: ['x-constraint', 'foo'],
     strictTuples: true
 };
-
-internals.ajvValidator = new Ajv(internals.ajvOptions);
 
 
 exports.skip = Symbol('skip');
@@ -178,8 +168,13 @@ exports.validateJsonSchemaValues = function (schema, tests, ajvOptionsOverride) 
 
 internals.ajv = function (options) {
 
-    return options ? new Ajv({ ...internals.ajvOptions, ...options }) : internals.ajvValidator;
+    const validator = new Ajv(options ? { ...internals.ajvOptions, ...options } : internals.ajvOptions);
+    AjvFormats(validator);
+    return validator;
 };
+
+
+internals.ajvValidator = internals.ajv();
 
 
 internals.thrownAt = function () {

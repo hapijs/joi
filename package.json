@@ -37,6 +37,7 @@
         "@hapi/lab": "^26.0.0",
         "@types/node": "^20.17.47",
         "ajv": "^8.18.0",
+        "ajv-formats": "^3.0.1",
         "typescript": "^5.8.3"
     },
     "scripts": {
