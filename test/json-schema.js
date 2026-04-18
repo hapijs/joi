@@ -1877,7 +1877,6 @@ describe('jsonSchema', () => {
 
             Helper.validateJsonSchema(Joi.binary().min(10).max(100), {
                 type: 'string',
-                format: 'binary',
                 minLength: 10,
                 maxLength: 100
             });
@@ -1885,14 +1884,13 @@ describe('jsonSchema', () => {
 
         it('represents binary with constraints', () => {
 
-            Helper.validateJsonSchema(Joi.binary().min(1).max(10).length(5).custom(() => {}), { type: 'string', format: 'binary', minLength: 5, maxLength: 5 });
+            Helper.validateJsonSchema(Joi.binary().min(1).max(10).length(5).custom(() => {}), { type: 'string', minLength: 5, maxLength: 5 });
         });
 
         it('represents binary encoding', () => {
 
             Helper.validateJsonSchema(Joi.binary().encoding('base64').min(3), {
                 type: 'string',
-                format: 'binary',
                 contentEncoding: 'base64',
                 minLength: 3
             });
