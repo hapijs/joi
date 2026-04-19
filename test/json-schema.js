@@ -4801,28 +4801,616 @@ describe('jsonSchema', () => {
             });
         });
 
-        it('represents complex alternatives with multiple conditions on object', () => {
+        it('hoists sibling literal whens to object-level conditionals', () => {
 
             const schema = Joi.object({
-                a: Joi.any(),
-                b: Joi.any()
-                    .when('a', { is: 1, then: Joi.string() })
-                    .when('a', { is: 2, then: Joi.number() })
+                mode: Joi.string().required(),
+                payload: Joi.any().when('mode', { is: 'numeric', then: Joi.number(), otherwise: Joi.string() })
             });
 
             Helper.validateJsonSchema(schema, {
                 type: 'object',
                 properties: {
-                    a: {},
-                    b: {
+                    mode: { type: 'string', minLength: 1 },
+                    payload: {
                         anyOf: [
-                            { type: 'string', minLength: 1 },
-                            {},
-                            { type: 'number' }
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
+                        ]
+                    }
+                },
+                required: ['mode'],
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        mode: { const: 'numeric' }
+                    },
+                    required: ['mode']
+                },
+                then: {
+                    properties: {
+                        payload: { type: 'number' }
+                    }
+                },
+                else: {
+                    properties: {
+                        payload: { type: 'string', minLength: 1 }
+                    }
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ mode: 'numeric', payload: 1 }, true],
+                [{ mode: 'numeric' }, true],
+                [{ mode: 'label', payload: 'hi' }, true],
+                [{ mode: 'label' }, true],
+                [{ mode: 'other', payload: 'hello' }, true],
+                [{ mode: 'numeric', payload: 'oops' }, false],
+                [{ mode: 'label', payload: 42 }, false],
+                [{ mode: 'other', payload: { nested: true } }, false]
+            ]);
+        });
+
+        it('hoists required branch presence to the object-level conditional', () => {
+
+            const schema = Joi.object({
+                mode: Joi.string().required(),
+                payload: Joi.any().when('mode', { is: 'needs-payload', then: Joi.required() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    mode: { type: 'string', minLength: 1 },
+                    payload: {}
+                },
+                required: ['mode'],
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        mode: { const: 'needs-payload' }
+                    },
+                    required: ['mode']
+                },
+                then: {
+                    properties: {
+                        payload: {}
+                    },
+                    required: ['payload']
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ mode: 'needs-payload', payload: 1 }, true],
+                [{ mode: 'needs-payload', payload: 'hi' }, true],
+                [{ mode: 'needs-payload' }, false],
+                [{ mode: 'passthrough' }, true],
+                [{ mode: 'passthrough', payload: 'hi' }, true],
+                [{ mode: 'passthrough', payload: 42 }, true],
+                [{ mode: 'passthrough', payload: { nested: true } }, true]
+            ]);
+        });
+
+        it('hoists sibling literal whens with passthrough matches and string fallbacks', () => {
+
+            const schema = Joi.object({
+                mode: Joi.string().required(),
+                payload: Joi.any().when('mode', { is: 'passthrough', otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    mode: { type: 'string', minLength: 1 },
+                    payload: {}
+                },
+                required: ['mode'],
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        mode: { const: 'passthrough' }
+                    },
+                    required: ['mode']
+                },
+                else: {
+                    properties: {
+                        payload: { type: 'string', minLength: 1 }
+                    }
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ mode: 'passthrough', payload: 1 }, true],
+                [{ mode: 'passthrough', payload: { nested: true } }, true],
+                [{ mode: 'passthrough' }, true],
+                [{ mode: 'label', payload: 'hi' }, true],
+                [{ mode: 'label' }, true],
+                [{ mode: 'label', payload: 42 }, false],
+                [{ mode: 'label', payload: { nested: true } }, false]
+            ]);
+        });
+
+        it('hoists multiple sibling literal whens as separate object-level conditionals', () => {
+
+            const schema = Joi.object({
+                mode: Joi.string(),
+                payload: Joi.any()
+                    .when('mode', { is: 'text', then: Joi.string() })
+                    .when('mode', { is: 'count', then: Joi.number() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    mode: { type: 'string', minLength: 1 },
+                    payload: {}
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        if: {
+                            type: 'object',
+                            properties: {
+                                mode: { const: 'text' }
+                            },
+                            required: ['mode']
+                        },
+                        then: {
+                            properties: {
+                                payload: { type: 'string', minLength: 1 }
+                            }
+                        }
+                    },
+                    {
+                        if: {
+                            type: 'object',
+                            properties: {
+                                mode: { const: 'count' }
+                            },
+                            required: ['mode']
+                        },
+                        then: {
+                            properties: {
+                                payload: { type: 'number' }
+                            }
+                        }
+                    }
+                ]
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ mode: 'text', payload: 'hello' }, true],
+                [{ mode: 'count', payload: 3 }, true],
+                [{ mode: 'other', payload: { nested: true } }, true],
+                [{ payload: 3 }, true],
+                [{ mode: 'text', payload: 3 }, false],
+                [{ mode: 'count', payload: 'hello' }, false]
+            ]);
+        });
+
+        it('appends hoisted conditionals to existing object allOf constraints', () => {
+
+            const schema = Joi.object({
+                mode: Joi.string(),
+                overrideMode: Joi.string(),
+                legacyMode: Joi.string(),
+                payload: Joi.any().when('mode', { is: 'numeric', then: Joi.number() })
+            })
+                .nand('mode', 'overrideMode')
+                .nand('overrideMode', 'legacyMode');
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    mode: { type: 'string', minLength: 1 },
+                    overrideMode: { type: 'string', minLength: 1 },
+                    legacyMode: { type: 'string', minLength: 1 },
+                    payload: {}
+                },
+                additionalProperties: false,
+                allOf: [
+                    {
+                        not: {
+                            properties: {
+                                mode: true,
+                                overrideMode: true
+                            },
+                            required: ['mode', 'overrideMode']
+                        }
+                    },
+                    {
+                        not: {
+                            properties: {
+                                overrideMode: true,
+                                legacyMode: true
+                            },
+                            required: ['overrideMode', 'legacyMode']
+                        }
+                    },
+                    {
+                        if: {
+                            type: 'object',
+                            properties: {
+                                mode: { const: 'numeric' }
+                            },
+                            required: ['mode']
+                        },
+                        then: {
+                            properties: {
+                                payload: { type: 'number' }
+                            }
+                        }
+                    }
+                ]
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ mode: 'numeric', payload: 3 }, true],
+                [{ mode: 'label', payload: 'hi' }, true],
+                [{ overrideMode: 'manual', payload: { nested: true } }, true],
+                [{ mode: 'numeric', payload: 'oops' }, false],
+                [{ mode: 'numeric', overrideMode: 'manual' }, false],
+                [{ overrideMode: 'manual', legacyMode: 'v1' }, false]
+            ]);
+        });
+
+        it('hoists simple object-path whens to object-level conditionals', () => {
+
+            const schema = Joi.object({
+                settings: Joi.object({
+                    mode: Joi.string()
+                }),
+                payload: Joi.any().when('settings.mode', { is: 'numeric', then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    settings: {
+                        type: 'object',
+                        properties: {
+                            mode: { type: 'string', minLength: 1 }
+                        },
+                        additionalProperties: false
+                    },
+                    payload: {}
+                },
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        settings: {
+                            type: 'object',
+                            properties: {
+                                mode: { const: 'numeric' }
+                            },
+                            required: ['mode']
+                        }
+                    },
+                    required: ['settings']
+                },
+                then: {
+                    properties: {
+                        payload: { type: 'number' }
+                    }
+                },
+                else: {
+                    properties: {
+                        payload: { type: 'string', minLength: 1 }
+                    }
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ settings: { mode: 'numeric' }, payload: 1 }, true],
+                [{ settings: { mode: 'label' }, payload: 'hi' }, true],
+                [{ settings: {}, payload: 'hi' }, true],
+                [{ payload: 'hi' }, true],
+                [{ settings: { mode: 'numeric' }, payload: 'oops' }, false],
+                [{ settings: { mode: 'label' }, payload: 42 }, false],
+                [{ payload: 42 }, false]
+            ]);
+        });
+
+        it('keeps fixed array-index whens on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                items: Joi.array().items(Joi.object({
+                    kind: Joi.string()
+                })),
+                payload: Joi.any().when('items.0.kind', { is: 'numeric', then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            // Fixed array indices are representable with `prefixItems`, but
+            // large refs like `items.9999.kind` would require enormous
+            // conditional scaffolding. Keep the lossy `anyOf` fallback until
+            // we decide on an index cap or another strategy.
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    items: {
+                        type: 'array',
+                        items: {
+                            type: 'object',
+                            properties: {
+                                kind: { type: 'string', minLength: 1 }
+                            },
+                            additionalProperties: false
+                        }
+                    },
+                    payload: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
                         ]
                     }
                 },
                 additionalProperties: false
+            });
+        });
+
+        it('keeps malformed object-path whens on the child as anyOf', () => {
+
+            const refs = [
+                Object.assign(Joi.ref('mode'), { path: [] }),
+                Object.assign(Joi.ref('mode'), { path: [0] }),
+                Joi.ref('settings..mode')
+            ];
+
+            for (const ref of refs) {
+                const schema = Joi.object({
+                    settings: Joi.object({
+                        mode: Joi.string()
+                    }),
+                    payload: Joi.any().when(ref, { is: 'numeric', then: Joi.number(), otherwise: Joi.string() })
+                });
+
+                Helper.validateJsonSchema(schema, {
+                    type: 'object',
+                    properties: {
+                        settings: {
+                            type: 'object',
+                            properties: {
+                                mode: { type: 'string', minLength: 1 }
+                            },
+                            additionalProperties: false
+                        },
+                        payload: {
+                            anyOf: [
+                                { type: 'number' },
+                                { type: 'string', minLength: 1 }
+                            ]
+                        }
+                    },
+                    additionalProperties: false
+                });
+            }
+        });
+
+        it('keeps schema-condition whens on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.string(),
+                value: Joi.any().when(
+                    Joi.object({ type: Joi.valid('num') }).unknown(),
+                    {
+                        then: Joi.number(),
+                        otherwise: Joi.string()
+                    }
+                )
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: { type: 'string', minLength: 1 },
+                    value: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
+                        ]
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('keeps switch whens on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.string(),
+                value: Joi.any().when('type', {
+                    switch: [
+                        { is: 'num', then: Joi.number() },
+                        { is: 'str', then: Joi.string() }
+                    ],
+                    otherwise: Joi.boolean()
+                })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: { type: 'string', minLength: 1 },
+                    value: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 },
+                            { type: 'boolean' }
+                        ]
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('keeps adjusted refs on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.string(),
+                value: Joi.any().when(Joi.ref('type', {
+                    adjust: (value) => value
+                }), { is: 'num', then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: { type: 'string', minLength: 1 },
+                    value: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
+                        ]
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('keeps non-sibling refs on the child as anyOf', () => {
+
+            const refs = [
+                Joi.ref('$type'),
+                Joi.ref('.type'),
+                Joi.ref('type', { map: [['num', 'num']] }),
+                Joi.ref('type', { iterables: true }),
+                Joi.in('type')
+            ];
+
+            for (const ref of refs) {
+                const schema = Joi.object({
+                    type: Joi.any(),
+                    value: Joi.any().when(ref, { is: 'num', then: Joi.number(), otherwise: Joi.string() })
+                });
+
+                Helper.validateJsonSchema(schema, {
+                    type: 'object',
+                    properties: {
+                        type: {},
+                        value: {
+                            anyOf: [
+                                { type: 'number' },
+                                { type: 'string', minLength: 1 }
+                            ]
+                        }
+                    },
+                    additionalProperties: false
+                });
+            }
+        });
+
+        it('keeps non-literal is predicates on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.any(),
+                value: Joi.any().when('type', { is: Joi.number().greater(10), then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: {},
+                    value: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
+                        ]
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('keeps multi-valued literal predicates on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.any(),
+                value: Joi.any().when('type', { is: Joi.valid(1, 2), then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: {},
+                    value: {
+                        anyOf: [
+                            { type: 'number' },
+                            { type: 'string', minLength: 1 }
+                        ]
+                    }
+                },
+                additionalProperties: false
+            });
+        });
+
+        it('keeps non-hoistable any predicates on the child as anyOf', () => {
+
+            const predicates = [
+                Joi.any(),
+                Joi.any().custom((value) => value),
+                Joi.valid('num').custom((value) => value),
+                Joi.valid('num').invalid('other'),
+                Joi.valid(Symbol('x')),
+                Joi.valid(Buffer.alloc(0))
+            ];
+
+            for (const predicate of predicates) {
+                const schema = Joi.object({
+                    type: Joi.any(),
+                    value: Joi.any().when('type', { is: predicate, then: Joi.number(), otherwise: Joi.string() })
+                });
+
+                Helper.validateJsonSchema(schema, {
+                    type: 'object',
+                    properties: {
+                        type: {},
+                        value: {
+                            anyOf: [
+                                { type: 'number' },
+                                { type: 'string', minLength: 1 }
+                            ]
+                        }
+                    },
+                    additionalProperties: false
+                });
+            }
+        });
+
+        it('hoists null literal whens to object-level conditionals', () => {
+
+            const schema = Joi.object({
+                type: Joi.any(),
+                value: Joi.any().when('type', { is: null, then: Joi.number(), otherwise: Joi.string() })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: {},
+                    value: {}
+                },
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        type: { const: null }
+                    },
+                    required: ['type']
+                },
+                then: {
+                    properties: {
+                        value: { type: 'number' }
+                    }
+                },
+                else: {
+                    properties: {
+                        value: { type: 'string', minLength: 1 }
+                    }
+                }
             });
         });
     });
