@@ -4812,12 +4812,7 @@ describe('jsonSchema', () => {
                 type: 'object',
                 properties: {
                     mode: { type: 'string', minLength: 1 },
-                    payload: {
-                        anyOf: [
-                            { type: 'number' },
-                            { type: 'string', minLength: 1 }
-                        ]
-                    }
+                    payload: {}
                 },
                 required: ['mode'],
                 additionalProperties: false,
@@ -5218,7 +5213,64 @@ describe('jsonSchema', () => {
             });
         });
 
-        it('keeps switch whens on the child as anyOf', () => {
+        it('hoists literal switch whens without otherwise to nested object-level conditionals', () => {
+
+            const schema = Joi.object({
+                kind: Joi.string(),
+                value: Joi.any().when('kind', {
+                    switch: [
+                        { is: 'a', then: Joi.string() },
+                        { is: 'b', then: Joi.number() }
+                    ]
+                })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    kind: { type: 'string', minLength: 1 },
+                    value: {}
+                },
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        kind: { const: 'a' }
+                    },
+                    required: ['kind']
+                },
+                then: {
+                    properties: {
+                        value: { type: 'string', minLength: 1 }
+                    }
+                },
+                else: {
+                    if: {
+                        type: 'object',
+                        properties: {
+                            kind: { const: 'b' }
+                        },
+                        required: ['kind']
+                    },
+                    then: {
+                        properties: {
+                            value: { type: 'number' }
+                        }
+                    }
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ kind: 'a', value: 'hi' }, true],
+                [{ kind: 'b', value: 42 }, true],
+                [{ kind: 'c' }, true],
+                [{ kind: 'c', value: { nested: true } }, true],
+                [{ kind: 'a', value: 42 }, false],
+                [{ kind: 'b', value: 'hi' }, false]
+            ]);
+        });
+
+        it('hoists literal switch whens with otherwise to nested object-level conditionals', () => {
 
             const schema = Joi.object({
                 type: Joi.string(),
@@ -5235,6 +5287,70 @@ describe('jsonSchema', () => {
                 type: 'object',
                 properties: {
                     type: { type: 'string', minLength: 1 },
+                    value: {}
+                },
+                additionalProperties: false,
+                if: {
+                    type: 'object',
+                    properties: {
+                        type: { const: 'num' }
+                    },
+                    required: ['type']
+                },
+                then: {
+                    properties: {
+                        value: { type: 'number' }
+                    }
+                },
+                else: {
+                    if: {
+                        type: 'object',
+                        properties: {
+                            type: { const: 'str' }
+                        },
+                        required: ['type']
+                    },
+                    then: {
+                        properties: {
+                            value: { type: 'string', minLength: 1 }
+                        }
+                    },
+                    else: {
+                        properties: {
+                            value: { type: 'boolean' }
+                        }
+                    }
+                }
+            });
+
+            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
+                [{ type: 'num', value: 1 }, true],
+                [{ type: 'str', value: 'hi' }, true],
+                [{ type: 'other', value: true }, true],
+                [{ type: 'other' }, true],
+                [{ type: 'num', value: 'oops' }, false],
+                [{ type: 'str', value: 42 }, false],
+                [{ type: 'other', value: 'hi' }, false]
+            ]);
+        });
+
+        it('keeps non-literal switch whens on the child as anyOf', () => {
+
+            const schema = Joi.object({
+                type: Joi.number(),
+                value: Joi.any().when('type', {
+                    switch: [
+                        { is: Joi.number().greater(10), then: Joi.number() },
+                        { is: 5, then: Joi.string() }
+                    ],
+                    otherwise: Joi.boolean()
+                })
+            });
+
+            Helper.validateJsonSchema(schema, {
+                type: 'object',
+                properties: {
+                    type: { type: 'number' },
                     value: {
                         anyOf: [
                             { type: 'number' },
