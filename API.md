@@ -2317,6 +2317,44 @@ const schema = Joi.array().items({ a: Joi.string() });
 
 Possible validation errors: [`object.base`](#objectbase)
 
+When used with TypeScript, `object` is generic; if you provide it an interface name, then Joi will check that the proper fields are defined.
+
+```ts
+interface Person {
+    firstName: string;
+    lastName: string;
+}
+
+const schema = Joi.object<Person>({
+    firstName: Joi.string(),
+    // Typo! TypeScript will report an error.
+    lastNam: Joi.string()
+})
+```
+
+You can opt in to strict schema checking by adding `, true` to `object`'s' parameters. This instructs Joi + TypeScript to check field types as well as field names. Both Joi schemas and TypeScript types are flexible enough that there may not be a one-to-one mapping; falling back to type assertions may be necessary to satisfy some strict schema checks.
+
+```ts
+interface Person {
+    firstName: string;
+    lastName: string;
+    code: 0 | 1;
+    details: string | string[];
+}
+
+const schema = Joi.object<Person>({
+    firstName: Joi.number().required(),
+    // Should be Joi.string(). TypeScript will report an error.
+    lastName: Joi.number()
+    // Should be Joi.number().allow(0, 1).required(), but no error:
+    // not all errors are caught:.
+    code: Joi.number()
+    // .single() is fine but not recognized by Joi; use a
+    // type assertion.
+    details: Joi.array().items(Joi.string()).single() as any
+})
+```
+
 #### `object.and(...peers, [options])`
 
 Defines an all-or-nothing relationship between keys where if one of the peers is present, all of
@@ -3510,6 +3548,34 @@ Performs validation against the current schema without the extra overhead of mer
 
 **Use this method to perform validation against nested schemas instead of `validate()`**
 
+### TypeScript support for extensions
+
+If you're using extensions with TypeScript and with `object`'s strict schema mapping, you can extend Joi's types to recognize added extensions. For example, if you extend Joi with a custom `myInstant` schema to add support for your codebase's `Instant` ponyfill:
+
+```ts
+// Declare an interface for your new extension that best
+// represents the type.
+interface MyInstantSchema extends Joi.AnySchema<Instant> {
+    // Add a brand so Joi + TypeScript can distinguish
+    __instant: boolean;
+}
+
+// Extend the Joi interface with the new methods
+interface MyValidation extends Joi.Root {
+    instant(): MyInstantSchema;
+}
+
+// Create the new methods
+const custom: MyValidation = Joi.extend(/* see above */);
+
+// Extend schema type maps
+declare module 'joi' {
+    interface CustomSchemaMap {
+      // Can use whatever for 'myInstant', as long as it's unique
+      myInstant: { type: Instant; schema: MyInstantSchema };
+    }
+}
+```
 
 ## Errors
 
