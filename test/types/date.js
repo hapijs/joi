@@ -218,6 +218,40 @@ describe('date', () => {
         });
     });
 
+    describe('default()', () => {
+
+        it('resolves "now" token to the current date at validation time', () => {
+
+            // Date.now is mocked to 1485907200000 by the before() hook above
+            const schema = Joi.date().default('now');
+            const result = schema.validate(undefined);
+
+            expect(result.error).to.not.exist();
+            expect(result.value).to.be.instanceOf(Date);
+            expect(result.value.getTime()).to.equal(Date.now());
+        });
+
+        it('does not apply "now" resolution when a value is provided', () => {
+
+            const schema = Joi.date().default('now');
+            const fixed = new Date('2024-06-01T00:00:00.000Z');
+            const result = schema.validate(fixed);
+
+            expect(result.error).to.not.exist();
+            expect(result.value.getTime()).to.equal(fixed.getTime());
+        });
+
+        it('does not affect Date object defaults', () => {
+
+            const fixed = new Date(Date.now());
+            const schema = Joi.date().default(fixed);
+            const result = schema.validate(undefined);
+
+            expect(result.error).to.not.exist();
+            expect(result.value.getTime()).to.equal(fixed.getTime());
+        });
+    });
+
     describe('greater()', () => {
 
         it('validates greater', () => {
