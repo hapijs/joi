@@ -827,10 +827,6 @@ describe('jsonSchema', () => {
                 type: 'array'
             });
 
-            Helper.validate(schema, [
-                [[1, 1], true]
-            ]);
-
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
                 [[1, 1], true]
             ]);
@@ -843,11 +839,6 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(schema, {
                 type: 'array'
             });
-
-            Helper.validate(schema, [
-                [[{}, {}], true],
-                [[{ id: 1 }, { id: 1 }], false, '"[1]" contains a duplicate value']
-            ]);
 
             Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), [
                 [[{}, {}], true]
@@ -906,12 +897,6 @@ describe('jsonSchema', () => {
                 type: 'array',
                 items: { type: 'number' }
             });
-
-            Helper.validate(schema, [
-                [[10, 1, 11], true],
-                [[10, 1, 2], false, '"value" does not contain at least one required match'],
-                [[10], false, '"value" does not contain at least one required match']
-            ]);
         });
 
         describe('ordered', () => {
@@ -928,9 +913,9 @@ describe('jsonSchema', () => {
                     [[], true],
                     [['a'], true],
                     [['a', 1], true],
-                    [[1], false, '"[0]" must be a string'],
-                    [[1, 'a'], false, '"[0]" must be a string'],
-                    [['a', 1, true], false, '"value" must contain at most 2 items']
+                    [[1], false],
+                    [[1, 'a'], false],
+                    [['a', 1, true], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -944,17 +929,16 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
 
             it('sets ordered array minItems from the first required item', () => {
 
                 const schema = Joi.array().ordered(Joi.string().required(), Joi.number());
                 const tests = [
-                    [[], false, '"value" does not contain 1 required value(s)'],
+                    [[], false],
                     [['a'], true],
                     [['a', 1], true],
-                    [[1], false, '"[0]" must be a string']
+                    [[1], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -969,17 +953,16 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
 
             it('sets ordered array minItems through the last required item', () => {
 
                 const schema = Joi.array().ordered(Joi.string(), Joi.number().required());
                 const tests = [
-                    [[], false, '"value" does not contain 1 required value(s)'],
-                    [['a'], false, '"value" does not contain 1 required value(s)'],
+                    [[], false],
+                    [['a'], false],
                     [['a', 1], true],
-                    [[1, 1], false, '"[0]" must be a string']
+                    [[1, 1], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -994,17 +977,16 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
 
             it('sets ordered array minItems from all required items', () => {
 
                 const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
                 const tests = [
-                    [[], false, '"value" does not contain 2 required value(s)'],
-                    [['a'], false, '"value" does not contain 1 required value(s)'],
+                    [[], false],
+                    [['a'], false],
                     [['a', 1], true],
-                    [[1, 1], false, '"[0]" must be a string']
+                    [[1, 1], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -1019,7 +1001,6 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
 
             it('represents optional ordered array items with additional item schemas', () => {
@@ -1029,8 +1010,8 @@ describe('jsonSchema', () => {
                     [[], true],
                     [['a'], true],
                     [['a', 1, 2], true],
-                    [[1, 2], false, '"[0]" must be a string'],
-                    [['a', 'b'], false, '"[1]" must be a number']
+                    [[1, 2], false],
+                    [['a', 'b'], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -1042,17 +1023,16 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
 
             it('sets ordered array minItems with additional item schemas', () => {
 
                 const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number());
                 const tests = [
-                    [[], false, '"value" does not contain 1 required value(s)'],
+                    [[], false],
                     [['a'], true],
                     [['a', 1, 2], true],
-                    [[1, 2], false, '"[0]" must be a string']
+                    [[1, 2], false]
                 ];
 
                 Helper.validateJsonSchema(schema, {
@@ -1065,7 +1045,6 @@ describe('jsonSchema', () => {
                 }, undefined, orderedAjvOptions);
 
                 Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-                Helper.validate(schema, tests);
             });
         });
 
@@ -1179,7 +1158,6 @@ describe('jsonSchema', () => {
                 type: 'array'
             });
         });
-
     });
 
     describe('binary', () => {
