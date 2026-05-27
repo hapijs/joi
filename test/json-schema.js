@@ -2283,6 +2283,24 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('represents Joi.link() to a child schema with id but without shared', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.string().id('aSchema'),
+                b: Joi.link('#aSchema')
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'string', minLength: 1 },
+                    b: { $ref: '#/$defs/aSchema' }
+                },
+                additionalProperties: false,
+                $defs: {
+                    aSchema: { type: 'string', minLength: 1 }
+                }
+            });
+        });
+
         it('represents Joi.link() with uninitialized schema', () => {
 
             Helper.validateJsonSchema(Joi.link(), {});
