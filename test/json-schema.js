@@ -882,156 +882,159 @@ describe('jsonSchema', () => {
             ]);
         });
 
-        // Optional ordered positions are valid JSON Schema,
-        // and are the correct representation of Joi behavior,
-        // but Ajv strictTuples only accepts fully required tuples.
-        const orderedAjvOptions = { strictTuples: false };
+        describe('ordered', () => {
 
-        it('represents ordered array items as optional by default', () => {
+            // Optional ordered positions are valid JSON Schema,
+            // and are the correct representation of Joi behavior,
+            // but Ajv strictTuples only accepts fully required tuples.
+            const orderedAjvOptions = { strictTuples: false };
 
-            const schema = Joi.array().ordered(Joi.string(), Joi.number());
-            const tests = [
-                [[], true],
-                [['a'], true],
-                [['a', 1], true],
-                [[1], false, '"[0]" must be a string'],
-                [[1, 'a'], false, '"[0]" must be a string'],
-                [['a', 1, true], false, '"value" must contain at most 2 items']
-            ];
+            it('represents ordered array items as optional by default', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 },
-                    { type: 'number' }
-                ],
-                unevaluatedItems: false,
-                maxItems: 2
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string(), Joi.number());
+                const tests = [
+                    [[], true],
+                    [['a'], true],
+                    [['a', 1], true],
+                    [[1], false, '"[0]" must be a string'],
+                    [[1, 'a'], false, '"[0]" must be a string'],
+                    [['a', 1, true], false, '"value" must contain at most 2 items']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
-        });
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 },
+                        { type: 'number' }
+                    ],
+                    unevaluatedItems: false,
+                    maxItems: 2
+                }, undefined, orderedAjvOptions);
 
-        it('sets ordered array minItems from the first required item', () => {
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
 
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number());
-            const tests = [
-                [[], false, '"value" does not contain 1 required value(s)'],
-                [['a'], true],
-                [['a', 1], true],
-                [[1], false, '"[0]" must be a string']
-            ];
+            it('sets ordered array minItems from the first required item', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 },
-                    { type: 'number' }
-                ],
-                unevaluatedItems: false,
-                minItems: 1,
-                maxItems: 2
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string().required(), Joi.number());
+                const tests = [
+                    [[], false, '"value" does not contain 1 required value(s)'],
+                    [['a'], true],
+                    [['a', 1], true],
+                    [[1], false, '"[0]" must be a string']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
-        });
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 },
+                        { type: 'number' }
+                    ],
+                    unevaluatedItems: false,
+                    minItems: 1,
+                    maxItems: 2
+                }, undefined, orderedAjvOptions);
 
-        it('sets ordered array minItems through the last required item', () => {
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
 
-            const schema = Joi.array().ordered(Joi.string(), Joi.number().required());
-            const tests = [
-                [[], false, '"value" does not contain 1 required value(s)'],
-                [['a'], false, '"value" does not contain 1 required value(s)'],
-                [['a', 1], true],
-                [[1, 1], false, '"[0]" must be a string']
-            ];
+            it('sets ordered array minItems through the last required item', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 },
-                    { type: 'number' }
-                ],
-                unevaluatedItems: false,
-                minItems: 2,
-                maxItems: 2
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string(), Joi.number().required());
+                const tests = [
+                    [[], false, '"value" does not contain 1 required value(s)'],
+                    [['a'], false, '"value" does not contain 1 required value(s)'],
+                    [['a', 1], true],
+                    [[1, 1], false, '"[0]" must be a string']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
-        });
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 },
+                        { type: 'number' }
+                    ],
+                    unevaluatedItems: false,
+                    minItems: 2,
+                    maxItems: 2
+                }, undefined, orderedAjvOptions);
 
-        it('sets ordered array minItems from all required items', () => {
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
 
-            const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
-            const tests = [
-                [[], false, '"value" does not contain 2 required value(s)'],
-                [['a'], false, '"value" does not contain 1 required value(s)'],
-                [['a', 1], true],
-                [[1, 1], false, '"[0]" must be a string']
-            ];
+            it('sets ordered array minItems from all required items', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 },
-                    { type: 'number' }
-                ],
-                unevaluatedItems: false,
-                minItems: 2,
-                maxItems: 2
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string().required(), Joi.number().required());
+                const tests = [
+                    [[], false, '"value" does not contain 2 required value(s)'],
+                    [['a'], false, '"value" does not contain 1 required value(s)'],
+                    [['a', 1], true],
+                    [[1, 1], false, '"[0]" must be a string']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
-        });
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 },
+                        { type: 'number' }
+                    ],
+                    unevaluatedItems: false,
+                    minItems: 2,
+                    maxItems: 2
+                }, undefined, orderedAjvOptions);
 
-        it('represents optional ordered array items with additional item schemas', () => {
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
 
-            const schema = Joi.array().ordered(Joi.string()).items(Joi.number());
-            const tests = [
-                [[], true],
-                [['a'], true],
-                [['a', 1, 2], true],
-                [[1, 2], false, '"[0]" must be a string'],
-                [['a', 'b'], false, '"[1]" must be a number']
-            ];
+            it('represents optional ordered array items with additional item schemas', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 }
-                ],
-                unevaluatedItems: { type: 'number' }
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string()).items(Joi.number());
+                const tests = [
+                    [[], true],
+                    [['a'], true],
+                    [['a', 1, 2], true],
+                    [[1, 2], false, '"[0]" must be a string'],
+                    [['a', 'b'], false, '"[1]" must be a number']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
-        });
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 }
+                    ],
+                    unevaluatedItems: { type: 'number' }
+                }, undefined, orderedAjvOptions);
 
-        it('sets ordered array minItems with additional item schemas', () => {
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
 
-            const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number());
-            const tests = [
-                [[], false, '"value" does not contain 1 required value(s)'],
-                [['a'], true],
-                [['a', 1, 2], true],
-                [[1, 2], false, '"[0]" must be a string']
-            ];
+            it('sets ordered array minItems with additional item schemas', () => {
 
-            Helper.validateJsonSchema(schema, {
-                type: 'array',
-                prefixItems: [
-                    { type: 'string', minLength: 1 }
-                ],
-                unevaluatedItems: { type: 'number' },
-                minItems: 1
-            }, undefined, orderedAjvOptions);
+                const schema = Joi.array().ordered(Joi.string().required()).items(Joi.number());
+                const tests = [
+                    [[], false, '"value" does not contain 1 required value(s)'],
+                    [['a'], true],
+                    [['a', 1, 2], true],
+                    [[1, 2], false, '"[0]" must be a string']
+                ];
 
-            Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
-            Helper.validate(schema, tests);
+                Helper.validateJsonSchema(schema, {
+                    type: 'array',
+                    prefixItems: [
+                        { type: 'string', minLength: 1 }
+                    ],
+                    unevaluatedItems: { type: 'number' },
+                    minItems: 1
+                }, undefined, orderedAjvOptions);
+
+                Helper.validateJsonSchemaValues(schema['~standard'].jsonSchema.input(), tests, orderedAjvOptions);
+                Helper.validate(schema, tests);
+            });
         });
 
         it('represents array with multiple item schemas after ordered items', () => {
