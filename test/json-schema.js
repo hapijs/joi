@@ -667,6 +667,38 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.alternatives().try(Joi.string(), Joi.number()).match('one'), { oneOf: [{ type: 'string', minLength: 1 }, { type: 'number' }] });
         });
 
+        it('represents match all as allOf', () => {
+
+            Helper.validateJsonSchema(
+                Joi.alternatives().try(
+                    Joi.object({ a: Joi.string() }).unknown(true),
+                    Joi.object({ b: Joi.number() }).unknown(true)
+                ).match('all'),
+                {
+                    allOf: [
+                        { type: 'object', properties: { a: { type: 'string', minLength: 1 } } },
+                        { type: 'object', properties: { b: { type: 'number' } } }
+                    ]
+                }
+            );
+        });
+
+        it('represents match all as allOf with strict objects', () => {
+
+            Helper.validateJsonSchema(
+                Joi.alternatives().try(
+                    Joi.object({ a: Joi.string() }),
+                    Joi.object({ b: Joi.number() })
+                ).match('all'),
+                {
+                    allOf: [
+                        { type: 'object', properties: { a: { type: 'string', minLength: 1 } }, additionalProperties: false },
+                        { type: 'object', properties: { b: { type: 'number' } }, additionalProperties: false }
+                    ]
+                }
+            );
+        });
+
         it('represents empty schema when no alternatives provided', () => {
 
             Helper.validateJsonSchema(Joi.alternatives(), {});
