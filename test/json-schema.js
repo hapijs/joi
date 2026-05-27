@@ -1095,6 +1095,21 @@ describe('jsonSchema', () => {
             Helper.validateJsonSchema(Joi.array().min(1).max(10).length(5).unique(), { type: 'array', minItems: 5, maxItems: 5, uniqueItems: true });
         });
 
+        it('skips array constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.array().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'array' }
+                },
+                additionalProperties: false
+            });
+        });
+
         it('omits items: false when unevaluatedItems is used', () => {
 
             Helper.validateJsonSchema(Joi.array().ordered(Joi.string().required()), {
@@ -1317,6 +1332,57 @@ describe('jsonSchema', () => {
                 type: 'integer',
                 minimum: 0,
                 maximum: 65535
+            });
+        });
+
+        it('skips number constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().max(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().greater(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.number().less(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'number' }
+                },
+                additionalProperties: false
             });
         });
 
@@ -1687,6 +1753,45 @@ describe('jsonSchema', () => {
             });
 
             Helper.validateJsonSchema(Joi.string().allow('a'), { type: 'string', minLength: 1 });
+        });
+
+        it('skips string constraints with ref arguments', () => {
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().min(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string' }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().max(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string', minLength: 1 }
+                },
+                additionalProperties: false
+            });
+
+            Helper.validateJsonSchema(Joi.object({
+                a: Joi.number(),
+                b: Joi.string().length(Joi.ref('a'))
+            }), {
+                type: 'object',
+                properties: {
+                    a: { type: 'number' },
+                    b: { type: 'string' }
+                },
+                additionalProperties: false
+            });
         });
 
         it('represents nullable string', () => {
