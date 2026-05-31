@@ -249,6 +249,16 @@ describe('date', () => {
             expect(result.error).to.not.exist();
             expect(result.value.getTime()).to.equal(fixed.getTime());
         });
+
+        it('does not affect function defaults', () => {
+
+            const fixed = new Date('2024-06-01T00:00:00.000Z');
+            const schema = Joi.date().default(() => fixed);
+            const result = schema.validate(undefined);
+
+            expect(result.error).to.not.exist();
+            expect(result.value.getTime()).to.equal(fixed.getTime());
+        });
     });
 
     describe('greater()', () => {
