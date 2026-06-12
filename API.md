@@ -2014,6 +2014,10 @@ Note that named links must be found in a direct ancestor of the link. The names 
 
 Links are resolved once (per runtime) and the result schema cached. If you reuse a link in different places, the first time it is resolved at run-time, the result will be used by all other instances. If you want each link to resolve relative to the place it is used, use a separate `Joi.link()` statement in each place or set the `relative()` flag.
 
+As a safety net, when validation exceeds the runtime call stack while resolving a link, validation fails with the `link.depth` error code instead of crashing the process.
+
+Possible validation errors: [`link.depth`](#linkdepth)
+
 Named links:
 
 ```js
@@ -3888,6 +3892,10 @@ Additional local context properties:
     n: number // Minimum expected arity
 }
 ```
+
+#### `link.depth`
+
+The validation chain exceeded the runtime call stack while resolving a recursive link. Returned instead of throwing a `RangeError`.
 
 #### `number.base`
 

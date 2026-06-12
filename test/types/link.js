@@ -319,6 +319,26 @@ describe('link', () => {
         expect(() => schema.validate({ x: 123 })).to.throw('"x" contains link reference "ref:y" which is another link');
     });
 
+    describe('runtime stack overflow', () => {
+
+        it('reports a validation error instead of crashing on deeply nested recursive input', () => {
+
+            const schema = Joi.object({
+                a: Joi.link('/')
+            });
+
+            let value = {};
+            for (let i = 0; i < 5000; ++i) {
+                value = { a: value };
+            }
+
+            const { error } = schema.validate(value);
+            expect(error).to.exist();
+            expect(error.details[0].type).to.equal('link.depth');
+            expect(error.message).to.contain('exceeds maximum recursion depth supported by the runtime');
+        });
+    });
+
     describe('when()', () => {
 
         it('validates a schema with when()', () => {
