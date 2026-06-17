@@ -105,6 +105,28 @@ describe('object', () => {
         expect(schema.validate(new Test()).value).to.be.instanceof(Test);
     });
 
+    it('does not pollute the cloned value prototype via a __proto__ key', () => {
+
+        const schema = Joi.object({ name: Joi.string() });
+
+        const payload = JSON.parse('{"name":"alice","__proto__":{"isAdmin":true,"role":"superuser"}}');
+        expect(Object.getPrototypeOf(payload)).to.equal(Object.prototype);
+        expect(payload.isAdmin).to.not.exist();
+
+        const { value, error } = schema.validate(payload);
+        expect(error).to.not.exist();
+        expect(Object.getPrototypeOf(value)).to.equal(Object.prototype);
+        expect(value.isAdmin).to.not.exist();
+        expect(value.role).to.not.exist();
+
+        // Same with allowUnknown disabled
+
+        const { value: value2, error: error2 } = schema.validate(payload, { allowUnknown: false });
+        expect(error2).to.not.exist();
+        expect(Object.getPrototypeOf(value2)).to.equal(Object.prototype);
+        expect(value2.isAdmin).to.not.exist();
+    });
+
     it('allows any key when schema is undefined', () => {
 
         Helper.validate(Joi.object(), [[{ a: 4 }, true]]);
