@@ -1623,6 +1623,28 @@ describe('jsonSchema', () => {
             });
         });
 
+        it('composes multiple patterns via allOf', () => {
+
+            Helper.validateJsonSchema(Joi.string().pattern(/^\d+$/).pattern(/.{4,}/), {
+                type: 'string',
+                minLength: 1,
+                allOf: [
+                    { pattern: '^\\d+$' },
+                    { pattern: '.{4,}' }
+                ]
+            });
+
+            Helper.validateJsonSchema(Joi.string().pattern(/^a/).pattern(/b/).pattern(/c$/), {
+                type: 'string',
+                minLength: 1,
+                allOf: [
+                    { pattern: '^a' },
+                    { pattern: 'b' },
+                    { pattern: 'c$' }
+                ]
+            });
+        });
+
         it('represents string with valids', () => {
 
             Helper.validateJsonSchema(Joi.string().valid('a', 'b'), {
