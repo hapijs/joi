@@ -4638,6 +4638,24 @@ describe('string', () => {
             ]);
         });
 
+        it('converts an hexadecimal string with byte align and prefix', () => {
+
+            const optionalRule = Joi.string().hex({ byteAligned: true, prefix: 'optional' });
+            Helper.validate(optionalRule, [
+                ['0xABCD', true, '0xABCD'],
+                ['0xABC', true, '0x0ABC'],
+                ['0XABC', true, '0X0ABC'],
+                ['0xABCDE', true, '0x0ABCDE']
+            ]);
+
+            const requiredRule = Joi.string().hex({ byteAligned: true, prefix: true });
+            Helper.validate(requiredRule, [
+                ['0xABCD', true, '0xABCD'],
+                ['0xABC', true, '0x0ABC'],
+                ['0XABC', true, '0X0ABC']
+            ]);
+        });
+
         it('validates an hexadecimal string with prefix explicitly required', () => {
 
             const rule = Joi.string().hex({ prefix: true }).strict();
