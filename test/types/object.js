@@ -1638,6 +1638,28 @@ describe('object', () => {
                 [{ type: 'a', set: true, flag: true }, false, '"flag" must be [false]']
             ]);
         });
+
+        it('builds keys referencing a duplicated sibling key name of a nested object', () => {
+
+            const schema = Joi.object({
+                id: Joi.number().required(),
+                command: Joi.object({
+                    command: Joi.string().valid('run', 'jump').required(),
+                    params: Joi.alternatives().conditional('command', {
+                        switch: [
+                            { is: 'run', then: Joi.object({ howFast: Joi.number().required() }) },
+                            { is: 'jump', then: Joi.object({ howHigh: Joi.number().required() }) }
+                        ]
+                    })
+                })
+            });
+
+            Helper.validate(schema, [
+                [{ id: 1, command: { command: 'run', params: { howFast: 1 } } }, true],
+                [{ id: 1, command: { command: 'jump', params: { howHigh: 2 } } }, true],
+                [{ id: 1, command: { command: 'run', params: {} } }, false, '"command.params.howFast" is required']
+            ]);
+        });
     });
 
     describe('length()', () => {
