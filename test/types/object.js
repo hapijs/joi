@@ -1638,6 +1638,31 @@ describe('object', () => {
                 [{ type: 'a', set: true, flag: true }, false, '"flag" must be [false]']
             ]);
         });
+
+        it('errors on circular references between sibling keys', () => {
+
+            const err = expect(() => {
+
+                Joi.object({
+                    a: Joi.ref('b'),
+                    b: Joi.ref('a')
+                });
+            }).to.throw('item added into group b created a dependencies error');
+
+            expect(err.path).to.equal('b');
+        });
+
+        it('errors on circular references introduced by rebuild', () => {
+
+            const schema = Joi.object({
+                a: Joi.any(),
+                b: Joi.any()
+            })
+                .fork('a', (s) => s.default(Joi.ref('b')));
+
+            const err = expect(() => schema.fork('b', (s) => s.default(Joi.ref('a')))).to.throw('item added into group a created a dependencies error');
+            expect(err.path).to.equal('a');
+        });
     });
 
     describe('length()', () => {
