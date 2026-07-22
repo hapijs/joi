@@ -1453,6 +1453,34 @@ describe('string', () => {
             expect(() => Joi.string().email({ multiple: false })).to.not.throw();
             expect(() => Joi.string().email({ multiple: {} })).to.throw('multiple option must be an boolean');
             expect(() => Joi.string().email({ multiple: 'abc' })).to.throw('multiple option must be an boolean');
+
+            expect(() => Joi.string().email({ allowUnderscore: true })).to.not.throw();
+            expect(() => Joi.string().email({ allowUnderscore: false })).to.not.throw();
+        });
+
+        it('validates email with underscores in domain', () => {
+
+            const validSchema = Joi.string().email({ allowUnderscore: true });
+            Helper.validate(validSchema, [
+                ['user@_acme-challenge.example.com', true],
+                ['user@_abc.example.com', true]
+            ]);
+
+            const invalidSchema = Joi.string().email();
+            Helper.validate(invalidSchema, [
+                ['user@_acme-challenge.example.com', false, {
+                    message: '"value" must be a valid email',
+                    path: [],
+                    type: 'string.email',
+                    context: { value: 'user@_acme-challenge.example.com', invalids: ['user@_acme-challenge.example.com'], label: 'value' }
+                }],
+                ['user@_abc.example.com', false, {
+                    message: '"value" must be a valid email',
+                    path: [],
+                    type: 'string.email',
+                    context: { value: 'user@_abc.example.com', invalids: ['user@_abc.example.com'], label: 'value' }
+                }]
+            ]);
         });
 
         it('validates email', () => {
