@@ -1181,7 +1181,7 @@ Validates a value asynchronously using the current schema and options where:
     - `artifacts` - when `true`, artifacts are returned alongside the value (i.e. `{ value, artifacts }`). Defaults to `false`.
     - `warnings` - when `true`, warnings are returned alongside the value (i.e. `{ value, warning }`). Defaults to `false`.
 
-Returns a Promise that resolves into the validated value when the value is valid. If the value is valid and the `warnings` or `debug` options are set to `true`, returns an object `{ value, warning, debug }`. If validation fails, the promise rejects with the validation error.
+Returns a Promise that resolves into the validated value when the value is valid. If the value is valid and the `warnings` or `debug` options are set to `true`, returns an object `{ value, warning, debug }`. If validation fails, the promise rejects with the validation error. When `warnings` is `true`, warnings generated before the failure are available as `error.warning`.
 
 ```js
 const schema = Joi.object({
@@ -3518,6 +3518,7 @@ Performs validation against the current schema without the extra overhead of mer
 **joi** throws or returns `ValidationError` objects containing :
 - `name` - `'ValidationError'`.
 - `isJoi` - `true`.
+- `warning` - when the `warnings` option is `true`, the warning object generated before an asynchronous validation failure, if any.
 - `details` - an array of errors :
     - `message` - string with a description of the error.
     - `path` - ordered array where each element is the accessor to the value where the error happened.
