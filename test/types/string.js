@@ -8082,6 +8082,42 @@ describe('string', () => {
             ]);
         });
 
+        it('validates uri with Unicode domain', () => {
+
+            const schema = Joi.string().uri({ domain: { allowUnicode: true, tlds: false } });
+
+            Helper.validate(schema, [
+                ['https://ëxample.com', true],
+                ['https://ëxample.com/path', true],
+                ['https://ëxample.com/a%20b', true],
+                ['https://example.com/ë', false, '"value" must be a valid uri'],
+                ['urn:ë', false, '"value" must be a valid uri'],
+                ['https:///ë', false, '"value" must be a valid uri'],
+                ['https://\uD800.com', false, '"value" must be a valid uri']
+            ]);
+
+            Helper.validate(schema, { convert: false }, [
+                ['https://ëxample.com', true],
+                ['https://example.com/ë', false, '"value" must be a valid uri']
+            ]);
+
+            const asciiSchema = Joi.string().uri({ domain: { allowUnicode: false, tlds: false } });
+            Helper.validate(asciiSchema, [
+                ['https://ëxample.com', false, '"value" must be a valid uri']
+            ]);
+
+            const relativeSchema = Joi.string().uri({ allowRelative: true, domain: { allowUnicode: true, tlds: false } });
+            Helper.validate(relativeSchema, [
+                ['//ëxample.com/path', true]
+            ]);
+
+            const encodedSchema = Joi.string().uri({ domain: { allowUnicode: true, tlds: false }, encodeUri: true });
+            Helper.validate(encodedSchema, [
+                ['https://ëxample.com/ë', true, 'https://%C3%ABxample.com/%C3%AB'],
+                ['urn:ë', false, '"value" must contain a valid domain name']
+            ]);
+        });
+
         it('validates relative uri', () => {
 
             const schema = Joi.string().uri({ allowRelative: true });
