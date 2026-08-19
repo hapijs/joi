@@ -566,6 +566,24 @@ describe('extension', () => {
         expect(special.validate(1).error).to.be.an.error('shit happens');
     });
 
+    it('does not pollute the prototype with a language named __proto__', () => {
+
+        try {
+            Joi.extend({
+                type: 'special',
+                base: Joi.string(),
+                messages: {
+                    ['__proto__']: { isAdmin: 'true' }
+                }
+            });
+
+            expect({}.isAdmin).to.not.exist();
+        }
+        finally {
+            delete Object.prototype.isAdmin;
+        }
+    });
+
     it('overrides specific error messages with template', () => {
 
         const custom = Joi.extend({
