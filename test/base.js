@@ -2027,6 +2027,30 @@ describe('any', () => {
             Helper.validate(schema, [[{ a: 1 }, false, '"a" angustus']]);
         });
 
+        it('does not pollute the prototype with a language named __proto__', () => {
+
+            try {
+                Joi.any().messages({ ['__proto__']: { isAdmin: 'true' } });
+                Joi.any().prefs({ messages: { ['__proto__']: { isAdmin: 'true' } } });
+
+                expect({}.isAdmin).to.not.exist();
+            }
+            finally {
+                delete Object.prototype.isAdmin;
+            }
+        });
+
+        it('does not pollute Object with a language named constructor', () => {
+
+            try {
+                Joi.any().messages({ constructor: { 'number.min': 'too small' } });
+                expect(Object['number.min']).to.not.exist();
+            }
+            finally {
+                delete Object['number.min'];
+            }
+        });
+
         it('errors on invalid message value', () => {
 
             expect(() => Joi.number().min(10).message(12)).to.throw('Invalid message options');
