@@ -3053,6 +3053,27 @@ describe('object', () => {
                 Helper.validate(Joi.compile(schema), [[{ other: 'here', A: 100, c: 50 }, true, { other: 'here', A: 100, b: 100, c: 50 }]]);
             });
 
+            it('errors on a template target rendering __proto__ instead of setting the prototype', () => {
+
+                const payload = JSON.parse('{"user":"alice","x-__proto__":{"isAdmin":true,"role":"superuser"}}');
+
+                const schema = Joi.object({ user: Joi.string().required() })
+                    .rename(/^x-(.+)$/, Joi.x('{#1}'), { multiple: true })
+                    .unknown(false);
+
+                const { value, error } = schema.validate(payload);
+                expect(error).to.be.an.error('"value" cannot rename "x-__proto__" because target "__proto__" is a reserved key');
+                expect(error.details[0].type).to.equal('object.rename.proto');
+                expect(Object.getPrototypeOf(value)).to.equal(Object.prototype);
+                expect(value.isAdmin).to.not.exist();
+                expect(Object.prototype.isAdmin).to.not.exist();
+
+                const { value: value2, error: error2 } = schema.validate(payload, { abortEarly: false });
+                expect(error2.details[0].type).to.equal('object.rename.proto');
+                expect(Object.getPrototypeOf(value2)).to.equal(Object.prototype);
+                expect(value2.isAdmin).to.not.exist();
+            });
+
             it('uses template', () => {
 
                 const schema = Joi.object()

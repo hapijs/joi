@@ -2550,7 +2550,7 @@ const value = await Joi.compile(schema).validateAsync(input);
 // value === { x123x: 'x', x1x: 'y', x0x: 'z', x4x: 'test' }
 ```
 
-Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
+Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.proto`](#objectrenameproto)
 
 #### `object.schema([type])`
 
@@ -4135,6 +4135,19 @@ Additional local context properties:
 #### `object.rename.override`
 
 The target property already exists and you disallowed overrides.
+
+Additional local context properties:
+```ts
+{
+    from: string, // Origin property name of the rename
+    to: string, // Target property of the rename
+    pattern: boolean // Indicates if the rename source was a pattern (regular expression)
+}
+```
+
+#### `object.rename.proto`
+
+The target property is `__proto__`, which would set the object prototype instead of creating a key.
 
 Additional local context properties:
 ```ts
