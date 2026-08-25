@@ -893,6 +893,32 @@ describe('Validator', () => {
             });
         });
 
+        it('reports warnings with errors (async)', async () => {
+
+            const schema = Joi.object({
+                a: Joi.any().warning('custom.x', { w: 'world' }).message({ 'custom.x': 'hello {#w}!' }),
+                b: Joi.number().max(1)
+            });
+
+            const error = await expect(schema.validateAsync({ a: 'anything', b: 2 }, { warnings: true })).to.reject('"b" must be less than or equal to 1');
+            expect(error.warning).to.equal({
+                message: 'hello world!',
+                details: [
+                    {
+                        message: 'hello world!',
+                        path: ['a'],
+                        type: 'custom.x',
+                        context: {
+                            w: 'world',
+                            label: 'a',
+                            value: 'anything',
+                            key: 'a'
+                        }
+                    }
+                ]
+            });
+        });
+
         it('reports warnings with externals', async () => {
 
             const append = (value) => value + '!';
@@ -916,6 +942,32 @@ describe('Validator', () => {
                         }
                     ]
                 }
+            });
+        });
+
+        it('reports warnings with external errors', async () => {
+
+            const schema = Joi.number().external((value, { error, warn }) => {
+
+                warn('number.max', { limit: 1, value });
+                return error('number.min', { limit: 10, value });
+            });
+
+            const error = await expect(schema.validateAsync(5, { warnings: true })).to.reject('"value" must be greater than or equal to 10');
+            expect(error.warning).to.equal({
+                message: '"value" must be less than or equal to 1',
+                details: [
+                    {
+                        message: '"value" must be less than or equal to 1',
+                        path: [],
+                        type: 'number.max',
+                        context: {
+                            limit: 1,
+                            value: 5,
+                            label: 'value'
+                        }
+                    }
+                ]
             });
         });
 
