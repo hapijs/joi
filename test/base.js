@@ -1701,6 +1701,28 @@ describe('any', () => {
                 [{ x: [] }, true, { x: 2 }]
             ]);
         });
+
+        it('does not run external rules after failover replaces value with non-traversable fallback', async () => {
+
+            const schema = Joi.object({
+                someAsync: Joi.any().external(() => Promise.resolve(true)),
+                someNormal: Joi.any().required()
+            }).failover(() => null);
+
+            const value = await schema.validateAsync({ someAsync: 2 });
+            expect(value).to.equal(null);
+        });
+
+        it('runs external rules normally when no failover fires', async () => {
+
+            const schema = Joi.object({
+                someAsync: Joi.any().external(() => Promise.resolve(true))
+            });
+
+            const value = await schema.validateAsync({ someAsync: 2 });
+            expect(value).to.equal({ someAsync: true });
+        });
+
     });
 
     describe('forbidden()', () => {
