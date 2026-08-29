@@ -2509,7 +2509,7 @@ declare namespace Joi {
     /**
      * Creates a custom validation schema.
      */
-    custom(fn: CustomValidator, description?: string): Schema;
+    custom(fn: CustomValidator, description?: string): AnySchema;
 
     /**
      * Creates a new Joi instance that will apply defaults onto newly created schemas
@@ -2596,50 +2596,60 @@ declare namespace Joi {
     /**
      * Whitelists a value
      */
-    allow(...values: any[]): Schema;
+    allow(...values: any[]): AnySchema;
 
     /**
      * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
      */
-    valid(...values: any[]): Schema;
-    equal(...values: any[]): Schema;
+    valid(...values: any[]): AnySchema;
+    equal(...values: any[]): AnySchema;
 
     /**
      * Blacklists a value
      */
-    invalid(...values: any[]): Schema;
-    disallow(...values: any[]): Schema;
-    not(...values: any[]): Schema;
+    invalid(...values: any[]): AnySchema;
+    disallow(...values: any[]): AnySchema;
+    not(...values: any[]): AnySchema;
 
     /**
      * Marks a key as required which will not allow undefined as value. All keys are optional by default.
      */
-    required(): Schema;
+    required(): AnySchema;
 
     /**
      * Alias of `required`.
      */
-    exist(): Schema;
+    exist(): AnySchema;
 
     /**
      * Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default.
      */
-    optional(): Schema;
+    optional(): AnySchema;
 
     /**
      * Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys.
      */
-    forbidden(): Schema;
+    forbidden(): AnySchema;
 
     /**
      * Overrides the global validate() options for the current key and any sub-key.
      */
-    preferences(options: ValidationOptions): Schema;
+    preferences(options: ValidationOptions): AnySchema;
 
     /**
      * Overrides the global validate() options for the current key and any sub-key.
      */
-    prefs(options: ValidationOptions): Schema;
+    prefs(options: ValidationOptions): AnySchema;
+
+    /**
+     * Requires the validated value to match of the provided `any.allow()` values.
+     */
+    only(): AnySchema;
+
+    /**
+     * Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
+     */
+    strip(enabled?: boolean): AnySchema;
 
     /**
      * Converts the type into an alternatives type where the conditions are merged into the type definition where:
