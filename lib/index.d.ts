@@ -848,27 +848,45 @@ declare namespace Joi {
       : true
     : false;
 
-  type ObjectPropertiesSchema<T = any> = true extends IsNonPrimitiveSubsetUnion<
-    Exclude<T, undefined | null>
-  >
-    ? Joi.AlternativesSchema
-    : T extends NullableType<string>
-    ? Joi.StringSchema
-    : T extends NullableType<number>
-    ? Joi.NumberSchema
-    : T extends NullableType<bigint>
-    ? Joi.NumberSchema
-    : T extends NullableType<boolean>
-    ? Joi.BooleanSchema
-    : T extends NullableType<Date>
-    ? Joi.DateSchema
-    : T extends NullableType<Buffer>
-    ? Joi.BinarySchema
-    : T extends NullableType<Array<any>>
-    ? Joi.ArraySchema
-    : T extends NullableType<object>
-    ? StrictSchemaMap<T> | ObjectSchema<T>
-    : never;
+  // User-extensible registry for mapping value types to schema types.
+  // Augment via `declare module 'joi' { interface CustomSchemaMap { ... } }`,
+  // where each entry has the shape `{ type: SomeValue; schema: SomeSchema }`.
+  // Entries here are consulted before the built-in mapping, so they can also
+  // override the default schema chosen for a built-in type.
+  interface CustomSchemaMap {}
+
+  type ResolveCustomSchema<T> = {
+    [K in keyof CustomSchemaMap]: CustomSchemaMap[K] extends {
+      type: infer Type;
+      schema: infer S;
+    }
+      ? [Exclude<T, undefined | null>] extends [Type]
+        ? S
+        : never
+      : never;
+  }[keyof CustomSchemaMap];
+
+  type ObjectPropertiesSchema<T = any> = [ResolveCustomSchema<T>] extends [never]
+    ? true extends IsNonPrimitiveSubsetUnion<Exclude<T, undefined | null>>
+      ? Joi.AlternativesSchema
+      : T extends NullableType<string>
+      ? Joi.StringSchema
+      : T extends NullableType<number>
+      ? Joi.NumberSchema
+      : T extends NullableType<bigint>
+      ? Joi.NumberSchema
+      : T extends NullableType<boolean>
+      ? Joi.BooleanSchema
+      : T extends NullableType<Date>
+      ? Joi.DateSchema
+      : T extends NullableType<Buffer>
+      ? Joi.BinarySchema
+      : T extends NullableType<Array<any>>
+      ? Joi.ArraySchema
+      : T extends NullableType<object>
+      ? StrictSchemaMap<T> | ObjectSchema<T>
+      : never
+    : ResolveCustomSchema<T>;
 
   type PartialSchemaMap<TSchema = any> = {
     [key in keyof TSchema]?: SchemaLike | SchemaLike[];
