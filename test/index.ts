@@ -4,6 +4,14 @@ import { StandardSchemaV1 } from "@standard-schema/spec";
 
 const { expect } = Lab.types;
 
+type IsNull<T> = [T] extends [null] ? true : false;
+type IsAny<T> = 0 extends 1 & NoInfer<T> ? true : false;
+type IsUnknown<T> = unknown extends T // `T` can be `unknown` or `any`
+  ? IsNull<T> extends false // `any` can be `null`, but `unknown` can't be
+    ? true
+    : false
+  : false;
+
 // The following was copied (almost) as-is from:
 // https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/hapi__joi
 
@@ -399,13 +407,13 @@ arrSchema = arrSchema.items(schemaMap);
 arrSchema = arrSchema.items(schemaMap, schemaMap, schemaLike);
 expect.error(arrSchema.items([schemaMap, schemaMap, schemaLike]));
 let value1 = Joi.array().items(Joi.string(), Joi.boolean(), Joi.number(), Joi.object({key: Joi.string()}));
-expect.type<Joi.ArraySchema<(string | number | boolean | {key: string})[]>>(value1)
+expect.type<Joi.ArraySchema<(string | number | boolean | {key?: string})[]>>(value1)
 
 const arr1 = Joi.array().items(Joi.boolean());
 expect.type<Joi.ArraySchema<boolean[]>>(arr1);
-const arr2 = Joi.array().items<boolean>(Joi.boolean());
+const arr2 = Joi.array().items(Joi.boolean());
 expect.type<Joi.ArraySchema<boolean[]>>(arr2);
-const arr3 = Joi.array().items<number>(Joi.number());
+const arr3 = Joi.array().items(Joi.number());
 expect.type<Joi.ArraySchema<number[]>>(arr3);
 const arr4 = Joi.array().items(Joi.array().items(Joi.number()));
 expect.type<Joi.ArraySchema<number[][]>>(arr4);
@@ -427,6 +435,21 @@ const arr9 = Joi.array().items(
   Joi.string(),
 );
 expect.type<Joi.ArraySchema<(Buffer | boolean | Date | Function | number | Record<string, string> | string)[]>>(arr9);
+
+// Negative tests for array.items() — prove item types are actually inferred, not any
+{
+  const strArr = Joi.array().items(Joi.string());
+  type StrArrType = Joi.InferType<typeof strArr>;
+  expect.error<string>({} as StrArrType);
+
+  const numArr = Joi.array().items(Joi.number());
+  type NumArrType = Joi.InferType<typeof numArr>;
+  expect.error<string>({} as NumArrType);
+
+  const unionArr = Joi.array().items(Joi.string(), Joi.number());
+  type UnionArrType = Joi.InferType<typeof unionArr>;
+  expect.error<boolean>({} as UnionArrType);
+}
 
 // - - - - - - - -
 
@@ -1059,6 +1082,16 @@ schema = Joi.alt(schema, anySchema, boolSchema);
 
 expect.type<Joi.AlternativesSchema<string | number | boolean>>(Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean()));
 
+// Negative tests for alternatives().try() — prove the union is real, not any
+{
+  const alt = Joi.alternatives().try(Joi.string(), Joi.number());
+  type AltType = Joi.InferType<typeof alt>;
+  expect.error<boolean>({} as AltType);
+
+  const altBool = Joi.alternatives().try(Joi.string(), Joi.boolean());
+  type AltBoolType = Joi.InferType<typeof altBool>;
+  expect.error<number>({} as AltBoolType);
+}
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1167,13 +1200,21 @@ expect.error(Joi.assert(obj, schemaLike));
 }
 
 expect.type<number[]>(Joi.attempt(numArr, Joi.array()));
+expect.error<string>(Joi.attempt(numArr, Joi.array()));
 expect.type<boolean>(Joi.attempt(bool, Joi.bool()));
+expect.error<string>(Joi.attempt(bool, Joi.bool()));
 expect.type<Buffer>(Joi.attempt(buf, Joi.binary()));
+expect.error<string>(Joi.attempt(buf, Joi.binary()));
 expect.type<Date>(Joi.attempt(date, Joi.date()));
+expect.error<string>(Joi.attempt(date, Joi.date()));
 expect.type<Function>(Joi.attempt(func, Joi.func()));
+expect.error<string>(Joi.attempt(func, Joi.func()));
 expect.type<number>(Joi.attempt(num, Joi.number()));
+expect.error<string>(Joi.attempt(num, Joi.number()));
 expect.type<string>(Joi.attempt(str, Joi.string()));
+expect.error<number>(Joi.attempt(str, Joi.string()));
 expect.type<Symbol>(Joi.attempt(symbol, Joi.symbol()));
+expect.error<string>(Joi.attempt(symbol, Joi.symbol()));
 
 expect.error(Joi.attempt(obj, schemaLike));
 
@@ -1328,8 +1369,8 @@ const terms = schema.$_terms;
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 // Test Joi.object, Joi.append and Joi.extends (with `any` type)
 
-// should be able to append any new properties
-let anyObject = Joi.object({
+// should be able to append any new properties (explicit <any> opts out of inference)
+let anyObject = Joi.object<any>({
   name: Joi.string().required(),
   family: Joi.string(),
 });
@@ -1492,4 +1533,1417 @@ expect.error(Joi.string('x'));
     expect.type<Record<string, unknown>>(input);
     expect.type<Record<string, unknown>>(output);
   }
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Type Inference Infrastructure
+
+{
+  // InferType extracts the output type from primitive schemas
+  type StringOut = Joi.InferType<Joi.StringSchema>;
+  expect.type<string>({} as StringOut);
+  expect.error<number>({} as StringOut);
+
+  type NumberOut = Joi.InferType<Joi.NumberSchema>;
+  expect.type<number>({} as NumberOut);
+  expect.error<string>({} as NumberOut);
+
+  type BooleanOut = Joi.InferType<Joi.BooleanSchema>;
+  expect.type<boolean>({} as BooleanOut);
+  expect.error<string>({} as BooleanOut);
+
+  type DateOut = Joi.InferType<Joi.DateSchema>;
+  expect.type<Date>({} as DateOut);
+  expect.error<string>({} as DateOut);
+
+  type BufferOut = Joi.InferType<Joi.BinarySchema>;
+  expect.type<Buffer>({} as BufferOut);
+  expect.error<string>({} as BufferOut);
+
+  // InferOutput is an alias for InferType
+  type StringOut2 = Joi.InferOutput<Joi.StringSchema>;
+  expect.type<string>({} as StringOut2);
+  expect.error<number>({} as StringOut2);
+
+  // InferInput extracts the input type
+  type StringIn = Joi.InferInput<Joi.StringSchema>;
+  expect.type<string>({} as StringIn);
+  expect.error<number>({} as StringIn);
+}
+
+{
+  // InferType works with schema instances from factory methods
+  const strSchema = Joi.string();
+  type StrType = Joi.InferType<typeof strSchema>;
+  expect.type<string>({} as StrType);
+  expect.error<number>({} as StrType);
+
+  const numSchema = Joi.number();
+  type NumType = Joi.InferType<typeof numSchema>;
+  expect.type<number>({} as NumType);
+  expect.error<string>({} as NumType);
+
+  const boolSchema = Joi.boolean();
+  type BoolType = Joi.InferType<typeof boolSchema>;
+  expect.type<boolean>({} as BoolType);
+  expect.error<string>({} as BoolType);
+
+  const dateSchema = Joi.date();
+  type DateType = Joi.InferType<typeof dateSchema>;
+  expect.type<Date>({} as DateType);
+  expect.error<string>({} as DateType);
+
+  const binSchema = Joi.binary();
+  type BinType = Joi.InferType<typeof binSchema>;
+  expect.type<Buffer>({} as BinType);
+  expect.error<string>({} as BinType);
+
+  // SymbolSchema inference (negative test)
+  const symSchema = Joi.symbol();
+  type SymType = Joi.InferType<typeof symSchema>;
+  expect.type<Symbol>({} as SymType);
+  expect.error<string>({} as SymType);
+}
+
+{
+  // .valid() narrows the output type to literal unions
+  const narrowedStr = Joi.string().valid('a' as const, 'b' as const);
+  type NarrowedStrType = Joi.InferType<typeof narrowedStr>;
+  expect.type<'a' | 'b'>({} as NarrowedStrType);
+  expect.error<number>({} as NarrowedStrType);
+
+  const narrowedNum = Joi.number().valid(1 as const, 2 as const, 3 as const);
+  type NarrowedNumType = Joi.InferType<typeof narrowedNum>;
+  expect.type<1 | 2 | 3>({} as NarrowedNumType);
+  expect.error<string>({} as NarrowedNumType);
+
+  const narrowedBool = Joi.boolean().valid(true as const);
+  type NarrowedBoolType = Joi.InferType<typeof narrowedBool>;
+  expect.type<true>({} as NarrowedBoolType);
+  expect.error<string>({} as NarrowedBoolType);
+
+  // .equal() behaves the same as .valid()
+  const equalStr = Joi.string().equal('x' as const, 'y' as const);
+  type EqualStrType = Joi.InferType<typeof equalStr>;
+  expect.type<'x' | 'y'>({} as EqualStrType);
+  expect.error<number>({} as EqualStrType);
+}
+
+{
+  // .valid() with non-literal values doesn't narrow (returns same type)
+  const nonLiteral = Joi.string().valid('a', 'b');
+  type NonLiteralType = Joi.InferType<typeof nonLiteral>;
+  expect.type<string>({} as NonLiteralType);
+}
+
+{
+  // validate() returns typed results for primitive schemas
+  const strResult = Joi.string().validate('test');
+  if (!strResult.error) {
+    expect.type<string>(strResult.value);
+    expect.error<number>(strResult.value);
+  }
+
+  const numResult = Joi.number().validate(42);
+  if (!numResult.error) {
+    expect.type<number>(numResult.value);
+    expect.error<string>(numResult.value);
+  }
+
+  // attempt() returns the inferred type
+  expect.type<string>(Joi.attempt('test', Joi.string()));
+  expect.error<number>(Joi.attempt('test', Joi.string()));
+  expect.type<number>(Joi.attempt(42, Joi.number()));
+  expect.error<string>(Joi.attempt(42, Joi.number()));
+  expect.type<boolean>(Joi.attempt(true, Joi.boolean()));
+  expect.error<string>(Joi.attempt(true, Joi.boolean()));
+  expect.type<Date>(Joi.attempt(new Date(), Joi.date()));
+  expect.error<string>(Joi.attempt(new Date(), Joi.date()));
+  expect.type<Buffer>(Joi.attempt(Buffer.alloc(0), Joi.binary()));
+  expect.error<string>(Joi.attempt(Buffer.alloc(0), Joi.binary()));
+}
+
+{
+  // Schema flags infrastructure exists and schemas carry TFlags
+  const schema = Joi.string();
+  type Flags = typeof schema extends Joi.StringSchema<any, infer F> ? F : never;
+  expect.type<Joi.SchemaFlags>({} as Flags);
+}
+
+{
+  // Type-preserving methods don't change the inferred type
+  const schema = Joi.string().min(1).max(100).email().trim();
+  type SchemaType = Joi.InferType<typeof schema>;
+  expect.type<string>({} as SchemaType);
+
+  const numSchemaChained = Joi.number().min(0).max(100).integer().positive();
+  type NumChainedType = Joi.InferType<typeof numSchemaChained>;
+  expect.type<number>({} as NumChainedType);
+}
+
+{
+  // Manual generic type parameters still work (backward compatibility)
+  const manualSchema = Joi.object<{ name: string; age: number }>();
+  type ManualType = Joi.InferType<typeof manualSchema>;
+  expect.type<{ name: string; age: number }>({} as ManualType);
+
+  const manualStr = Joi.string<'hello'>();
+  type ManualStrType = Joi.InferType<typeof manualStr>;
+  expect.type<'hello'>({} as ManualStrType);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Presence-Modifying Methods (required, optional, exist, forbidden, strip, default, failover)
+
+// Helper to extract flag values from schema types via phantom ~flags property
+type ExtractPresence<T extends Joi.AnySchema> = T['~flags']['presence'];
+type ExtractHasDefault<T extends Joi.AnySchema> = T['~flags']['hasDefault'];
+type ExtractIsStripped<T extends Joi.AnySchema> = T['~flags']['isStripped'];
+
+{
+  // .required() sets presence flag to 'required'
+  const reqStr = Joi.string().required();
+  type ReqPresence = ExtractPresence<typeof reqStr>;
+  expect.type<'required'>({} as ReqPresence);
+  expect.error<'optional'>({} as ReqPresence);
+
+  // .required() preserves the output type
+  type ReqStrType = Joi.InferType<typeof reqStr>;
+  expect.type<string>({} as ReqStrType);
+  expect.error<number>({} as ReqStrType);
+
+  // .exist() is an alias for .required()
+  const existStr = Joi.string().exist();
+  type ExistPresence = ExtractPresence<typeof existStr>;
+  expect.type<'required'>({} as ExistPresence);
+  expect.error<'optional'>({} as ExistPresence);
+
+  // .optional() sets presence flag to 'optional'
+  const optStr = Joi.string().optional();
+  type OptPresence = ExtractPresence<typeof optStr>;
+  expect.type<'optional'>({} as OptPresence);
+  expect.error<'required'>({} as OptPresence);
+
+  // .optional() preserves the output type
+  type OptStrType = Joi.InferType<typeof optStr>;
+  expect.type<string>({} as OptStrType);
+  expect.error<number>({} as OptStrType);
+
+  // Chaining: .required().optional() should end up 'optional'
+  const reqThenOpt = Joi.string().required().optional();
+  type ReqThenOptPresence = ExtractPresence<typeof reqThenOpt>;
+  expect.type<'optional'>({} as ReqThenOptPresence);
+
+  // Works on other schema types too
+  const reqNum = Joi.number().required();
+  type ReqNumPresence = ExtractPresence<typeof reqNum>;
+  expect.type<'required'>({} as ReqNumPresence);
+  type ReqNumType = Joi.InferType<typeof reqNum>;
+  expect.type<number>({} as ReqNumType);
+  expect.error<string>({} as ReqNumType);
+
+  const reqBool = Joi.boolean().required();
+  type ReqBoolPresence = ExtractPresence<typeof reqBool>;
+  expect.type<'required'>({} as ReqBoolPresence);
+
+  const reqDate = Joi.date().required();
+  type ReqDatePresence = ExtractPresence<typeof reqDate>;
+  expect.type<'required'>({} as ReqDatePresence);
+}
+
+{
+  // .forbidden() narrows output to never and sets isStripped
+  const forbiddenStr = Joi.string().forbidden();
+  type ForbiddenType = Joi.InferType<typeof forbiddenStr>;
+  expect.type<never>({} as ForbiddenType);
+
+  type ForbiddenStripped = ExtractIsStripped<typeof forbiddenStr>;
+  expect.type<true>({} as ForbiddenStripped);
+  expect.error<false>({} as ForbiddenStripped);
+
+  // .forbidden() works on all schema types
+  const forbiddenNum = Joi.number().forbidden();
+  type ForbiddenNumType = Joi.InferType<typeof forbiddenNum>;
+  expect.type<never>({} as ForbiddenNumType);
+}
+
+{
+  // .strip() narrows output to never and sets isStripped flag
+  const strippedStr = Joi.string().strip();
+  type StrippedType = Joi.InferType<typeof strippedStr>;
+  expect.type<never>({} as StrippedType);
+
+  type StrippedFlag = ExtractIsStripped<typeof strippedStr>;
+  expect.type<true>({} as StrippedFlag);
+  expect.error<false>({} as StrippedFlag);
+
+  // .strip(true) falls back to non-narrowing overload (dynamic boolean)
+  const stripTrue = Joi.string().strip(true);
+  type StripTrueType = Joi.InferType<typeof stripTrue>;
+  expect.type<string>({} as StripTrueType);
+
+  // .strip(false) also falls back to non-narrowing overload
+  const stripFalse = Joi.string().strip(false);
+  type StripFalseType = Joi.InferType<typeof stripFalse>;
+  expect.type<string>({} as StripFalseType);
+}
+
+{
+  // .default() sets the hasDefault flag
+  const defaultStr = Joi.string().default('hello');
+  type DefaultFlag = ExtractHasDefault<typeof defaultStr>;
+  expect.type<true>({} as DefaultFlag);
+  expect.error<false>({} as DefaultFlag);
+
+  // .default() preserves the output type
+  type DefaultStrType = Joi.InferType<typeof defaultStr>;
+  expect.type<string>({} as DefaultStrType);
+  expect.error<number>({} as DefaultStrType);
+
+  // .failover() also sets the hasDefault flag
+  const failoverNum = Joi.number().failover(0);
+  type FailoverFlag = ExtractHasDefault<typeof failoverNum>;
+  expect.type<true>({} as FailoverFlag);
+  expect.error<false>({} as FailoverFlag);
+
+  // .failover() preserves the output type
+  type FailoverNumType = Joi.InferType<typeof failoverNum>;
+  expect.type<number>({} as FailoverNumType);
+  expect.error<string>({} as FailoverNumType);
+}
+
+{
+  // Chaining presence methods with .valid() preserves both narrowings
+  const narrowedRequired = Joi.string().valid('a' as const, 'b' as const).required();
+  type NarrowedReqType = Joi.InferType<typeof narrowedRequired>;
+  expect.type<'a' | 'b'>({} as NarrowedReqType);
+
+  type NarrowedReqPresence = ExtractPresence<typeof narrowedRequired>;
+  expect.type<'required'>({} as NarrowedReqPresence);
+
+  // .required() then .valid() also works
+  const requiredNarrowed = Joi.string().required().valid('x' as const, 'y' as const);
+  type ReqNarrowedType = Joi.InferType<typeof requiredNarrowed>;
+  expect.type<'x' | 'y'>({} as ReqNarrowedType);
+
+  type ReqNarrowedPresence = ExtractPresence<typeof requiredNarrowed>;
+  expect.type<'required'>({} as ReqNarrowedPresence);
+}
+
+{
+  // Type-preserving methods still work after presence methods
+  const reqChained = Joi.string().required().min(1).max(100).email();
+  type ReqChainedType = Joi.InferType<typeof reqChained>;
+  expect.type<string>({} as ReqChainedType);
+
+  type ReqChainedPresence = ExtractPresence<typeof reqChained>;
+  expect.type<'required'>({} as ReqChainedPresence);
+
+  const numDefault = Joi.number().default(42).min(0).max(100);
+  type NumDefaultType = Joi.InferType<typeof numDefault>;
+  expect.type<number>({} as NumDefaultType);
+
+  type NumDefaultFlag = ExtractHasDefault<typeof numDefault>;
+  expect.type<true>({} as NumDefaultFlag);
+}
+
+{
+  // Backward compatibility: assigning narrowed schemas to base schema variables
+  const reqSchema: Joi.StringSchema = Joi.string().required();
+  const optSchema: Joi.StringSchema = Joi.string().optional();
+  const defSchema: Joi.StringSchema = Joi.string().default('hello');
+  const forbSchema: Joi.StringSchema = Joi.string().forbidden();
+  const stripSchema: Joi.StringSchema = Joi.string().strip();
+
+  const reqNum: Joi.NumberSchema = Joi.number().required();
+  const reqBool: Joi.BooleanSchema = Joi.boolean().required();
+  const reqDate: Joi.DateSchema = Joi.date().required();
+  const reqBin: Joi.BinarySchema = Joi.binary().required();
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Object Schema Inference (Joi.object() captures schema map and infers output type)
+
+{
+  // Basic object inference: all optional keys (no .required() called)
+  const allOptional = Joi.object({
+    name: Joi.string(),
+    age: Joi.number(),
+  });
+  type AllOptionalType = Joi.InferType<typeof allOptional>;
+  expect.type<{ name?: string; age?: number }>({} as AllOptionalType);
+  expect.error<string>({} as AllOptionalType);
+
+  // Mixed required and optional keys
+  const mixed = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().email().required(),
+    age: Joi.number(),
+  });
+  type MixedType = Joi.InferType<typeof mixed>;
+  expect.type<{ name: string; email: string; age?: number }>({} as MixedType);
+  expect.error<string>({} as MixedType);
+
+  // All required keys
+  const allRequired = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number().required(),
+    active: Joi.boolean().required(),
+  });
+  type AllRequiredType = Joi.InferType<typeof allRequired>;
+  expect.type<{ name: string; age: number; active: boolean }>({} as AllRequiredType);
+  expect.error<string>({} as AllRequiredType);
+
+  // Keys with .default() are treated as required (default fills in missing values)
+  const withDefaults = Joi.object({
+    name: Joi.string().required(),
+    role: Joi.string().default('user'),
+    count: Joi.number().default(0),
+  });
+  type WithDefaultsType = Joi.InferType<typeof withDefaults>;
+  expect.type<{ name: string; role: string; count: number }>({} as WithDefaultsType);
+  expect.error<string>({} as WithDefaultsType);
+
+  // Keys with .forbidden() or .strip() are excluded from the output
+  const withStripped = Joi.object({
+    name: Joi.string().required(),
+    secret: Joi.string().strip(),
+    internal: Joi.number().forbidden(),
+  });
+  type WithStrippedType = Joi.InferType<typeof withStripped>;
+  expect.type<{ name: string }>({} as WithStrippedType);
+  expect.error<string>({} as WithStrippedType);
+
+  // Nested objects infer correctly
+  const nested = Joi.object({
+    user: Joi.object({
+      name: Joi.string().required(),
+      email: Joi.string().required(),
+    }).required(),
+    meta: Joi.object({
+      createdAt: Joi.date(),
+    }),
+  });
+  type NestedType = Joi.InferType<typeof nested>;
+  expect.type<{
+    user: { name: string; email: string };
+    meta?: { createdAt?: Date };
+  }>({} as NestedType);
+
+  // Empty object infers empty type
+  const empty = Joi.object({});
+  type EmptyType = Joi.InferType<typeof empty>;
+  expect.type<{}>({} as EmptyType);
+
+  // .valid() narrowing works inside objects
+  const withValid = Joi.object({
+    status: Joi.string().valid('active' as const, 'inactive' as const).required(),
+    priority: Joi.number().valid(1 as const, 2 as const, 3 as const),
+  });
+  type WithValidType = Joi.InferType<typeof withValid>;
+  expect.type<{
+    status: 'active' | 'inactive';
+    priority?: 1 | 2 | 3;
+  }>({} as WithValidType);
+
+  // .exist() (alias for .required()) works in objects
+  const withExist = Joi.object({
+    name: Joi.string().exist(),
+    age: Joi.number(),
+  });
+  type WithExistType = Joi.InferType<typeof withExist>;
+  expect.type<{ name: string; age?: number }>({} as WithExistType);
+
+  // Explicit type parameter still works (backward compat)
+  interface ManualUser {
+    name: string;
+    age?: number;
+  }
+  const manualObj = Joi.object<ManualUser>({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  });
+  type ManualObjType = Joi.InferType<typeof manualObj>;
+  expect.type<ManualUser>({} as ManualObjType);
+
+  // Joi.object() without args returns ObjectSchema<any> (backward compat)
+  const noArgs = Joi.object();
+  type NoArgsType = Joi.InferType<typeof noArgs>;
+  expect.type<any>({} as NoArgsType);
+
+  // validate() returns inferred type (must check error first for typed value)
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  });
+  const result = schema.validate({ name: 'test' });
+  if (!result.error) {
+    expect.type<{ name: string; age?: number }>(result.value);
+    expect.error<string>(result.value);
+  }
+
+  // Type-preserving methods on ObjectSchema don't break inference
+  const withConstraints = Joi.object({
+    name: Joi.string().required(),
+  }).min(1).max(10).unknown(true);
+  type ConstrainedType = Joi.InferType<typeof withConstraints>;
+  expect.type<{ name: string }>({} as ConstrainedType);
+  expect.error<string>({} as ConstrainedType);
+
+  // Chaining presence methods on the object schema itself
+  const requiredObj = Joi.object({
+    name: Joi.string().required(),
+  }).required();
+  type ReqObjPresence = ExtractPresence<typeof requiredObj>;
+  expect.type<'required'>({} as ReqObjPresence);
+  type ReqObjType = Joi.InferType<typeof requiredObj>;
+  expect.type<{ name: string }>({} as ReqObjType);
+
+  // .failover() on keys works like .default()
+  const withFailover = Joi.object({
+    retries: Joi.number().failover(3),
+    name: Joi.string().required(),
+  });
+  type WithFailoverType = Joi.InferType<typeof withFailover>;
+  expect.type<{ retries: number; name: string }>({} as WithFailoverType);
+
+  // Backward compat: inferred ObjectSchema assignable to base ObjectSchema
+  const inferredObj: Joi.ObjectSchema = Joi.object({
+    name: Joi.string().required(),
+  });
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test .keys(), .append(), and .concat() with type inference on ObjectSchema
+
+{
+  // .keys() adds new fields to inferred schema
+  const base = Joi.object({
+    name: Joi.string().required(),
+  });
+  const extended = base.keys({
+    age: Joi.number(),
+  });
+  type ExtendedType = Joi.InferType<typeof extended>;
+  expect.type<{ name: string; age?: number }>({} as ExtendedType);
+  expect.error<string>({} as ExtendedType);
+
+  // .keys() overwrites conflicting keys (last writer wins)
+  const overwritten = Joi.object({
+    name: Joi.string(),
+  }).keys({
+    name: Joi.number().required(),
+  });
+  type OverwrittenType = Joi.InferType<typeof overwritten>;
+  expect.type<{ name: number }>({} as OverwrittenType);
+  expect.error<string>({} as OverwrittenType);
+
+  // Chaining multiple .keys() calls
+  const chained = Joi.object({
+    a: Joi.string().required(),
+  }).keys({
+    b: Joi.number().required(),
+  }).keys({
+    c: Joi.boolean(),
+  });
+  type ChainedType = Joi.InferType<typeof chained>;
+  expect.type<{ a: string; b: number; c?: boolean }>({} as ChainedType);
+
+  // .append() adds new fields to inferred schema
+  const appended = Joi.object({
+    name: Joi.string().required(),
+  }).append({
+    email: Joi.string().email().required(),
+    age: Joi.number(),
+  });
+  type AppendedType = Joi.InferType<typeof appended>;
+  expect.type<{ name: string; email: string; age?: number }>({} as AppendedType);
+  expect.error<string>({} as AppendedType);
+
+  // .keys() then .append() chaining
+  const mixed = Joi.object({
+    id: Joi.number().required(),
+  }).keys({
+    name: Joi.string().required(),
+  }).append({
+    active: Joi.boolean().default(true),
+  });
+  type MixedType = Joi.InferType<typeof mixed>;
+  expect.type<{ id: number; name: string; active: boolean }>({} as MixedType);
+
+  // .concat() merges two inferred ObjectSchemas
+  const schema1 = Joi.object({
+    name: Joi.string().required(),
+  });
+  const schema2 = Joi.object({
+    age: Joi.number().required(),
+  });
+  const merged = schema1.concat(schema2);
+  type MergedType = Joi.InferType<typeof merged>;
+  expect.type<{ name: string } & { age: number }>({} as MergedType);
+  expect.error<string>({} as MergedType);
+
+  // .keys() on empty object builds up the shape
+  const fromEmpty = Joi.object({}).keys({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  });
+  type FromEmptyType = Joi.InferType<typeof fromEmpty>;
+  expect.type<{ name: string; age?: number }>({} as FromEmptyType);
+  const fromEmptyIsAny: IsAny<FromEmptyType> = false;
+  const fromEmptyIsUnknown: IsUnknown<FromEmptyType> = false;
+
+  // .keys() on lack of value builds up the shape
+  const fromNoValue = Joi.object().keys({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  });
+  type FromNoValueType = Joi.InferType<typeof fromNoValue>;
+  expect.type<{ name: string; age?: number }>({} as FromNoValueType);
+  const noValueIsAny: IsAny<FromNoValueType> = false;
+  const noValueIsUnknown: IsUnknown<FromNoValueType> = false;
+
+  // Nested objects work with .keys()
+  const nested = Joi.object({
+    user: Joi.object({
+      name: Joi.string().required(),
+    }).required(),
+  }).keys({
+    meta: Joi.object({
+      createdAt: Joi.date(),
+    }),
+  });
+  type NestedKeysType = Joi.InferType<typeof nested>;
+  expect.type<{
+    user: { name: string };
+    meta?: { createdAt?: Date };
+  }>({} as NestedKeysType);
+  const nestedIsAny: IsAny<NestedKeysType> = false;
+  const nestedIsUnknown: IsUnknown<NestedKeysType> = false;
+
+  // validate() returns inferred type after .keys()
+  const schema = Joi.object({
+    name: Joi.string().required(),
+  }).keys({
+    age: Joi.number(),
+  });
+  const result = schema.validate({});
+  expect.type<{ name: string; age?: number }>(result.value);
+
+  // Deep negative tests: prove .keys() added fields carry real types, not any
+  type ExtNameType = ExtendedType['name'];
+  expect.type<string>({} as ExtNameType);
+  expect.error<number>({} as ExtNameType);  // proves name is string, not any
+
+  type ExtAgeType = NonNullable<ExtendedType['age']>;
+  expect.type<number>({} as ExtAgeType);
+  expect.error<string>({} as ExtAgeType);  // proves age is number, not any
+
+  // Deep negative tests: prove chained .keys() carries all key types
+  type ChainedAType = ChainedType['a'];
+  expect.type<string>({} as ChainedAType);
+  expect.error<number>({} as ChainedAType);
+
+  type ChainedBType = ChainedType['b'];
+  expect.type<number>({} as ChainedBType);
+  expect.error<string>({} as ChainedBType);
+
+  type ChainedCType = NonNullable<ChainedType['c']>;
+  expect.type<boolean>({} as ChainedCType);
+  expect.error<string>({} as ChainedCType);
+
+  // Deep negative tests: prove .append() carries real types
+  type AppendedNameType = AppendedType['name'];
+  expect.type<string>({} as AppendedNameType);
+  expect.error<number>({} as AppendedNameType);
+
+  type AppendedEmailType = AppendedType['email'];
+  expect.type<string>({} as AppendedEmailType);
+  expect.error<number>({} as AppendedEmailType);
+
+  type AppendedAgeType = NonNullable<AppendedType['age']>;
+  expect.type<number>({} as AppendedAgeType);
+  expect.error<string>({} as AppendedAgeType);
+
+  // Deep negative tests: .concat() merged keys carry real types
+  type MergedNameType = MergedType['name'];
+  expect.type<string>({} as MergedNameType);
+  expect.error<number>({} as MergedNameType);
+
+  type MergedAgeType = MergedType['age'];
+  expect.type<number>({} as MergedAgeType);
+  expect.error<string>({} as MergedAgeType);
+
+  // Deep negative tests: nested .keys() inner keys at deeper levels
+  type NestedUserNameType = NestedKeysType['user']['name'];
+  expect.type<string>({} as NestedUserNameType);
+  expect.error<number>({} as NestedUserNameType);
+
+  type NestedMetaType = NonNullable<NestedKeysType['meta']>;
+  type NestedCreatedAtType = NonNullable<NestedMetaType['createdAt']>;
+  expect.type<Date>({} as NestedCreatedAtType);
+  expect.error<string>({} as NestedCreatedAtType);
+
+  // 3-level nesting: prove leaf keys are correctly typed
+  const deep = Joi.object({
+    level1: Joi.object({
+      level2: Joi.object({
+        leaf: Joi.string().required(),
+      }).required(),
+    }).required(),
+  }).keys({
+    extra: Joi.object({
+      nested: Joi.object({
+        value: Joi.number().required(),
+      }).required(),
+    }),
+  });
+  type DeepType = Joi.InferType<typeof deep>;
+  type LeafType = DeepType['level1']['level2']['leaf'];
+  expect.type<string>({} as LeafType);
+  expect.error<number>({} as LeafType);
+
+  type ExtraNestedType = NonNullable<DeepType['extra']>;
+  type DeepValueType = ExtraNestedType['nested']['value'];
+  expect.type<number>({} as DeepValueType);
+  expect.error<string>({} as DeepValueType);
+}
+
+{
+  // Explicitly-typed ObjectSchema still enforces strict keys
+  // (TShape is null, inference overload is skipped)
+  expect.error(Joi.object<{ name: string }>().keys({ height: Joi.number() }));
+}
+
+{
+  // .append() on untyped Joi.object() should infer shape from arguments
+  const appendNoValue = Joi.object().append({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  });
+  type AppendNoValueType = Joi.InferType<typeof appendNoValue>;
+  expect.type<{ name: string; age?: number }>({} as AppendNoValueType);
+  const appendNoValueIsAny: IsAny<AppendNoValueType> = false;
+  const appendNoValueIsUnknown: IsUnknown<AppendNoValueType> = false;
+
+  // .concat() on untyped Joi.object() should infer shape from the other schema
+  const concatNoValue = Joi.object().concat(Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  }));
+  type ConcatNoValueType = Joi.InferType<typeof concatNoValue>;
+  expect.type<{ name: string; age?: number }>({} as ConcatNoValueType);
+  const concatNoValueIsAny: IsAny<ConcatNoValueType> = false;
+  const concatNoValueIsUnknown: IsUnknown<ConcatNoValueType> = false;
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test .ordered() tuple inference on ArraySchema
+
+{
+  // .ordered() with a single schema infers a 1-tuple
+  const single = Joi.array().ordered(Joi.string());
+  type SingleType = Joi.InferType<typeof single>;
+  expect.type<[string]>({} as SingleType);
+  expect.error<string>({} as SingleType);
+
+  // .ordered() with two schemas infers a 2-tuple
+  const pair = Joi.array().ordered(Joi.string(), Joi.number());
+  type PairType = Joi.InferType<typeof pair>;
+  expect.type<[string, number]>({} as PairType);
+  expect.error<string>({} as PairType);
+
+  // .ordered() with three schemas infers a 3-tuple
+  const triple = Joi.array().ordered(Joi.string(), Joi.number(), Joi.boolean());
+  type TripleType = Joi.InferType<typeof triple>;
+  expect.type<[string, number, boolean]>({} as TripleType);
+  expect.error<string>({} as TripleType);
+
+  // .ordered() with mixed types including date
+  const mixed = Joi.array().ordered(Joi.string(), Joi.date(), Joi.number(), Joi.boolean());
+  type MixedType = Joi.InferType<typeof mixed>;
+  expect.type<[string, Date, number, boolean]>({} as MixedType);
+  expect.error<string>({} as MixedType);
+
+  // .ordered() result is assignable to base ArraySchema (backward compat)
+  const orderedArr: Joi.ArraySchema = Joi.array().ordered(Joi.string(), Joi.number());
+
+  // Deep negative tests: prove tuple elements are real types, not any
+  // Wrong order must fail
+  expect.error<[number, string]>({} as PairType);
+
+  // Extract each tuple position and prove it's typed
+  type PairFirst = PairType[0];
+  expect.type<string>({} as PairFirst);
+  expect.error<number>({} as PairFirst);   // proves element 0 is string, not any
+
+  type PairSecond = PairType[1];
+  expect.type<number>({} as PairSecond);
+  expect.error<string>({} as PairSecond);  // proves element 1 is number, not any
+
+  // Extract triple elements individually
+  type TripleFirst = TripleType[0];
+  expect.type<string>({} as TripleFirst);
+  expect.error<number>({} as TripleFirst);
+
+  type TripleSecond = TripleType[1];
+  expect.type<number>({} as TripleSecond);
+  expect.error<string>({} as TripleSecond);
+
+  type TripleThird = TripleType[2];
+  expect.type<boolean>({} as TripleThird);
+  expect.error<string>({} as TripleThird);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test .sparse() adding undefined to array item type
+
+{
+  // .sparse() on a string array adds undefined to items
+  const sparseStr = Joi.array().items(Joi.string()).sparse();
+  type SparseStrType = Joi.InferType<typeof sparseStr>;
+  expect.type<(string | undefined)[]>({} as SparseStrType);
+  expect.error<string>({} as SparseStrType);
+
+  // .sparse() on a number array adds undefined to items
+  const sparseNum = Joi.array().items(Joi.number()).sparse();
+  type SparseNumType = Joi.InferType<typeof sparseNum>;
+  expect.type<(number | undefined)[]>({} as SparseNumType);
+  expect.error<string>({} as SparseNumType);
+
+  // .sparse() on a union array adds undefined to items
+  const sparseUnion = Joi.array().items(Joi.string(), Joi.number()).sparse();
+  type SparseUnionType = Joi.InferType<typeof sparseUnion>;
+  expect.type<(string | number | undefined)[]>({} as SparseUnionType);
+
+  // .sparse(true) falls back to this (dynamic arg, no narrowing)
+  const sparseTrue = Joi.array().items(Joi.string()).sparse(true);
+  type SparseTrueType = Joi.InferType<typeof sparseTrue>;
+  expect.type<string[]>({} as SparseTrueType);
+
+  // .sparse() result is assignable to base ArraySchema (backward compat)
+  const sparseArr: Joi.ArraySchema = Joi.array().items(Joi.string()).sparse();
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test simple .when() type inference
+
+{
+  // .when() with both then and otherwise infers union of both branches
+  // Note: Joi.any() is used because runtime Joi asserts then/otherwise match the base schema type
+  const conditional = Joi.any().when('type', {
+    is: 'admin',
+    then: Joi.string().required(),
+    otherwise: Joi.number().required(),
+  });
+  type ConditionalType = Joi.InferType<typeof conditional>;
+  expect.type<string | number>({} as ConditionalType);
+  expect.error<boolean>({} as ConditionalType);
+
+  // .when() with only then (and an otherwise fallback for runtime validity)
+  const thenOnly = Joi.any().when('type', {
+    is: 'admin',
+    then: Joi.string().required(),
+    otherwise: Joi.any(),
+  });
+  type ThenOnlyType = Joi.InferType<typeof thenOnly>;
+  expect.type<string | any>({} as ThenOnlyType);
+
+  // .when() with matching types on string schema
+  const strWhen = Joi.string().when('type', {
+    is: 'admin',
+    then: Joi.string().required(),
+    otherwise: Joi.string(),
+  });
+  type StrWhenType = Joi.InferType<typeof strWhen>;
+  expect.type<string>({} as StrWhenType);
+
+  // .when() inside an object schema: field type is the union
+  const objWithWhen = Joi.object({
+    type: Joi.string().valid('a' as const, 'b' as const).required(),
+    value: Joi.any().when('type', {
+      is: 'a',
+      then: Joi.string().required(),
+      otherwise: Joi.number().required(),
+    }),
+  });
+  type ObjWithWhenType = Joi.InferType<typeof objWithWhen>;
+  // value field is typed as AnySchema output (string | number) — key is optional since .when() returns AnySchema
+  expect.type<{ type: 'a' | 'b' }>({} as Pick<ObjWithWhenType, 'type'>);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Root-level undocumented methods with type inference
+
+{
+  // Root.valid() narrows to literal types
+  const validSchema = Joi.valid('a' as const, 'b' as const);
+  type ValidType = Joi.InferType<typeof validSchema>;
+  expect.type<'a' | 'b'>({} as ValidType);
+  expect.error<number>({} as ValidType);
+
+  // Root.equal() narrows to literal types (alias for valid)
+  const equalSchema = Joi.equal(1 as const, 2 as const);
+  type EqualType = Joi.InferType<typeof equalSchema>;
+  expect.type<1 | 2>({} as EqualType);
+  expect.error<string>({} as EqualType);
+
+  // Root.required() sets presence flag
+  const requiredSchema = Joi.required();
+  type RequiredFlags = typeof requiredSchema['~flags'];
+  expect.type<'required'>({} as RequiredFlags['presence']);
+
+  // Root.exist() sets presence flag (alias for required)
+  const existSchema = Joi.exist();
+  type ExistFlags = typeof existSchema['~flags'];
+  expect.type<'required'>({} as ExistFlags['presence']);
+
+  // Root.forbidden() narrows to never
+  const forbiddenSchema = Joi.forbidden();
+  type ForbiddenType = Joi.InferType<typeof forbiddenSchema>;
+  expect.type<never>({} as ForbiddenType);
+
+  // Root.allow() returns AnySchema
+  const allowSchema = Joi.allow(null);
+  expect.type<Joi.AnySchema>(allowSchema);
+
+  // Root.invalid() returns AnySchema
+  const invalidSchema = Joi.invalid('x');
+  expect.type<Joi.AnySchema>(invalidSchema);
+
+  // Root.prefs() returns AnySchema
+  const prefsSchema = Joi.prefs({ convert: false });
+  expect.type<Joi.AnySchema>(prefsSchema);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Joi.compile() with type pass-through
+
+{
+  // compile() with a typed schema preserves the type
+  const strSchema = Joi.string().required();
+  const compiled = Joi.compile(strSchema);
+  expect.type<Joi.StringSchema<string, Joi.SetPresence<Joi.SchemaFlags, 'required'>>>(compiled);
+
+  // compile() with a generic SchemaLike returns Schema
+  const compiledGeneric = Joi.compile({ name: Joi.string() });
+  expect.type<Joi.Schema>(compiledGeneric);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Joi.assert() as type-narrowing assertion
+
+{
+  const assertSchema = Joi.object({
+    name: Joi.string().required(),
+  });
+
+  const assertData: unknown = { name: 'test' };
+  Joi.assert(assertData, assertSchema);
+  // After assert, data is narrowed to the inferred type
+  expect.type<{ name: string }>(assertData);
+  expect.error<string>(assertData);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Joi.extend() with type parameter
+
+{
+  // extend() with type parameter returns Root & TExtension
+  interface MillionDef {
+    million(): Joi.NumberSchema;
+  }
+  const extJoi = Joi.extend<MillionDef>({ type: 'million', base: Joi.number() });
+  // extJoi has both Root and MillionDef methods
+  const millionSchema = extJoi.million();
+  expect.type<Joi.NumberSchema>(millionSchema);
+  // Original Root methods still work
+  const strFromExt = extJoi.string();
+  expect.type<Joi.StringSchema>(strFromExt);
+
+  // Deep negative test: extension schema inside Joi.object() carries real types
+  const extObj = extJoi.object({
+    count: extJoi.million().required(),
+    name: extJoi.string().required(),
+  });
+  type ExtObjType = Joi.InferType<typeof extObj>;
+  type ExtCountType = ExtObjType['count'];
+  expect.type<number>({} as ExtCountType);
+  expect.error<string>({} as ExtCountType);  // proves count is number, not any
+
+  type ExtNameType = ExtObjType['name'];
+  expect.type<string>({} as ExtNameType);
+  expect.error<number>({} as ExtNameType);  // proves name is string, not any
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Joi.link() with explicit type parameter
+
+{
+  // link() without type parameter infers any
+  const anyLink = Joi.link('#root');
+  type AnyLinkType = Joi.InferType<typeof anyLink>;
+  expect.type<any>({} as AnyLinkType);
+
+  // link() with explicit type parameter infers the provided type
+  interface TreeNode {
+    value: string;
+    children: TreeNode[];
+  }
+  const typedLink = Joi.link<TreeNode>('#node');
+  type TreeLinkType = Joi.InferType<typeof typedLink>;
+  expect.type<TreeNode>({} as TreeLinkType);
+  expect.error<string>({} as TreeLinkType);  // proves it's not any
+
+  // Deep negative test: link<T>() inside an object propagates real types
+  const treeObj = Joi.object({
+    root: Joi.link<TreeNode>('#node').required(),
+    label: Joi.string().required(),
+  });
+  type TreeObjType = Joi.InferType<typeof treeObj>;
+  type TreeRootType = TreeObjType['root'];
+  expect.error<string>({} as TreeRootType);  // proves root is TreeNode, not any
+
+  type TreeRootValue = TreeRootType['value'];
+  expect.type<string>({} as TreeRootValue);
+  expect.error<number>({} as TreeRootValue);  // proves value is string, not any
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test escape hatches — manual generics still work
+
+{
+  // Joi.any<T>() manual generic
+  interface CustomType { x: number; y: string }
+  const anyTyped = Joi.any<CustomType>();
+  type AnyTypedOut = Joi.InferType<typeof anyTyped>;
+  expect.type<CustomType>({} as AnyTypedOut);
+
+  // Joi.object<T>() manual generic still works
+  interface User { name: string; age: number }
+  const userSchema = Joi.object<User>({ name: Joi.string(), age: Joi.number() });
+  type UserOut = Joi.InferType<typeof userSchema>;
+  expect.type<User>({} as UserOut);
+
+  // Manual generic doesn't interfere with inferred schemas
+  const inferredSchema = Joi.object({ name: Joi.string().required() });
+  type InferredOut = Joi.InferType<typeof inferredSchema>;
+  expect.type<{ name: string }>(({} as InferredOut));
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test .unknown(true) does not break inference of known keys
+
+{
+  const schemaWithUnknown = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number(),
+  }).unknown(true);
+
+  type UnknownType = Joi.InferType<typeof schemaWithUnknown>;
+  // Known keys are still properly inferred
+  expect.type<{ name: string; age?: number }>({} as UnknownType);
+
+  // Deep negative tests: prove .unknown(true) doesn't leak any into known keys
+  type UnknownNameType = UnknownType['name'];
+  expect.type<string>({} as UnknownNameType);
+  expect.error<number>({} as UnknownNameType);
+
+  type UnknownAgeType = NonNullable<UnknownType['age']>;
+  expect.type<number>({} as UnknownAgeType);
+  expect.error<string>({} as UnknownAgeType);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test .alter() and .tailor() best-effort typing
+
+{
+  // .alter() preserves the schema type (returns this)
+  const alteredStr = Joi.string().alter({
+    create: (s) => s.required(),
+    update: (s) => s.optional(),
+  });
+  expect.type<Joi.StringSchema>(alteredStr);
+
+  // .tailor() preserves the schema type (returns this) — string
+  const tailored = alteredStr.tailor('create');
+  expect.type<Joi.StringSchema>(tailored);
+
+  // .tailor() output preserves inferred type
+  type TailoredType = Joi.InferType<typeof tailored>;
+  expect.type<string>({} as TailoredType);
+  expect.error<number>({} as TailoredType);
+
+  // .alter() + .tailor() on an object schema — real-world use case
+  const userSchema = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().required(),
+    age: Joi.number(),
+  }).alter({
+    create: (s) => s.required(),
+    list: (s) => s.optional(),
+  });
+
+  const createUserSchema = userSchema.tailor('create');
+  type CreateUser = Joi.InferType<typeof createUserSchema>;
+
+  // extract and test each key individually
+  type CreateUserName = CreateUser['name'];
+  type CreateUserEmail = CreateUser['email'];
+  type CreateUserAge = CreateUser['age'];
+
+  expect.type<string>({} as CreateUserName);
+  expect.error<number>({} as CreateUserName);
+  expect.type<string>({} as CreateUserEmail);
+  expect.error<number>({} as CreateUserEmail);
+  expect.type<number | undefined>({} as CreateUserAge);
+  expect.error<string>({} as CreateUserAge);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test graceful fallbacks for untypeable features
+
+{
+  // .when() with WhenOptions variable falls back to this
+  const whenOpts: Joi.WhenOptions = { is: Joi.string(), then: Joi.required() };
+  const fallbackWhen = Joi.string().when('field', whenOpts);
+  expect.type<Joi.StringSchema>(fallbackWhen);
+
+  // .rename() returns this (type-preserving, no key remapping)
+  const renamed = Joi.object({
+    name: Joi.string().required(),
+  }).rename('oldName', 'name');
+  expect.type<Joi.ObjectSchema>(renamed);
+
+  // .pattern() returns this (type-preserving)
+  const patterned = Joi.object({
+    name: Joi.string().required(),
+  }).pattern(/^key_/, Joi.number());
+  expect.type<Joi.ObjectSchema>(patterned);
+
+  // Complex .when() with switch falls back gracefully
+  const switchWhen = Joi.any().when('type', {
+    switch: [
+      { is: 'a', then: Joi.string() },
+      { is: 'b', then: Joi.number() },
+    ],
+  });
+  // Falls back to this (AnySchema) since switch isn't in typed overloads
+  expect.type<Joi.AnySchema>(switchWhen);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test Joi.attempt() returns inferred type
+
+{
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    count: Joi.number().default(0),
+  });
+
+  const result = Joi.attempt({ name: 'test', count: 1 }, schema);
+  expect.type<{ name: string; count: number }>(result);
+  expect.error<string>(result);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test input/output type distinction for schemas with .default()
+
+{
+  // Object with required, optional, and defaulted keys
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number(),
+    role: Joi.string().default('user'),
+    count: Joi.number().default(0),
+  });
+
+  // Output type: defaulted keys are required (default fills them in)
+  type Output = Joi.InferType<typeof schema>;
+  const output: Output = { name: 'alice', role: 'admin', count: 5 };
+  expect.type<{ name: string; age?: number; role: string; count: number }>(output);
+  expect.error<string>(output);
+
+  // Input type: defaulted keys are optional (you can omit them)
+  type Input = Joi.InferInput<typeof schema>;
+  const input: Input = { name: 'alice' };
+  expect.type<{ name: string; age?: number; role?: string; count?: number }>(input);
+  expect.error<string>(input);
+
+  // InferOutput is an alias for InferType (output type)
+  type Output2 = Joi.InferOutput<typeof schema>;
+  expect.type<Output>({} as Output2);
+  expect.type<Output2>({} as Output);
+  expect.error<string>({} as Output2);
+
+  // validate() returns the output type (defaulted keys are present)
+  const validated = schema.validate({ name: 'test', role: 'admin', count: 1 });
+  if (!validated.error) {
+    expect.type<{ name: string; age?: number; role: string; count: number }>(validated.value);
+    expect.error<string>(validated.value);
+  }
+}
+
+{
+  // Schema with .required().default() — both flags
+  const schema = Joi.object({
+    id: Joi.number().required(),
+    status: Joi.string().required().default('active'),
+  });
+
+  // Output: both required (id from .required(), status from .default() AND .required())
+  type Output = Joi.InferType<typeof schema>;
+  expect.type<{ id: number; status: string }>({} as Output);
+  expect.error<string>({} as Output);
+
+  // Input: id is required, status is required too (.required() takes precedence)
+  type Input = Joi.InferInput<typeof schema>;
+  expect.type<{ id: number; status: string }>({} as Input);
+  expect.error<string>({} as Input);
+}
+
+{
+  // Schema with only defaulted keys — all optional in input, all required in output
+  const schema = Joi.object({
+    x: Joi.number().default(0),
+    y: Joi.number().default(0),
+  });
+
+  type Output = Joi.InferType<typeof schema>;
+  expect.type<{ x: number; y: number }>({} as Output);
+  expect.error<string>({} as Output);
+
+  type Input = Joi.InferInput<typeof schema>;
+  expect.type<{ x?: number; y?: number }>({} as Input);
+  expect.error<string>({} as Input);
+}
+
+{
+  // Nested object with defaults
+  const schema = Joi.object({
+    user: Joi.object({
+      name: Joi.string().required(),
+      locale: Joi.string().default('en'),
+    }).required(),
+  });
+
+  type Output = Joi.InferType<typeof schema>;
+  expect.type<{ user: { name: string; locale: string } }>({} as Output);
+  expect.error<string>({} as Output);
+
+  // InferInput on non-object schemas returns the same as InferType
+  type StringInput = Joi.InferInput<Joi.StringSchema>;
+  expect.type<string>({} as StringInput);
+  expect.error<number>({} as StringInput);
+
+  type NumberInput = Joi.InferInput<Joi.NumberSchema>;
+  expect.type<number>({} as NumberInput);
+  expect.error<string>({} as NumberInput);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: .sparse() inference
+
+{
+  // sparse with string items
+  const sparseStrSchema = Joi.array().items(Joi.string()).sparse();
+  type SparseStrType = Joi.InferType<typeof sparseStrSchema>;
+  type SparseStrElement = SparseStrType[number];
+  // Element should be string | undefined, not any
+  expect.error<number>({} as NonNullable<SparseStrElement>);
+
+  // sparse with number items
+  const sparseNumSchema = Joi.array().items(Joi.number()).sparse();
+  type SparseNumType = Joi.InferType<typeof sparseNumSchema>;
+  type SparseNumElement = SparseNumType[number];
+  expect.error<string>({} as NonNullable<SparseNumElement>);
+
+  // sparse with union items
+  const sparseUnionSchema = Joi.array().items(Joi.string(), Joi.number()).sparse();
+  type SparseUnionType = Joi.InferType<typeof sparseUnionSchema>;
+  type SparseUnionElement = SparseUnionType[number];
+  expect.error<boolean>({} as NonNullable<SparseUnionElement>);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: .when() with then and otherwise
+
+{
+  // .when() with then + otherwise: both branches typed
+  const whenBothSchema = Joi.any().when('type', {
+    is: 'admin',
+    then: Joi.string().required(),
+    otherwise: Joi.number().required()
+  });
+  type WhenBothType = Joi.InferType<typeof whenBothSchema>;
+  expect.error<boolean>({} as WhenBothType);
+
+  // .when() then-only on Joi.any() — union of then + base (any)
+  // Note: Joi.string().when() then-only with Joi.number() then produces
+  // string | number, which is a valid Lab types limitation to test separately.
+  // When then-only is used with Joi.any() base, the result includes any.
+  const whenThenOnlyAny = Joi.any().when('type', {
+    is: 'admin',
+    then: Joi.string().required()
+  });
+  type WhenThenOnlyAnyType = Joi.InferType<typeof whenThenOnlyAny>;
+  // Base is any, so result is string | any = any (accepted limitation)
+  expect.type<any>({} as WhenThenOnlyAnyType);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: .when() inside objects
+
+{
+  const objWithWhenSchema = Joi.object({
+    type: Joi.string().required(),
+    value: Joi.any().when('type', {
+      is: 'text',
+      then: Joi.string().required(),
+      otherwise: Joi.number().required()
+    })
+  });
+  type ObjWithWhenType = Joi.InferType<typeof objWithWhenSchema>;
+
+  // Test the 'type' key individually
+  type TypeKey = ObjWithWhenType['type'];
+  expect.type<string>({} as TypeKey);
+  expect.error<number>({} as TypeKey);
+
+  // Test the 'value' key individually — should be string | number
+  type ValueKey = NonNullable<ObjWithWhenType['value']>;
+  expect.error<boolean>({} as ValueKey);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: Joi.array().items() element types
+
+{
+  // Single item type
+  const singleSchema = Joi.array().items(Joi.string());
+  type SingleType = Joi.InferType<typeof singleSchema>;
+  type SingleElement = SingleType[number];
+  expect.type<string>({} as SingleElement);
+  expect.error<number>({} as SingleElement);
+
+  // Multiple items (union)
+  const unionSchema = Joi.array().items(Joi.string(), Joi.number());
+  type UnionType = Joi.InferType<typeof unionSchema>;
+  type UnionElement = UnionType[number];
+  expect.error<boolean>({} as UnionElement);
+
+  // Nested array
+  const nestedSchema = Joi.array().items(Joi.array().items(Joi.number()));
+  type NestedType = Joi.InferType<typeof nestedSchema>;
+  type NestedElement = NestedType[number];
+  // NestedElement should be number[]
+  type NestedInnerElement = NestedElement[number];
+  expect.type<number>({} as NestedInnerElement);
+  expect.error<string>({} as NestedInnerElement);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: Joi.alternatives().try() union members
+
+{
+  // 2 branches
+  const alt2 = Joi.alternatives().try(Joi.string(), Joi.number());
+  type Alt2Type = Joi.InferType<typeof alt2>;
+  expect.error<boolean>({} as Alt2Type);
+
+  // 3+ branches
+  const alt3 = Joi.alternatives().try(Joi.string(), Joi.number(), Joi.boolean());
+  type Alt3Type = Joi.InferType<typeof alt3>;
+  expect.error<Date>({} as Alt3Type);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: Joi.attempt() with object schemas — per-key extraction
+
+{
+  const attemptSchema = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number().required(),
+    active: Joi.boolean().required()
+  });
+
+  const attemptResult = Joi.attempt({ name: 'test', age: 30, active: true }, attemptSchema);
+
+  // Extract and test each key individually
+  type AttemptResultType = typeof attemptResult;
+  type AttemptNameType = AttemptResultType['name'];
+  expect.type<string>({} as AttemptNameType);
+  expect.error<number>({} as AttemptNameType);
+
+  type AttemptAgeType = AttemptResultType['age'];
+  expect.type<number>({} as AttemptAgeType);
+  expect.error<string>({} as AttemptAgeType);
+
+  type AttemptActiveType = AttemptResultType['active'];
+  expect.type<boolean>({} as AttemptActiveType);
+  expect.error<string>({} as AttemptActiveType);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: Joi.assert() type narrowing — per-key extraction
+
+{
+  const assertSchema = Joi.object({
+    id: Joi.number().required(),
+    label: Joi.string().required()
+  });
+
+  const assertData: unknown = { id: 1, label: 'hello' };
+  Joi.assert(assertData, assertSchema);
+
+  // After assert, data should be narrowed
+  type AssertDataType = typeof assertData;
+  type AssertIdType = AssertDataType['id'];
+  expect.type<number>({} as AssertIdType);
+  expect.error<string>({} as AssertIdType);
+
+  type AssertLabelType = AssertDataType['label'];
+  expect.type<string>({} as AssertLabelType);
+  expect.error<number>({} as AssertLabelType);
+}
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Deep negative tests: InferInput/InferOutput on complex objects with .default() — per-key
+
+{
+  const defaultSchema = Joi.object({
+    name: Joi.string().required(),
+    age: Joi.number(),
+    role: Joi.string().default('user'),
+    count: Joi.number().default(0)
+  });
+
+  // Output type: extract and test each key
+  type DefaultOutput = Joi.InferOutput<typeof defaultSchema>;
+  type DefaultOutputName = DefaultOutput['name'];
+  expect.type<string>({} as DefaultOutputName);
+  expect.error<number>({} as DefaultOutputName);
+
+  type DefaultOutputRole = DefaultOutput['role'];
+  expect.type<string>({} as DefaultOutputRole);
+  expect.error<number>({} as DefaultOutputRole);
+
+  type DefaultOutputCount = DefaultOutput['count'];
+  expect.type<number>({} as DefaultOutputCount);
+  expect.error<string>({} as DefaultOutputCount);
+
+  // Input type: extract and test each key
+  type DefaultInput = Joi.InferInput<typeof defaultSchema>;
+  type DefaultInputName = DefaultInput['name'];
+  expect.type<string>({} as DefaultInputName);
+  expect.error<number>({} as DefaultInputName);
+
+  // Defaulted keys are optional in input — role and count should accept undefined
+  type DefaultInputRole = DefaultInput['role'];
+  expect.type<string | undefined>({} as DefaultInputRole);
+  expect.error<number>({} as DefaultInputRole);
+
+  type DefaultInputCount = DefaultInput['count'];
+  expect.type<number | undefined>({} as DefaultInputCount);
+  expect.error<string>({} as DefaultInputCount);
 }

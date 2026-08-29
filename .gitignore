@@ -15,3 +15,4 @@ coverage.*
 sandbox.js
 
 dist
+tmp
