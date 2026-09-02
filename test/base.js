@@ -1701,6 +1701,63 @@ describe('any', () => {
                 [{ x: [] }, true, { x: 2 }]
             ]);
         });
+
+        it('keeps the original errors when the failover method throws', () => {
+
+            const schema = Joi.number().failover(() => {
+
+                throw new Error('boom');
+            });
+
+            Helper.validate(schema, [
+                ['x', false, '"value" must be a number. "value" threw an error when running failover method']
+            ]);
+        });
+
+        it('drops warnings registered on a branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.any().warning('custom.x').message({ 'custom.x': 'warned' }),
+                    z: Joi.any().required()
+                })
+                    .failover(() => null)
+            });
+
+            expect(await schema.validateAsync({ a: { b: 1 } }, { warnings: true })).to.equal({ value: { a: null } });
+        });
+
+        it('skips externals registered on a branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                someAsync: Joi.any().external(() => true),
+                someNormal: Joi.any().required()
+            })
+                .failover(() => null);
+
+            expect(await schema.validateAsync({ someAsync: 2 })).to.be.null();
+        });
+
+        it('skips externals registered on a deep branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                a: Joi.object({ b: Joi.object({ c: Joi.any().external(() => 'ran') }) }),
+                z: Joi.any().required()
+            })
+                .failover(() => null);
+
+            expect(await schema.validateAsync({ a: { b: { c: 1 } } })).to.be.null();
+        });
+
+        it('keeps externals registered outside the branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                b: Joi.any().external(() => 'external ran'),
+                a: Joi.object({ y: Joi.any().required() }).failover(() => null)
+            });
+
+            expect(await schema.validateAsync({ a: {}, b: 'x' })).to.equal({ a: null, b: 'external ran' });
+        });
     });
 
     describe('forbidden()', () => {
