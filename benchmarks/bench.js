@@ -61,23 +61,28 @@ const versionPick = (o) => {
         return o;
     }
 
-    for (const k of Object.keys(o)) {
-        if (Joi.version.startsWith(k)) {
-            return o[k];
-        }
-    }
-
-    throw new Error(`Unsupported version ${Joi.version}`);
+    const major = parseInt(Joi.version, 10);
+    const match = Object.keys(o).map(Number).sort((a, b) => b - a).find((version) => version <= major);
+    assert(match !== undefined, `Unsupported version ${Joi.version}`);
+    return o[match];
 };
 
 const test = ([name, initFn, testFn]) => {
 
-    const [schema, valid, invalid] = versionPick(initFn)();
+    initFn = versionPick(initFn);
+    testFn = versionPick(testFn);
+
+    if (!initFn ||
+        !testFn) {
+
+        return;
+    }
+
+    const [schema, valid, invalid] = initFn();
 
     assert(valid === undefined || !testFn(schema, valid).error, 'validation must not fail for: ' + name);
     assert(invalid === undefined || testFn(schema, invalid).error, 'validation must fail for: ' + name);
 
-    testFn = versionPick(testFn);
     Suite.add(name + (valid !== undefined ? ' (valid)' : ''), () => {
 
         testFn(schema, valid);
