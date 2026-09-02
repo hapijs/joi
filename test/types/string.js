@@ -5585,6 +5585,49 @@ describe('string', () => {
             const schema = Joi.string().isoDate().allow('x');
             Helper.validate(schema, [['x', true]]);
         });
+
+        it('pads a bare-hour timeshift with a colon, not just zeros', () => {
+
+            // A bare-hour offset like "+07" is padded to a full offset before being
+            // handed to Date(). Node's own parser tolerates "+0700" (basic format),
+            // but the ISO 8601 extended format used everywhere else in this string
+            // requires "+07:00" - mixing the two breaks stricter parsers (e.g. Safari).
+            // Node can't tell these apart itself, so this spies on what string
+            // actually reaches Date() rather than trusting Date() to reject it.
+
+            const NativeDate = global.Date;
+            const seen = [];
+
+            global.Date = class extends NativeDate {
+
+                constructor(...args) {
+
+                    seen.push(args[0]);
+                    super(...args);
+                }
+            };
+
+            try {
+                Joi.string().isoDate().validate('2013-06-07T14:21:46+07');
+            }
+            finally {
+                global.Date = NativeDate;
+            }
+
+            expect(seen).to.include('2013-06-07T14:21:46+07:00');
+            expect(seen).to.not.include('2013-06-07T14:21:46+0700');
+        });
+
+        it('validates a date with thousands of decimals in linear time', () => {
+
+            const value = '2020-01-01T00:00:00.' + '1'.repeat(64 * 1024);
+
+            const start = process.hrtime.bigint();
+            Joi.string().isoDate().validate(value);
+            const elapsed = Number(process.hrtime.bigint() - start) / 1e6;
+
+            expect(elapsed).to.be.below(200);
+        });
     });
 
     describe('isoDuration()', () => {
