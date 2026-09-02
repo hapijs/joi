@@ -1359,6 +1359,26 @@ describe('any', () => {
             expect(err.details).to.not.exist();
         });
 
+        it('returns a clone of a static Error override', () => {
+
+            const override = new Error('shared');
+            override.data = { owner: 'original' };
+
+            const schema = Joi.any().invalid('x').error(override);
+            const first = schema.validate('x').error;
+            first.data.request = 'first';
+
+            const second = schema.validate('x').error;
+
+            expect(first).to.not.shallow.equal(override);
+            expect(second).to.not.shallow.equal(first);
+            expect(first).to.be.an.error('shared');
+            expect(second).to.be.an.error('shared');
+            expect(second.data.request).to.not.exist();
+            expect(override.data.request).to.not.exist();
+            expect(second.data.owner).to.equal('original');
+        });
+
         it('returns first custom error with multiple errors', () => {
 
             const schema = Joi.object({

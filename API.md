@@ -740,9 +740,9 @@ Overrides the default **joi** error with a custom error if the rule fails where:
   - an instance of `Error` - the override error.
   - a function with the signature `function(errors)`, where `errors` is an array of validation reports and it returns either a single `Error` or an array of validation reports.
 
-Do not use this method if you are simply trying to override the error message - use `any.message()` or `any.messages()` instead. This method is designed to override the **joi** validation error and return the exact override provided. It is useful when you want to return the result of validation directly (e.g. when using with a **hapi** server) and want to return a different HTTP error code than 400.
+Do not use this method if you are simply trying to override the error message - use `any.message()` or `any.messages()` instead. This method is designed to override the **joi** validation error and return that override. It is useful when you want to return the result of validation directly (e.g. when using with a **hapi** server) and want to return a different HTTP error code than 400.
 
-Note that if you provide an `Error`, it will be returned as-is, unmodified and undecorated with any of the normal error properties. If validation fails and another error is found before the error override, that error will be returned and the override will be ignored (unless the `abortEarly` option has been set to `false`). If you set multiple errors on a single schema, only the last error is used.
+Note that if you provide an `Error`, a clone of it is returned, unmodified and undecorated with any of the normal error properties. Cloning avoids leaking later mutations (for example a request-specific `data` field) into later validations. If validation fails and another error is found before the error override, that error will be returned and the override will be ignored (unless the `abortEarly` option has been set to `false`). If you set multiple errors on a single schema, only the last error is used.
 
 ```js
 const schema = Joi.string().error(new Error('Was REALLY expecting a string'));
