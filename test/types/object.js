@@ -2790,6 +2790,12 @@ describe('object', () => {
             expect(Joi.compile(schema).validate({ test1: 'a', test2: 'b' }).error).to.not.exist();
         });
 
+        it('allows a single rename to a target named after an Object prototype member', () => {
+
+            const schema = Joi.object().rename('a', 'toString');
+            Helper.validate(schema, [[{ a: 1 }, true, { toString: 1 }]]);
+        });
+
         it('errors renaming multiple times with multiple disabled', () => {
 
             const schema = Joi.object({
