@@ -5741,6 +5741,17 @@ describe('string', () => {
             expect(seen).to.include('2013-06-07T14:21:46+07:00');
             expect(seen).to.not.include('2013-06-07T14:21:46+0700');
         });
+
+        it('validates a date with thousands of decimals in linear time', () => {
+
+            const value = '2020-01-01T00:00:00.' + '1'.repeat(64 * 1024);
+
+            const start = process.hrtime.bigint();
+            Joi.string().isoDate().validate(value);
+            const elapsed = Number(process.hrtime.bigint() - start) / 1e6;
+
+            expect(elapsed).to.be.below(200);
+        });
     });
 
     describe('isoDuration()', () => {
