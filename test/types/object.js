@@ -1660,6 +1660,31 @@ describe('object', () => {
                 [{ id: 1, command: { command: 'run', params: {} } }, false, '"command.params.howFast" is required']
             ]);
         });
+
+        it('errors on circular references between sibling keys', () => {
+
+            const err = expect(() => {
+
+                Joi.object({
+                    a: Joi.ref('b'),
+                    b: Joi.ref('a')
+                });
+            }).to.throw('item added into group b created a dependencies error');
+
+            expect(err.path).to.equal('b');
+        });
+
+        it('errors on circular references introduced by rebuild', () => {
+
+            const schema = Joi.object({
+                a: Joi.any(),
+                b: Joi.any()
+            })
+                .fork('a', (s) => s.default(Joi.ref('b')));
+
+            const err = expect(() => schema.fork('b', (s) => s.default(Joi.ref('a')))).to.throw('item added into group a created a dependencies error');
+            expect(err.path).to.equal('a');
+        });
     });
 
     describe('length()', () => {
@@ -3073,6 +3098,27 @@ describe('object', () => {
                 }).rename(regex, 'b', { alias: true });
 
                 Helper.validate(Joi.compile(schema), [[{ other: 'here', A: 100, c: 50 }, true, { other: 'here', A: 100, b: 100, c: 50 }]]);
+            });
+
+            it('errors on a template target rendering __proto__ instead of setting the prototype', () => {
+
+                const payload = JSON.parse('{"user":"alice","x-__proto__":{"isAdmin":true,"role":"superuser"}}');
+
+                const schema = Joi.object({ user: Joi.string().required() })
+                    .rename(/^x-(.+)$/, Joi.x('{#1}'), { multiple: true })
+                    .unknown(false);
+
+                const { value, error } = schema.validate(payload);
+                expect(error).to.be.an.error('"value" cannot rename "x-__proto__" because target "__proto__" is a reserved key');
+                expect(error.details[0].type).to.equal('object.rename.proto');
+                expect(Object.getPrototypeOf(value)).to.equal(Object.prototype);
+                expect(value.isAdmin).to.not.exist();
+                expect(Object.prototype.isAdmin).to.not.exist();
+
+                const { value: value2, error: error2 } = schema.validate(payload, { abortEarly: false });
+                expect(error2.details[0].type).to.equal('object.rename.proto');
+                expect(Object.getPrototypeOf(value2)).to.equal(Object.prototype);
+                expect(value2.isAdmin).to.not.exist();
             });
 
             it('uses template', () => {

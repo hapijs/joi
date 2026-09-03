@@ -1701,6 +1701,63 @@ describe('any', () => {
                 [{ x: [] }, true, { x: 2 }]
             ]);
         });
+
+        it('keeps the original errors when the failover method throws', () => {
+
+            const schema = Joi.number().failover(() => {
+
+                throw new Error('boom');
+            });
+
+            Helper.validate(schema, [
+                ['x', false, '"value" must be a number. "value" threw an error when running failover method']
+            ]);
+        });
+
+        it('drops warnings registered on a branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                a: Joi.object({
+                    b: Joi.any().warning('custom.x').message({ 'custom.x': 'warned' }),
+                    z: Joi.any().required()
+                })
+                    .failover(() => null)
+            });
+
+            expect(await schema.validateAsync({ a: { b: 1 } }, { warnings: true })).to.equal({ value: { a: null } });
+        });
+
+        it('skips externals registered on a branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                someAsync: Joi.any().external(() => true),
+                someNormal: Joi.any().required()
+            })
+                .failover(() => null);
+
+            expect(await schema.validateAsync({ someAsync: 2 })).to.be.null();
+        });
+
+        it('skips externals registered on a deep branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                a: Joi.object({ b: Joi.object({ c: Joi.any().external(() => 'ran') }) }),
+                z: Joi.any().required()
+            })
+                .failover(() => null);
+
+            expect(await schema.validateAsync({ a: { b: { c: 1 } } })).to.be.null();
+        });
+
+        it('keeps externals registered outside the branch replaced by a failover', async () => {
+
+            const schema = Joi.object({
+                b: Joi.any().external(() => 'external ran'),
+                a: Joi.object({ y: Joi.any().required() }).failover(() => null)
+            });
+
+            expect(await schema.validateAsync({ a: {}, b: 'x' })).to.equal({ a: null, b: 'external ran' });
+        });
     });
 
     describe('forbidden()', () => {
@@ -2025,6 +2082,30 @@ describe('any', () => {
 
             const schema = Joi.object({ a: Joi.number().min(10).message(messages) });
             Helper.validate(schema, [[{ a: 1 }, false, '"a" angustus']]);
+        });
+
+        it('does not pollute the prototype with a language named __proto__', () => {
+
+            try {
+                Joi.any().messages({ ['__proto__']: { isAdmin: 'true' } });
+                Joi.any().prefs({ messages: { ['__proto__']: { isAdmin: 'true' } } });
+
+                expect({}.isAdmin).to.not.exist();
+            }
+            finally {
+                delete Object.prototype.isAdmin;
+            }
+        });
+
+        it('does not pollute Object with a language named constructor', () => {
+
+            try {
+                Joi.any().messages({ constructor: { 'number.min': 'too small' } });
+                expect(Object['number.min']).to.not.exist();
+            }
+            finally {
+                delete Object['number.min'];
+            }
         });
 
         it('errors on invalid message value', () => {

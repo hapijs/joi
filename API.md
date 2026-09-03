@@ -1694,7 +1694,22 @@ Requires the array values to be unique where:
 
 Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
-Be aware that a deep equality is performed on elements of the array having a type of `object`, a performance penalty is to be expected for this kind of operation.
+Be aware that a deep equality is performed on elements of the array having a type of `object` or
+`function`, comparing every element against all the previous ones. This is quadratic in the number
+of elements, so when validating untrusted input, bound the array size with
+[`array.max()`](#arraymaxlimit) and declare it **before** `unique()`, otherwise the comparisons run
+before the length is ever checked.
+
+```js
+// bounded, the length check short-circuits the comparisons
+const schema = Joi.array().max(1000).unique();
+
+// unbounded, every element is compared against all the previous ones first
+const schema = Joi.array().unique().max(1000);
+```
+
+Elements of a primitive type (`string`, `number`, `boolean`, `bigint`, `undefined`) use a hash
+lookup instead and are not affected.
 
 ```js
 const schema = Joi.array().unique();
@@ -2588,7 +2603,7 @@ const value = await Joi.compile(schema).validateAsync(input);
 // value === { x123x: 'x', x1x: 'y', x0x: 'z', x4x: 'test' }
 ```
 
-Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride)
+Possible validation errors: [`object.rename.multiple`](#objectrenamemultiple), [`object.rename.override`](#objectrenameoverride), [`object.rename.proto`](#objectrenameproto)
 
 #### `object.schema([type])`
 
@@ -4209,6 +4224,19 @@ Additional local context properties:
 #### `object.rename.override`
 
 The target property already exists and you disallowed overrides.
+
+Additional local context properties:
+```ts
+{
+    from: string, // Origin property name of the rename
+    to: string, // Target property of the rename
+    pattern: boolean // Indicates if the rename source was a pattern (regular expression)
+}
+```
+
+#### `object.rename.proto`
+
+The target property is `__proto__`, which would set the object prototype instead of creating a key.
 
 Additional local context properties:
 ```ts

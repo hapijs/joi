@@ -300,6 +300,14 @@ describe('Validator', () => {
             expect(await schema['~standard'].validate(['skip'])).to.equal({ value: ['skip!'] });
         });
 
+        it('executes externals on array items in linear time', { timeout: 3000 }, async () => {
+
+            const schema = Joi.array().items(Joi.object({ id: Joi.string().external((value) => value) }));
+            const values = Array.from({ length: 100000 }, (ignore, i) => ({ id: `id-${i}` }));
+
+            expect(await schema.validateAsync(values)).to.have.length(100000);
+        });
+
         it('executes externals on array', async () => {
 
             const schema = Joi.array().items(Joi.string()).external((value) => [...value, 'extra']);
