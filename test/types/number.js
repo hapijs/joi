@@ -856,6 +856,29 @@ describe('number', () => {
             ]);
         });
 
+        it('handles decimal references correctly', () => {
+
+            const ref = Joi.ref('a');
+            const schema = Joi.object({ a: Joi.number(), b: Joi.number().multiple(ref) });
+            Helper.validate(schema, [
+                [{ a: 0.1, b: 0.3 }, true],
+                [{ a: 0.5, b: 1.5 }, true],
+                [{ a: 3.5, b: 10.5 }, true],
+                [{ a: 0.1, b: 0.35 }, false, {
+                    message: '"b" must be a multiple of ref:a',
+                    path: ['b'],
+                    type: 'number.multiple',
+                    context: { multiple: ref, value: 0.35, label: 'b', key: 'b' }
+                }],
+                [{ a: 3.5, b: 10.499 }, false, {
+                    message: '"b" must be a multiple of ref:a',
+                    path: ['b'],
+                    type: 'number.multiple',
+                    context: { multiple: ref, value: 10.499, label: 'b', key: 'b' }
+                }]
+            ]);
+        });
+
         it('handles references correctly within a when', () => {
 
             const schema = Joi.object({
