@@ -584,6 +584,24 @@ describe('extension', () => {
         }
     });
 
+    it('rejects a flat message code named __proto__', () => {
+
+        // Same as compile(), the Template lands on the merged object's own prototype
+
+        for (const message of ['pwned', Joi.x('pwned')]) {
+            const extend = () => Joi.extend({ type: 'special', base: Joi.string(), messages: { ['__proto__']: message } });
+
+            expect(extend).to.throw('Cannot use __proto__ as a message code');
+        }
+    });
+
+    it('rejects a language scoped message code named __proto__', () => {
+
+        const extend = () => Joi.extend({ type: 'special', base: Joi.string(), messages: { english: { ['__proto__']: 'pwned' } } });
+
+        expect(extend).to.throw('Cannot use __proto__ as a message code');
+    });
+
     it('overrides specific error messages with template', () => {
 
         const custom = Joi.extend({

@@ -2108,6 +2108,30 @@ describe('any', () => {
             }
         });
 
+        it('rejects a flat message code named __proto__', () => {
+
+            // The message is wrapped in a Template before the assignment, and a Template is an object,
+            // so the inherited setter takes it and replaces the returned object's own prototype. That
+            // makes Template.isTemplate() true for the whole messages object, so every code renders the
+            // attacker's message and the next compile() throws 'Cannot set single message template'
+
+            for (const message of ['pwned', Joi.x('pwned')]) {
+                const messages = { ['__proto__']: message };
+
+                expect(() => Joi.number().min(10).messages(messages)).to.throw('Cannot use __proto__ as a message code');
+                expect(() => Joi.number().min(10).prefs({ messages })).to.throw('Cannot use __proto__ as a message code');
+                expect(() => Joi.number().min(10).validate(1, { messages })).to.throw('Cannot use __proto__ as a message code');
+            }
+        });
+
+        it('rejects a language scoped message code named __proto__', () => {
+
+            const messages = { english: { ['__proto__']: 'pwned' } };
+
+            expect(() => Joi.number().min(10).messages(messages)).to.throw('Cannot use __proto__ as a message code');
+            expect(() => Joi.number().min(10).messages({ english: { ['__proto__']: Joi.x('pwned') } })).to.throw('Cannot use __proto__ as a message code');
+        });
+
         it('errors on invalid message value', () => {
 
             expect(() => Joi.number().min(10).message(12)).to.throw('Invalid message options');
