@@ -1022,6 +1022,27 @@ describe('errors', () => {
             expect(() => err.annotate(true)).to.not.throw();
         });
 
+        it('handles objects with toJSON that throws', () => {
+
+            const schema = Joi.object({
+                type: Joi.string().required()
+            }).unknown(false);
+
+            const badObj = {};
+            Object.defineProperty(badObj, 'toJSON', {
+                value: function () {
+
+                    throw new TypeError('Receiver must be an instance');
+                },
+                enumerable: false
+            });
+
+            const err = schema.validate({ someUrl: badObj }).error;
+            expect(err).to.be.an.error();
+            expect(() => err.annotate()).to.not.throw();
+            expect(err.annotate(true)).to.contain('"type" is required');
+        });
+
         it('annotates joi schema error', () => {
 
             const schema = Joi.object({
