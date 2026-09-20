@@ -1642,6 +1642,20 @@ describe('alternatives', () => {
             ]);
         });
 
+        it('does not treat non-object alternatives as exclusive object overlap', () => {
+
+            const schema = Joi.alternatives()
+                .try(
+                    Joi.string(),
+                    Joi.object({ a: Joi.string() })
+                )
+                .match('one');
+
+            Helper.validate(schema, [
+                [{ z: 1 }, false, '"value" does not match any of the allowed types']
+            ]);
+        });
+
         it('matches all', () => {
 
             const schema = Joi.alternatives([
