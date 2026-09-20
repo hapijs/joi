@@ -1656,6 +1656,29 @@ describe('alternatives', () => {
             ]);
         });
 
+        it('does not report one when exclusive keys hide later object failures', () => {
+
+            const schema = Joi.alternatives()
+                .try(
+                    Joi.object({ a: Joi.string(), c: Joi.string() }).and('a', 'c'),
+                    Joi.object({ b: Joi.string(), d: Joi.string() }).and('b', 'd')
+                )
+                .match('one');
+
+            Helper.validate(schema, [
+                [{ a: 'x', b: 'y' }, false, '"value" does not match any of the allowed types'],
+                [{ a: 'x', b: 'y', c: 'z', d: 'w' }, false, {
+                    message: '"value" matches more than one allowed type',
+                    path: [],
+                    type: 'alternatives.one',
+                    context: {
+                        label: 'value',
+                        value: { a: 'x', b: 'y', c: 'z', d: 'w' }
+                    }
+                }]
+            ]);
+        });
+
         it('matches all', () => {
 
             const schema = Joi.alternatives([
