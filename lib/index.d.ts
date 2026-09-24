@@ -898,6 +898,158 @@ declare namespace Joi {
 
   type SchemaFunction = (schema: Schema) => Schema;
 
+  // --- Type inference infrastructure ---
+
+  interface SchemaFlags {
+    presence: 'optional' | 'required';
+    hasDefault: boolean;
+    isStripped: boolean;
+  }
+
+  type DefaultFlags = SchemaFlags;
+
+  type SetPresence<F extends SchemaFlags, P extends 'optional' | 'required'> = {
+    presence: P;
+    hasDefault: F['hasDefault'];
+    isStripped: F['isStripped'];
+  };
+
+  type SetDefault<F extends SchemaFlags, D extends boolean> = {
+    presence: F['presence'];
+    hasDefault: D;
+    isStripped: F['isStripped'];
+  };
+
+  type SetStripped<F extends SchemaFlags, S extends boolean> = {
+    presence: F['presence'];
+    hasDefault: F['hasDefault'];
+    isStripped: S;
+  };
+
+  /**
+   * Extracts the output type from a Joi schema.
+   */
+  type InferType<T extends AnySchema> = T['~output'];
+
+  /**
+   * Extracts the input type from a Joi schema (pre-default, pre-coercion).
+   * For ObjectSchema with inferred shape, defaulted keys become optional in input.
+   */
+  type InferInput<T extends AnySchema> =
+    T extends ObjectSchema<any, any, infer TShape>
+      ? TShape extends Record<string, AnySchema>
+        ? InferObjectInput<TShape>
+        : T['~input']
+      : T['~input'];
+
+  /**
+   * Alias for InferType - extracts the output type from a Joi schema.
+   */
+  type InferOutput<T extends AnySchema> = InferType<T>;
+
+  type IsAnyType<T> = 0 extends 1 & T ? true : false;
+
+  /**
+   * Checks if a schema's isStripped flag is narrowed to true (via .forbidden() or .strip()).
+   */
+  type IsSchemaStripped<T extends AnySchema> =
+    T['~flags']['isStripped'] extends true ? true : false;
+
+  /**
+   * Checks if a schema key should be required in an object output.
+   * A key is required if presence is narrowed to 'required' or hasDefault is narrowed to true.
+   */
+  type IsSchemaRequired<T extends AnySchema> =
+    IsSchemaStripped<T> extends true ? false :
+    T['~flags']['presence'] extends 'required' ? true :
+    T['~flags']['hasDefault'] extends true ? true :
+    false;
+
+  /**
+   * Extracts keys from a schema map that should be required in the output.
+   */
+  type RequiredKeysOf<TShape extends Record<string, AnySchema>> = {
+    [K in keyof TShape]: IsSchemaStripped<TShape[K]> extends true ? never :
+      IsSchemaRequired<TShape[K]> extends true ? K : never;
+  }[keyof TShape];
+
+  /**
+   * Extracts keys from a schema map that should be optional in the output.
+   */
+  type OptionalKeysOf<TShape extends Record<string, AnySchema>> = {
+    [K in keyof TShape]: IsSchemaStripped<TShape[K]> extends true ? never :
+      IsSchemaRequired<TShape[K]> extends true ? never : K;
+  }[keyof TShape];
+
+  /**
+   * Simplify intersection types for cleaner intellisense output.
+   */
+  type Simplify<T> = { [K in keyof T]: T[K] } & {};
+
+  /**
+   * Merges two schema shape records, with TNew taking precedence over TOld for overlapping keys.
+   * Uses a single mapped type instead of Omit & intersection for better TypeScript resolution.
+   */
+  type MergeShapes<TOld extends Record<string, AnySchema>, TNew extends Record<string, AnySchema>> = {
+    [K in keyof TOld | keyof TNew]: K extends keyof TNew ? TNew[K] : K extends keyof TOld ? TOld[K] : never;
+  };
+
+  /**
+   * Infers the output object type from a schema map.
+   * Required keys (via .required() or .default()) are non-optional.
+   * Stripped keys (via .forbidden() or .strip()) are excluded.
+   * All other keys are optional.
+   */
+  type InferObjectOutput<TShape extends Record<string, AnySchema>> = Simplify<
+    { [K in RequiredKeysOf<TShape>]: InferType<TShape[K]> } &
+    { [K in OptionalKeysOf<TShape>]?: InferType<TShape[K]> }
+  >;
+
+  /**
+   * Checks if a schema key should be required in an object INPUT type.
+   * Unlike IsSchemaRequired, hasDefault does NOT make a key required for input
+   * (you can omit a field that has a default — the default fills it in).
+   */
+  type IsSchemaRequiredForInput<T extends AnySchema> =
+    IsSchemaStripped<T> extends true ? false :
+    T['~flags']['presence'] extends 'required' ? true :
+    false;
+
+  /**
+   * Extracts keys from a schema map that should be required in the input type.
+   */
+  type RequiredKeysOfInput<TShape extends Record<string, AnySchema>> = {
+    [K in keyof TShape]: IsSchemaStripped<TShape[K]> extends true ? never :
+      IsSchemaRequiredForInput<TShape[K]> extends true ? K : never;
+  }[keyof TShape];
+
+  /**
+   * Extracts keys from a schema map that should be optional in the input type.
+   */
+  type OptionalKeysOfInput<TShape extends Record<string, AnySchema>> = {
+    [K in keyof TShape]: IsSchemaStripped<TShape[K]> extends true ? never :
+      IsSchemaRequiredForInput<TShape[K]> extends true ? never : K;
+  }[keyof TShape];
+
+  /**
+   * Infers the input object type from a schema map.
+   * Unlike InferObjectOutput, keys with .default() are optional in input
+   * (the default value fills them in during validation).
+   */
+  type InferObjectInput<TShape extends Record<string, AnySchema>> = Simplify<
+    { [K in RequiredKeysOfInput<TShape>]: InferInput<TShape[K]> } &
+    { [K in OptionalKeysOfInput<TShape>]?: InferInput<TShape[K]> }
+  >;
+
+  /**
+   * Infers a tuple type from an array of schema-like types passed to .ordered().
+   */
+  type InferTupleOutput<T extends SchemaLikeWithoutArray[]> = {
+    [K in keyof T]: UnwrapSchemaLikeWithoutArray<T[K]>;
+  };
+
+  // --- End type inference infrastructure ---
+
   interface AddRuleOptions {
     name: string;
     args?: {
@@ -1001,7 +1153,7 @@ declare namespace Joi {
     ): ValidationResult;
   }
 
-  interface AnySchema<TSchema = any>
+  interface AnySchema<TSchema = any, TFlags extends SchemaFlags = DefaultFlags>
     extends SchemaInternals,
       StandardSchemaV1<any, TSchema>,
       StandardJSONSchemaV1<any, TSchema> {
@@ -1010,6 +1162,9 @@ declare namespace Joi {
      */
     readonly "~standard": StandardSchemaV1.Props<any, TSchema> &
       StandardJSONSchemaV1.Props<any, TSchema>;
+    readonly '~output': TSchema;
+    readonly '~input': TSchema;
+    readonly '~flags': TFlags;
 
     /**
      * Flags of current schema.
@@ -1095,7 +1250,7 @@ declare namespace Joi {
         | BasicType
         | Reference
         | ((parent: any, helpers: CustomHelpers) => BasicType | Reference)
-    ): this;
+    ): this & AnySchema<TSchema, SetDefault<TFlags, true>>;
 
     /**
      * Returns a plain object representing the schema's rules and properties
@@ -1121,6 +1276,7 @@ declare namespace Joi {
     /**
      * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
      */
+    equal<V extends TSchema>(...values: V[]): this & AnySchema<V, TFlags>;
     equal(...values: any[]): this;
 
     /**
@@ -1151,7 +1307,7 @@ declare namespace Joi {
     /**
      * Marks a key as required which will not allow undefined as value. All keys are optional by default.
      */
-    exist(): this;
+    exist(): this & AnySchema<TSchema, SetPresence<TFlags, 'required'>>;
 
     /**
      * Adds an external validation rule.
@@ -1180,12 +1336,12 @@ declare namespace Joi {
      * Using a function with a single argument performs some internal cloning which has a performance impact.
      * If you do not need access to the context, define the function without any arguments.
      */
-    failover(value: any): this;
+    failover(value: any): this & AnySchema<TSchema, SetDefault<TFlags, true>>;
 
     /**
      * Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys.
      */
-    forbidden(): this;
+    forbidden(): this & AnySchema<never, SetStripped<TFlags, true>>;
 
     /**
      * Returns a new schema where each of the path keys listed have been modified.
@@ -1264,7 +1420,7 @@ declare namespace Joi {
     /**
      * Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default.
      */
-    optional(): this;
+    optional(): this & AnySchema<TSchema, SetPresence<TFlags, 'optional'>>;
 
     /**
      * Overrides the global validate() options for the current key and any sub-key.
@@ -1294,7 +1450,7 @@ declare namespace Joi {
     /**
      * Marks a key as required which will not allow undefined as value. All keys are optional by default.
      */
-    required(): this;
+    required(): this & AnySchema<TSchema, SetPresence<TFlags, 'required'>>;
 
     /**
      * Applies a set of rule options to the current ruleset or last rule added.
@@ -1324,6 +1480,7 @@ declare namespace Joi {
      * Marks a key to be removed from a resulting object or array after validation. Used to sanitize output.
      * @param [enabled=true] - if true, the value is stripped, otherwise the validated value is retained. Defaults to true.
      */
+    strip(): this & AnySchema<never, SetStripped<TFlags, true>>;
     strip(enabled?: boolean): this;
 
     /**
@@ -1334,7 +1491,7 @@ declare namespace Joi {
     /**
      * Applies any assigned target alterations to a copy of the schema that were applied via `any.alter()`.
      */
-    tailor(targets: string | string[]): Schema;
+    tailor(targets: string | string[]): this;
 
     /**
      * Annotates the key with an unit name.
@@ -1344,6 +1501,7 @@ declare namespace Joi {
     /**
      * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
      */
+    valid<V extends TSchema>(...values: V[]): this & AnySchema<V, TFlags>;
     valid(...values: any[]): this;
 
     /**
@@ -1389,6 +1547,14 @@ declare namespace Joi {
     /**
      * Converts the type into an alternatives type where the conditions are merged into the type definition where:
      */
+    when<TThen extends AnySchema, TOtherwise extends AnySchema>(
+      ref: string | Reference,
+      options: { is?: SchemaLike; not?: SchemaLike; then: TThen; otherwise: TOtherwise; break?: boolean }
+    ): AnySchema<InferType<TThen> | InferType<TOtherwise>, TFlags>;
+    when<TThen extends AnySchema>(
+      ref: string | Reference,
+      options: { is?: SchemaLike; not?: SchemaLike; then: TThen; break?: boolean }
+    ): AnySchema<InferType<TThen> | TSchema, TFlags>;
     when(ref: string | Reference, options: WhenOptions | WhenOptions[]): this;
 
     /**
@@ -1429,7 +1595,7 @@ declare namespace Joi {
     localize?(...args: any[]): State;
   }
 
-  interface BooleanSchema<TSchema = boolean> extends AnySchema<TSchema> {
+  interface BooleanSchema<TSchema = boolean, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Allows for additional values to be considered valid booleans by converting them to false during validation.
      * String comparisons are by default case insensitive,
@@ -1452,7 +1618,7 @@ declare namespace Joi {
     truthy(...values: Array<string | number | null>): this;
   }
 
-  interface NumberSchema<TSchema = number> extends AnySchema<TSchema> {
+  interface NumberSchema<TSchema = number, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Specifies that the value must be greater than limit.
      * It can also be a reference to another field.
@@ -1519,7 +1685,7 @@ declare namespace Joi {
     unsafe(enabled?: any): this;
   }
 
-  interface StringSchema<TSchema = string> extends AnySchema<TSchema> {
+  interface StringSchema<TSchema = string, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Requires the string value to only contain a-z, A-Z, and 0-9.
      */
@@ -1684,7 +1850,7 @@ declare namespace Joi {
     uuid(options?: GuidOptions): this;
   }
 
-  interface SymbolSchema<TSchema = Symbol> extends AnySchema<TSchema> {
+  interface SymbolSchema<TSchema = Symbol, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     // TODO: support number and symbol index
     map(
       iterable:
@@ -1725,7 +1891,7 @@ declare namespace Joi {
     ? T
     : never;
 
-  interface ArraySchema<TSchema = any[]> extends AnySchema<TSchema> {
+  interface ArraySchema<TSchema = any[], TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Verifies that an assertion passes for at least one item in the array, where:
      * `schema` - the validation rules required to satisfy the assertion. If the `schema` includes references, they are resolved against
@@ -1743,47 +1909,13 @@ declare namespace Joi {
      *
      * @param type - a joi schema object to validate each array item against.
      */
-    items<A>(a: SchemaLikeWithoutArray<A>): ArraySchema<A[]>;
-    items<A, B>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>
-    ): ArraySchema<(A | B)[]>;
-    items<A, B, C>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>
-    ): ArraySchema<(A | B | C)[]>;
-    items<A, B, C, D>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>
-    ): ArraySchema<(A | B | C | D)[]>;
-    items<A, B, C, D, E>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>
-    ): ArraySchema<(A | B | C | D | E)[]>;
-    items<A, B, C, D, E, F>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>,
-      f: SchemaLikeWithoutArray<F>
-    ): ArraySchema<(A | B | C | D | E | F)[]>;
-    items<
-      TItems,
-      TTItems extends SchemaLikeWithoutArray<TItems>[] = SchemaLikeWithoutArray<TItems>[]
-    >(
-      ...types: NoNestedArrays<TTItems>
-    ): ArraySchema<
-      {
-        [I in keyof TTItems]: UnwrapSchemaLikeWithoutArray<TTItems[I]>;
-      }[number][]
-    >;
+    items<A extends AnySchema>(a: A): ArraySchema<InferType<A>[]>;
+    items<A extends AnySchema, B extends AnySchema>(a: A, b: B): ArraySchema<(InferType<A> | InferType<B>)[]>;
+    items<A extends AnySchema, B extends AnySchema, C extends AnySchema>(a: A, b: B, c: C): ArraySchema<(InferType<A> | InferType<B> | InferType<C>)[]>;
+    items<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema>(a: A, b: B, c: C, d: D): ArraySchema<(InferType<A> | InferType<B> | InferType<C> | InferType<D>)[]>;
+    items<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema>(a: A, b: B, c: C, d: D, e: E): ArraySchema<(InferType<A> | InferType<B> | InferType<C> | InferType<D> | InferType<E>)[]>;
+    items<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema, FF extends AnySchema>(a: A, b: B, c: C, d: D, e: E, f: FF): ArraySchema<(InferType<A> | InferType<B> | InferType<C> | InferType<D> | InferType<E> | InferType<FF>)[]>;
+    items(...types: SchemaLikeWithoutArray[]): this;
 
     /**
      * Specifies the exact number of items in the array.
@@ -1807,6 +1939,12 @@ declare namespace Joi {
      * Errors will contain the number of items that didn't match.
      * Any unmatched item having a label will be mentioned explicitly.
      */
+    ordered<A extends AnySchema>(a: A): ArraySchema<[InferType<A>]>;
+    ordered<A extends AnySchema, B extends AnySchema>(a: A, b: B): ArraySchema<[InferType<A>, InferType<B>]>;
+    ordered<A extends AnySchema, B extends AnySchema, C extends AnySchema>(a: A, b: B, c: C): ArraySchema<[InferType<A>, InferType<B>, InferType<C>]>;
+    ordered<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema>(a: A, b: B, c: C, d: D): ArraySchema<[InferType<A>, InferType<B>, InferType<C>, InferType<D>]>;
+    ordered<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema>(a: A, b: B, c: C, d: D, e: E): ArraySchema<[InferType<A>, InferType<B>, InferType<C>, InferType<D>, InferType<E>]>;
+    ordered<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema, FF extends AnySchema>(a: A, b: B, c: C, d: D, e: E, f: FF): ArraySchema<[InferType<A>, InferType<B>, InferType<C>, InferType<D>, InferType<E>, InferType<FF>]>;
     ordered(...types: SchemaLikeWithoutArray[]): this;
 
     /**
@@ -1824,7 +1962,8 @@ declare namespace Joi {
      * Allow this array to be sparse.
      * enabled can be used with a falsy value to go back to the default behavior.
      */
-    sparse(enabled?: any): this;
+    sparse(): ArraySchema<TSchema extends (infer T)[] ? (T | undefined)[] : TSchema, TFlags>;
+    sparse(enabled: any): this;
 
     /**
      * Requires the array values to be unique.
@@ -1844,7 +1983,7 @@ declare namespace Joi {
     matches: SchemaLike | Reference;
   }
 
-  interface ObjectSchema<TSchema = any> extends AnySchema<TSchema> {
+  interface ObjectSchema<TSchema = any, TFlags extends SchemaFlags = DefaultFlags, TShape extends Record<string, AnySchema> | null = null> extends AnySchema<TSchema, TFlags> {
     /**
      * Defines an all-or-nothing relationship between keys where if one of the peers is present, all of them are required as well.
      *
@@ -1855,6 +1994,12 @@ declare namespace Joi {
     /**
      * Appends the allowed object keys. If schema is null, undefined, or {}, no changes will be applied.
      */
+    append<TNew extends Record<string, any>>(
+      schema: null extends TShape ? never : TNew
+    ): ObjectSchema<InferObjectOutput<MergeShapes<Exclude<TShape, null>, TNew>>, TFlags, MergeShapes<Exclude<TShape, null>, TNew>>;
+    append<TNew extends Record<string, any>>(
+      schema: TShape extends null ? (IsAnyType<TSchema> extends true ? TNew : never) : never
+    ): ObjectSchema<InferObjectOutput<TNew>, TFlags, TNew>;
     append(schema?: SchemaMap<TSchema>): this;
     append<TSchemaExtended = any, T = TSchemaExtended>(
       schema?: SchemaMap<T>
@@ -1864,6 +2009,14 @@ declare namespace Joi {
      * Verifies an assertion where.
      */
     assert(ref: string | Reference, schema: SchemaLike, message?: string): this;
+
+    /**
+     * Returns a new type that is the result of adding the rules of one type to another.
+     */
+    concat<TOther, TOtherFlags extends SchemaFlags, TOtherShape extends Record<string, AnySchema> | null>(
+      schema: ObjectSchema<TOther, TOtherFlags, TOtherShape>
+    ): ObjectSchema<IsAnyType<TSchema> extends true ? TOther : Simplify<TSchema & TOther>, TFlags>;
+    concat(schema: this): this;
 
     /**
      * Requires the object to be an instance of a given constructor.
@@ -1877,6 +2030,12 @@ declare namespace Joi {
     /**
      * Sets or extends the allowed object keys.
      */
+    keys<TNew extends Record<string, any>>(
+      schema: null extends TShape ? never : TNew
+    ): ObjectSchema<InferObjectOutput<MergeShapes<Exclude<TShape, null>, TNew>>, TFlags, MergeShapes<Exclude<TShape, null>, TNew>>;
+    keys<TNew extends Record<string, any>>(
+      schema: TShape extends null ? (IsAnyType<TSchema> extends true ? TNew : never) : never
+    ): ObjectSchema<InferObjectOutput<TNew>, TFlags, TNew>;
     keys(schema?: SchemaMap<TSchema>): this;
 
     /**
@@ -1978,7 +2137,7 @@ declare namespace Joi {
     xor(...peers: Array<string | DependencyOptions>): this;
   }
 
-  interface BinarySchema<TSchema = Buffer> extends AnySchema<TSchema> {
+  interface BinarySchema<TSchema = Buffer, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Sets the string encoding format if a string input is converted to a buffer.
      */
@@ -2000,7 +2159,7 @@ declare namespace Joi {
     length(limit: number | Reference): this;
   }
 
-  interface DateSchema<TSchema = Date> extends AnySchema<TSchema> {
+  interface DateSchema<TSchema = Date, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Specifies that the value must be greater than date.
      * Notes: 'now' can be passed in lieu of date so as to always compare relatively to the current date,
@@ -2045,7 +2204,7 @@ declare namespace Joi {
     timestamp(type?: "javascript" | "unix"): this;
   }
 
-  interface FunctionSchema<TSchema = Function> extends ObjectSchema<TSchema> {
+  interface FunctionSchema<TSchema = Function, TFlags extends SchemaFlags = DefaultFlags> extends ObjectSchema<TSchema, TFlags> {
     /**
      * Specifies the arity of the function where:
      * @param n - the arity expected.
@@ -2070,7 +2229,7 @@ declare namespace Joi {
     maxArity(n: number): this;
   }
 
-  interface AlternativesSchema<TSchema = any> extends AnySchema<TSchema> {
+  interface AlternativesSchema<TSchema = any, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Adds a conditional alternative schema type, either based on another key value, or a schema peeking into the current value.
      */
@@ -2092,41 +2251,41 @@ declare namespace Joi {
     /**
      * Adds an alternative schema type for attempting to match against the validated value.
      */
-    try<A>(a: SchemaLikeWithoutArray<A>): AlternativesSchema<A>;
-    try<A, B>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>
-    ): AlternativesSchema<A | B>;
-    try<A, B, C>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>
-    ): AlternativesSchema<A | B | C>;
-    try<A, B, C, D>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>
-    ): AlternativesSchema<A | B | C | D>;
-    try<A, B, C, D, E>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>
-    ): AlternativesSchema<A | B | C | D | E>;
-    try<A, B, C, D, E, F>(
-      a: SchemaLikeWithoutArray<A>,
-      b: SchemaLikeWithoutArray<B>,
-      c: SchemaLikeWithoutArray<C>,
-      d: SchemaLikeWithoutArray<D>,
-      e: SchemaLikeWithoutArray<E>,
-      f: SchemaLikeWithoutArray<F>
-    ): AlternativesSchema<A | B | C | D | E | F>;
+    try<A extends AnySchema>(a: A): AlternativesSchema<InferType<A>>;
+    try<A extends AnySchema, B extends AnySchema>(
+      a: A,
+      b: B
+    ): AlternativesSchema<InferType<A> | InferType<B>>;
+    try<A extends AnySchema, B extends AnySchema, C extends AnySchema>(
+      a: A,
+      b: B,
+      c: C
+    ): AlternativesSchema<InferType<A> | InferType<B> | InferType<C>>;
+    try<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema>(
+      a: A,
+      b: B,
+      c: C,
+      d: D
+    ): AlternativesSchema<InferType<A> | InferType<B> | InferType<C> | InferType<D>>;
+    try<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema>(
+      a: A,
+      b: B,
+      c: C,
+      d: D,
+      e: E
+    ): AlternativesSchema<InferType<A> | InferType<B> | InferType<C> | InferType<D> | InferType<E>>;
+    try<A extends AnySchema, B extends AnySchema, C extends AnySchema, D extends AnySchema, E extends AnySchema, F extends AnySchema>(
+      a: A,
+      b: B,
+      c: C,
+      d: D,
+      e: E,
+      f: F
+    ): AlternativesSchema<InferType<A> | InferType<B> | InferType<C> | InferType<D> | InferType<E> | InferType<F>>;
     try(...types: SchemaLikeWithoutArray[]): this;
   }
 
-  interface LinkSchema<TSchema = any> extends AnySchema<TSchema> {
+  interface LinkSchema<TSchema = any, TFlags extends SchemaFlags = DefaultFlags> extends AnySchema<TSchema, TFlags> {
     /**
      * Same as `any.concat()` but the schema is merged after the link is resolved which allows merging with schemas of the same type as the resolved link.
      * Will throw an exception during validation if the merged types are not compatible.
@@ -2335,7 +2494,11 @@ declare namespace Joi {
 
     /**
      * Generates a schema object that matches an object data type (as well as JSON strings that have been parsed into objects).
+     * When passed a record of Joi schemas, infers the output type automatically.
      */
+    object<TShape extends Record<string, any>>(
+      schema: TShape
+    ): ObjectSchema<InferObjectOutput<TShape>, DefaultFlags, TShape>;
     // tslint:disable-next-line:no-unnecessary-generics
     object<TSchema = any, isStrict = false, T = TSchema>(
       schema?: SchemaMap<T, isStrict>
@@ -2462,6 +2625,13 @@ declare namespace Joi {
      * @param schema - the schema object.
      * @param message - optional message string prefix added in front of the error message. may also be an Error object.
      */
+    assert<TSchema extends AnySchema>(value: unknown, schema: TSchema, options?: ValidationOptions): asserts value is InferType<TSchema>;
+    assert<TSchema extends AnySchema>(
+      value: unknown,
+      schema: TSchema,
+      message: string | Error,
+      options?: ValidationOptions
+    ): asserts value is InferType<TSchema>;
     assert(value: any, schema: Schema, options?: ValidationOptions): void;
     assert(
       value: any,
@@ -2494,6 +2664,7 @@ declare namespace Joi {
     /**
      * Converts literal schema definition to joi schema object (or returns the same back if already a joi schema object).
      */
+    compile<T extends AnySchema>(schema: T, options?: CompileOptions): T;
     compile(schema: SchemaLike, options?: CompileOptions): Schema;
 
     /**
@@ -2527,7 +2698,7 @@ declare namespace Joi {
     /**
      * Creates a new Joi instance customized with the extension(s) you provide included.
      */
-    extend(...extensions: Array<Extension | ExtensionFactory>): any;
+    extend<TExtension = {}>(...extensions: Array<Extension | ExtensionFactory>): Root & TExtension;
 
     /**
      * Creates a reference that when resolved, is used as an array of values to match against the rule.
@@ -2596,50 +2767,50 @@ declare namespace Joi {
     /**
      * Whitelists a value
      */
-    allow(...values: any[]): Schema;
+    allow(...values: any[]): AnySchema;
 
     /**
      * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
      */
-    valid(...values: any[]): Schema;
-    equal(...values: any[]): Schema;
+    valid<V>(...values: V[]): AnySchema<V>;
+    equal<V>(...values: V[]): AnySchema<V>;
 
     /**
      * Blacklists a value
      */
-    invalid(...values: any[]): Schema;
-    disallow(...values: any[]): Schema;
-    not(...values: any[]): Schema;
+    invalid(...values: any[]): AnySchema;
+    disallow(...values: any[]): AnySchema;
+    not(...values: any[]): AnySchema;
 
     /**
      * Marks a key as required which will not allow undefined as value. All keys are optional by default.
      */
-    required(): Schema;
+    required(): AnySchema<any, SetPresence<DefaultFlags, 'required'>>;
 
     /**
      * Alias of `required`.
      */
-    exist(): Schema;
+    exist(): AnySchema<any, SetPresence<DefaultFlags, 'required'>>;
 
     /**
      * Marks a key as optional which will allow undefined as values. Used to annotate the schema for readability as all keys are optional by default.
      */
-    optional(): Schema;
+    optional(): AnySchema;
 
     /**
      * Marks a key as forbidden which will not allow any value except undefined. Used to explicitly forbid keys.
      */
-    forbidden(): Schema;
+    forbidden(): AnySchema<never, SetStripped<DefaultFlags, true>>;
 
     /**
      * Overrides the global validate() options for the current key and any sub-key.
      */
-    preferences(options: ValidationOptions): Schema;
+    preferences(options: ValidationOptions): AnySchema;
 
     /**
      * Overrides the global validate() options for the current key and any sub-key.
      */
-    prefs(options: ValidationOptions): Schema;
+    prefs(options: ValidationOptions): AnySchema;
 
     /**
      * Converts the type into an alternatives type where the conditions are merged into the type definition where:
