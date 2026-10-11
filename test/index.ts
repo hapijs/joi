@@ -1493,3 +1493,52 @@ expect.error(Joi.string('x'));
     expect.type<Record<string, unknown>>(output);
   }
 }
+
+// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
+// Test user-extensible schema registry (CustomSchemaMap)
+
+declare class Instant {
+  private readonly __instant: true;
+  static now(): Instant;
+}
+
+interface MyInstantSchema extends Joi.AnySchema<Instant> {
+  instant(): this;
+}
+
+declare module '..' {
+  interface CustomSchemaMap {
+    Instant: { type: Instant; schema: MyInstantSchema };
+  }
+}
+
+const myInstant = (() => null) as unknown as () => MyInstantSchema;
+
+interface TemporalEvent {
+  name: string;
+  at: Instant;
+}
+
+const temporalEventSchema = Joi.object<TemporalEvent, true>({
+  name: Joi.string().required(),
+  at: myInstant(),
+});
+expect.type<Joi.ObjectSchema<TemporalEvent>>(temporalEventSchema);
+
+// Without the registry entry, a non-built-in type would resolve to `never` and
+// reject any schema; the augmentation above is what makes the call above compile.
+// Conversely, passing a wrong schema type for the registered value must error.
+expect.error(
+  Joi.object<TemporalEvent, true>({
+    name: Joi.string().required(),
+    at: Joi.string(),
+  })
+);
+
+// Optional + nullable variants should still match the registered schema.
+interface MaybeTemporalEvent {
+  at?: Instant | null;
+}
+Joi.object<MaybeTemporalEvent, true>({
+  at: myInstant(),
+});
