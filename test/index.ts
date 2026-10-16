@@ -1188,6 +1188,27 @@ description = schema.describe();
 
 const Joi2 = Joi.extend({ type: 'test1', base: schema });
 
+Joi.extend((joi) => ({
+  type: 'number',
+  base: joi.number(),
+  prepare(value, helpers) {
+    return { value };
+  },
+}));
+
+Joi.extend((joi) => ({
+  type: 'number',
+  base: joi.number(),
+  prepare: {
+    undefined: true,
+    method(value, helpers) {
+      return { value };
+    },
+  },
+}));
+
+expect.error(Joi.extend((joi) => ({ type: 'number', base: joi.number(), prepare: { undefined: true } })));
+
 const Joi3 = Joi.extend({
   type: 'string',
   base: Joi.string(),
