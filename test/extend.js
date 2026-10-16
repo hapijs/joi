@@ -1548,6 +1548,100 @@ describe('extension', () => {
         expect(custom.number().validate(0)).to.equal({ value: undefined });
     });
 
+    it('extends any to prepare undefined values', () => {
+
+        const source = { a: '1' };
+        const custom = Joi.extend({
+            type: /^.*$/,
+            prepare: {
+                undefined: true,
+                method(value, { schema }) {
+
+                    const key = schema.$_getFlag('source');
+                    if (value === undefined &&
+                        key !== undefined &&
+                        source[key] !== undefined) {
+
+                        return { value: source[key] };
+                    }
+                }
+            },
+            rules: {
+                source: {
+                    method(key) {
+
+                        return this.$_setFlag('source', key);
+                    }
+                }
+            }
+        });
+
+        const schema = custom.object({
+            a: custom.number().source('a').default(2),
+            b: custom.number().source('b').default(3),
+            c: custom.string().source('c').required()
+        });
+
+        expect(schema.validate({}).error).to.be.an.error('"c" is required');
+        expect(schema.validate({ a: 4, c: 'x' })).to.equal({ value: { a: 4, b: 3, c: 'x' } });
+        expect(schema.validate({}, { convert: false }).error).to.be.an.error('"c" is required');
+        expect(custom.number().source('a').validate(undefined)).to.equal({ value: 1 });
+    });
+
+    it('extends any with an explicit prepare object', () => {
+
+        const custom = Joi.extend((joi) => ({
+            type: 'number',
+            base: joi.number(),
+            prepare: {
+                method(value) {
+
+                    return { value: value.replace(',', '.') };
+                }
+            }
+        }));
+
+        expect(custom.number().validate('2,0')).to.equal({ value: 2.0 });
+        expect(custom.number().validate(undefined)).to.equal({ value: undefined });
+    });
+
+    it('chains prepare methods that accept undefined with those that don\'t', () => {
+
+        const supply = (joi) => ({
+            type: 'number',
+            base: joi.number(),
+            prepare: {
+                undefined: true,
+                method(value) {
+
+                    if (value === undefined) {
+                        return { value: '1,5' };
+                    }
+                }
+            }
+        });
+
+        const comma = (joi) => ({
+            type: 'number',
+            base: joi.number(),
+            prepare(value) {
+
+                if (typeof value === 'string') {
+                    return { value: value.replace(',', '.') };
+                }
+            }
+        });
+
+        // Later extensions prepare first, comma is skipped on undefined and runs before supply
+        const supplyFirst = Joi.extend(supply, comma);
+        expect(supplyFirst.number().validate(undefined).error).to.be.an.error('"value" must be a number');
+        expect(supplyFirst.number().validate('2,5')).to.equal({ value: 2.5 });
+
+        const commaFirst = Joi.extend(comma, supply);
+        expect(commaFirst.number().validate(undefined)).to.equal({ value: 1.5 });
+        expect(commaFirst.number().validate('2,5')).to.equal({ value: 2.5 });
+    });
+
     it('extends object to support string coerce', () => {
 
         const custom = Joi.extend({

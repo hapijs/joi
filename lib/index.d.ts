@@ -2222,6 +2222,13 @@ declare namespace Joi {
     from?: string | string[];
   }
 
+  type PrepareFunction = (value: any, helpers: CustomHelpers) => any;
+
+  interface PrepareObject {
+    method: PrepareFunction;
+    undefined?: boolean;
+  }
+
   interface ExtensionFlag {
     setter?: string;
     default?: any;
@@ -2252,7 +2259,7 @@ declare namespace Joi {
     messages?: LanguageMessages | string;
     modifiers?: Record<string, (rule: any, enabled?: boolean) => any>;
     overrides?: Record<string, (value: any) => Schema>;
-    prepare?(value: any, helpers: CustomHelpers): any;
+    prepare?: PrepareFunction | PrepareObject;
     rebuild?(schema: ExtensionBoundSchema): void;
     rules?: Record<string, ExtensionRule & ThisType<SchemaInternals>>;
     terms?: Record<string, ExtensionTerm>;
