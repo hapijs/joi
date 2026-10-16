@@ -310,6 +310,58 @@ describe('object', () => {
         ]);
     });
 
+    it('does not break objects that carry internal state', () => {
+
+        // The value is cloned before keys are applied. Object.assign() only
+        // copies own enumerable properties, so anything with internal slots
+        // used to come back with the right prototype and no state at all.
+        const schema = Joi.object({ unused: Joi.any() });
+
+        const date = new Date(0);
+        expect(schema.validate(date).value.getTime()).to.equal(0);
+
+        const map = new Map([['a', 1]]);
+        expect(schema.validate(map).value.get('a')).to.equal(1);
+
+        const set = new Set([1]);
+        expect(schema.validate(set).value.has(1)).to.be.true();
+
+        const regex = /ab/g;
+        expect(schema.validate(regex).value.test('ab')).to.be.true();
+
+        const buffer = Buffer.from('hi');
+        expect(schema.validate(buffer).value.toString()).to.equal('hi');
+
+        // Plain objects, arrays and class instances keep taking the fast path.
+        expect(schema.validate({ a: 1 }).value).to.equal({ a: 1 });
+        expect(schema.validate([1, 2]).value).to.equal([1, 2]);
+
+        const Point = class {
+            constructor() {
+
+                this.x = 1;
+            }
+
+            get double() {
+
+                return this.x * 2;
+            }
+        };
+
+        expect(schema.validate(new Point()).value.double).to.equal(2);
+    });
+
+    it('does not mutate an object that carries internal state', () => {
+
+        const schema = Joi.object({ unused: Joi.any() });
+        const date = new Date(0);
+        date.extra = 'kept';
+
+        const { value } = schema.validate(date, { stripUnknown: true });
+        expect(date.extra).to.equal('kept');
+        expect(value.getTime()).to.equal(0);
+    });
+
     it('validates constructor when type is set', () => {
 
         const schema = Joi.object().instance(RegExp);
