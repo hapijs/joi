@@ -376,6 +376,7 @@ describe('Manifest', () => {
 
             internals.test([
                 Joi.string().example('text').tag('a').note('ok then').meta(123),
+                Joi.object({ type: Joi.string() }).example({ type: 'some-type' }),
                 Joi.binary().external((v) => v, 'custom'),
                 Joi.number().alter({ x: (s) => s.min(1) })
             ]);
