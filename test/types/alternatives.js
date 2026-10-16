@@ -1599,6 +1599,116 @@ describe('alternatives', () => {
             ]);
         });
 
+        it('reports one when exclusive object alternatives all apply', () => {
+
+            const shared = Joi.object({
+                x: Joi.string(),
+                y: Joi.string().optional()
+            });
+
+            const schema = Joi.alternatives()
+                .try(
+                    Joi.object({ a: Joi.string().email() }).concat(shared),
+                    Joi.object({ b: Joi.string() }).concat(shared)
+                )
+                .match('one');
+
+            Helper.validate(schema, [
+                [{ a: 'a@example.com', x: 'x' }, true, { a: 'a@example.com', x: 'x' }],
+                [{ b: 'b-value', x: 'x' }, true, { b: 'b-value', x: 'x' }],
+                [{ a: 'a@example.com', b: 'b-value', x: 'x' }, false, {
+                    message: '"value" matches more than one allowed type',
+                    path: [],
+                    type: 'alternatives.one',
+                    context: {
+                        label: 'value',
+                        value: { a: 'a@example.com', b: 'b-value', x: 'x' }
+                    }
+                }],
+                [{ x: 'x' }, false, {
+                    message: '"value" matches more than one allowed type',
+                    path: [],
+                    type: 'alternatives.one',
+                    context: {
+                        label: 'value',
+                        value: { x: 'x' }
+                    }
+                }],
+                [null, false, '"value" does not match any of the allowed types'],
+                [[], false, '"value" does not match any of the allowed types'],
+                [{ a: 'a@example.com', b: 'b-value', x: 'x', z: 'z' }, false, '"value" does not match any of the allowed types'],
+                [{ a: 'not-an-email', b: 'b-value', x: 'x' }, false, '"value" does not match any of the allowed types'],
+                [{ a: 'not-an-email' }, false, '"value" does not match any of the allowed types']
+            ]);
+        });
+
+        it('reports one for exclusive required object alternatives from #3058', () => {
+
+            const shared = Joi.object({
+                x: Joi.string().min(1).max(30).label('X'),
+                y: Joi.string().optional().min(1).max(60).label('Y')
+            });
+
+            const schema = Joi.alternatives()
+                .match('one')
+                .try(
+                    Joi.object({ a: Joi.string().email().label('A') }).concat(shared),
+                    Joi.object({ b: Joi.string().label('B') }).concat(shared)
+                )
+                .label('AB.XY');
+
+            Helper.validate(schema, [
+                [{ a: 'a@example.com', b: 'b-value', x: 'x-value' }, false, {
+                    message: '"AB.XY" matches more than one allowed type',
+                    path: [],
+                    type: 'alternatives.one',
+                    context: {
+                        label: 'AB.XY',
+                        value: { a: 'a@example.com', b: 'b-value', x: 'x-value' }
+                    }
+                }],
+                [{ a: 'a@example.com', x: 'x-value' }, true, { a: 'a@example.com', x: 'x-value' }],
+                [{ b: 'b-value', x: 'x-value' }, true, { b: 'b-value', x: 'x-value' }]
+            ]);
+        });
+
+        it('does not treat non-object alternatives as exclusive object overlap', () => {
+
+            const schema = Joi.alternatives()
+                .try(
+                    Joi.string(),
+                    Joi.object({ a: Joi.string() })
+                )
+                .match('one');
+
+            Helper.validate(schema, [
+                [{ z: 1 }, false, '"value" does not match any of the allowed types']
+            ]);
+        });
+
+        it('does not report one when exclusive keys hide later object failures', () => {
+
+            const schema = Joi.alternatives()
+                .try(
+                    Joi.object({ a: Joi.string(), c: Joi.string() }).and('a', 'c'),
+                    Joi.object({ b: Joi.string(), d: Joi.string() }).and('b', 'd')
+                )
+                .match('one');
+
+            Helper.validate(schema, [
+                [{ a: 'x', b: 'y' }, false, '"value" does not match any of the allowed types'],
+                [{ a: 'x', b: 'y', c: 'z', d: 'w' }, false, {
+                    message: '"value" matches more than one allowed type',
+                    path: [],
+                    type: 'alternatives.one',
+                    context: {
+                        label: 'value',
+                        value: { a: 'x', b: 'y', c: 'z', d: 'w' }
+                    }
+                }]
+            ]);
+        });
+
         it('matches all', () => {
 
             const schema = Joi.alternatives([
