@@ -14,12 +14,7 @@ internals.ajvOptions = {
     strict: true,
     allowUnionTypes: true,
     formats: {
-        banana: true,
-        base64: true,
-        'data-uri': true,
-        hex: true,
-        ip: true,
-        token: true
+        banana: true
     },
     keywords: ['x-constraint', 'foo'],
     strictTuples: true
