@@ -926,7 +926,7 @@ declare namespace Joi {
     /**
      * Adds a rule to current validation schema.
      */
-    $_addRule(rule: string | AddRuleOptions): Schema;
+    $_addRule(rule: string | AddRuleOptions): this;
 
     /**
      * Internally compiles schema.
@@ -962,7 +962,7 @@ declare namespace Joi {
      */
     $_match(value: any, state: State, prefs: ValidationOptions): boolean;
 
-    $_modify(options?: ModifyOptions): Schema;
+    $_modify(options?: ModifyOptions): this;
 
     /**
      * Resets current schema.
@@ -989,7 +989,7 @@ declare namespace Joi {
     /**
      * Set flag to given value.
      */
-    $_setFlag(flag: string, value: any, options?: SetFlagOptions): void;
+    $_setFlag(flag: string, value: any, options?: SetFlagOptions): this;
 
     /**
      * Runs internal validations against given value.
