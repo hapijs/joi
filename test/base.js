@@ -2084,16 +2084,21 @@ describe('any', () => {
             Helper.validate(schema, [[{ a: 1 }, false, '"a" angustus']]);
         });
 
-        it('does not pollute the prototype with a language named __proto__', () => {
+        it('rejects a language named __proto__', () => {
+
+            // Object.prototype stays clean, but the assignment replaces the compiled messages object's own
+            // prototype with the language, so its codes resolve through inheritance
+
+            const messages = JSON.parse('{"__proto__":{"number.min":"pwned","hasOwnProperty":"y"}}');
 
             try {
-                Joi.any().messages({ ['__proto__']: { isAdmin: 'true' } });
-                Joi.any().prefs({ messages: { ['__proto__']: { isAdmin: 'true' } } });
-
-                expect({}.isAdmin).to.not.exist();
+                expect(() => Joi.number().min(10).messages(messages)).to.throw('Cannot use __proto__ as a language');
+                expect(() => Joi.number().min(10).prefs({ messages })).to.throw('Cannot use __proto__ as a language');
+                expect(() => Joi.number().min(10).validate(1, { messages })).to.throw('Cannot use __proto__ as a language');
+                expect({}['number.min']).to.not.exist();
             }
             finally {
-                delete Object.prototype.isAdmin;
+                delete Object.prototype['number.min'];
             }
         });
 
