@@ -1558,6 +1558,37 @@ describe('string', () => {
             ]);
         });
 
+        it('validates email with multiple in linear time on long whitespace runs', () => {
+
+            const spaces = ' '.repeat(100000);
+            const mixed = `joe@example.com${spaces}joe@example.org`;
+
+            // With ', ' as separator, the space is a separator too
+            const tests = [
+                [{}, spaces, [spaces]],
+                [{}, mixed, [mixed]],
+                [{ separator: ';' }, spaces, [spaces]],
+                [{ separator: ';' }, mixed, [mixed]],
+                [{ separator: ', ' }, spaces, ['', '']],
+                [{ separator: ', ' }, mixed, null]
+            ];
+
+            for (const [options, value, invalids] of tests) {
+                const schema = Joi.string().email({ multiple: true, ...options });
+                const start = Date.now();
+                const { error } = schema.validate(value);
+                expect(Date.now() - start).to.be.below(100);
+
+                if (invalids) {
+                    expect(error.details[0].type).to.equal('string.email');
+                    expect(error.details[0].context.invalids).to.equal(invalids);
+                }
+                else {
+                    expect(error).to.not.exist();
+                }
+            }
+        });
+
         it('validates email', () => {
 
             const schema = { item: Joi.string().email() };
