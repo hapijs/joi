@@ -3099,6 +3099,29 @@ describe('object', () => {
                 expect(value2.isAdmin).to.not.exist();
             });
 
+            it('renames to a key named like an Object.prototype member', () => {
+
+                const schema = Joi.object().rename('a', 'toString').unknown();
+                expect(schema.validate({ a: 1 })).to.equal({ value: { toString: 1 } });
+            });
+
+            it('does not override a key named like an Object.prototype member', () => {
+
+                const schema = Joi.object().rename('a', 'constructor', { multiple: true }).unknown();
+                const { error } = schema.validate({ a: 'attacker', constructor: 'original' });
+                expect(error).to.be.an.error('"value" cannot rename "a" because override is disabled and target "constructor" exists');
+            });
+
+            it('does not override a key named like an Object.prototype member using a template', () => {
+
+                const schema = Joi.object()
+                    .rename(/^k_(.*)$/, Joi.expression('{#1}'), { multiple: true })
+                    .unknown();
+
+                const { error } = schema.validate({ k_hasOwnProperty: 'pwn', hasOwnProperty: 'original' });
+                expect(error).to.be.an.error('"value" cannot rename "k_hasOwnProperty" because override is disabled and target "hasOwnProperty" exists');
+            });
+
             it('uses template', () => {
 
                 const schema = Joi.object()
