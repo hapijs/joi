@@ -566,21 +566,17 @@ describe('extension', () => {
         expect(special.validate(1).error).to.be.an.error('shit happens');
     });
 
-    it('does not pollute the prototype with a language named __proto__', () => {
+    it('rejects a language named __proto__', () => {
+
+        const messages = JSON.parse('{"__proto__":{"string.base":"pwned"}}');
+        const extend = () => Joi.extend({ type: 'special', base: Joi.string(), messages });
 
         try {
-            Joi.extend({
-                type: 'special',
-                base: Joi.string(),
-                messages: {
-                    ['__proto__']: { isAdmin: 'true' }
-                }
-            });
-
-            expect({}.isAdmin).to.not.exist();
+            expect(extend).to.throw('Cannot use __proto__ as a language');
+            expect({}['string.base']).to.not.exist();
         }
         finally {
-            delete Object.prototype.isAdmin;
+            delete Object.prototype['string.base'];
         }
     });
 
