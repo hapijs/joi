@@ -1394,6 +1394,34 @@ describe('any', () => {
             }]);
         });
 
+        it('does not share the custom error object across validations', () => {
+
+            const custom = new Error('Really wanted a number!');
+            custom.data = { my: 'data' };
+
+            const schema = Joi.number().error(custom);
+
+            const first = schema.validate('x').error;
+            const second = schema.validate('x').error;
+
+            // Each validation must hand out its own error object, not the object
+            // the schema was configured with. `.shallow` is required because the
+            // default assertion compares Errors deeply, and the copies are equal
+            // in shape by design.
+            expect(first).to.not.shallow.equal(custom);
+            expect(second).to.not.shallow.equal(custom);
+            expect(first).to.not.shallow.equal(second);
+            expect(first.message).to.equal('Really wanted a number!');
+            expect(second.message).to.equal('Really wanted a number!');
+
+            // Reproduces hapi's behaviour: it annotates the error it receives.
+            first.data.annotation = 'added by consumer';
+
+            expect(first.data.annotation).to.equal('added by consumer');
+            expect(custom.data).to.equal({ my: 'data' });
+            expect(second.data).to.equal({ my: 'data' });
+        });
+
         it('errors on invalid error option', () => {
 
             expect(() => {
