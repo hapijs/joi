@@ -1511,6 +1511,45 @@ describe('object', () => {
             }]]);
         });
 
+        it('treats keys named like Object.prototype members as missing when not set', () => {
+
+            const schema = Joi.object({
+                constructor: Joi.string(),
+                toString: Joi.number().default(1),
+                valueOf: Joi.forbidden(),
+                hasOwnProperty: Joi.any()
+            });
+
+            expect(schema.validate({})).to.equal({ value: { toString: 1 } });
+            expect(schema.validate({ constructor: 'x', toString: 2 })).to.equal({ value: { constructor: 'x', toString: 2 } });
+            expect(schema.validate({ constructor: 1 }).error).to.be.an.error('"constructor" must be a string');
+            expect(schema.validate({ valueOf: 1 }).error).to.be.an.error('"valueOf" is not allowed');
+
+            expect(Joi.object({ constructor: Joi.any().required() }).validate({}).error).to.be.an.error('"constructor" is required');
+            expect(Joi.object({ ['__proto__']: Joi.any().required() }).validate({}).error).to.be.an.error('"__proto__" is required');
+            expect(Joi.function().keys({ call: Joi.any().required() }).validate(() => { }).error).to.be.an.error('"call" is required');
+        });
+
+        it('keeps other inherited properties', () => {
+
+            class Person {
+                toString() {
+
+                    return 'person';
+                }
+            }
+
+            const schema = Joi.object({
+                name: Joi.string().required(),
+                toString: Joi.function().required(),
+                constructor: Joi.function().required()
+            });
+
+            expect(schema.validate(new Person()).error).to.be.an.error('"name" is required');
+            expect(schema.validate(Object.assign(Object.create(new Person()), {})).error).to.be.an.error('"name" is required');
+            expect(schema.validate(Object.create(Object.assign(new Person(), { name: 'x' }))).error).to.not.exist();
+        });
+
         it('adds to existing keys', () => {
 
             const a = Joi.object({ a: 1 });
