@@ -1694,9 +1694,10 @@ Requires the array values to be unique where:
 
 Note: remember that if you provide a custom comparator function, different types can be passed as parameter depending on the rules you set on items.
 
-Be aware that a deep equality is performed on elements of the array having a type of `object` or
-`function`, comparing every element against all the previous ones. This is quadratic in the number
-of elements, so when validating untrusted input, bound the array size with
+Be aware that a custom `comparator` function compares every element against all the previous ones,
+and so does the default deep equality for elements that are not plain objects, arrays, dates or
+buffers (e.g. maps, sets or class instances). This is quadratic in the number of elements, so when
+validating untrusted input with those, bound the array size with
 [`array.max()`](#arraymaxlimit) and declare it **before** `unique()`, otherwise the comparisons run
 before the length is ever checked.
 
