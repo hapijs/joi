@@ -1611,6 +1611,39 @@ describe('any', () => {
 
             expect(() => Joi.any().example()).to.throw('Missing example');
         });
+
+        it('rebuilds object examples that contain a type property', () => {
+
+            const schema = Joi.object({
+                type: Joi.string()
+            }).example({
+                type: 'some-type'
+            });
+
+            Helper.equal(Joi.build(schema.describe()), schema);
+
+            const fromSpec = Joi.build({
+                type: 'object',
+                examples: [{ type: 'some-type' }],
+                keys: { type: { type: 'string' } }
+            });
+
+            Helper.equal(fromSpec, schema);
+            expect(fromSpec.describe().examples).to.equal([{ type: 'some-type' }]);
+        });
+
+        it('rebuilds special example values', () => {
+
+            const values = [Buffer.from('abc'), /abc/i, Joi.ref('a')];
+            const checks = [Buffer.isBuffer, (value) => value instanceof RegExp, Joi.isRef];
+
+            for (let i = 0; i < values.length; ++i) {
+                const schema = Joi.any().example(values[i]);
+                const rebuilt = Joi.build(schema.describe());
+                expect(checks[i](rebuilt.$_terms.examples[0])).to.be.true();
+                Helper.equal(rebuilt, schema);
+            }
+        });
     });
 
     describe('exist()', () => {
