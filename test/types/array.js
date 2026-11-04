@@ -2553,6 +2553,60 @@ describe('array', () => {
                 [[{ 'a.b': 1 }, { 'a.b': 2 }], true]
             ]);
         });
+
+        it('validates large arrays of distinct objects in linear time', () => {
+
+            const n = 10000;
+            const cases = [
+                [Joi.array().unique(), (i) => ({ id: i })],
+                [Joi.array().unique(), (i) => [i]],
+                [Joi.array().unique(), (i) => ({ a: { b: [{ id: i }] } })],
+                [Joi.array().unique('a'), (i) => ({ a: { id: i } })],
+                [Joi.array().items(Joi.date()).unique(), (i) => new Date(i).toISOString()],
+                [Joi.array().items(Joi.object({ at: Joi.date() })).unique(), (i) => ({ at: new Date(i).toISOString() })],
+                [Joi.array().items(Joi.binary()).unique(), (i) => String(i)]
+            ];
+
+            for (const [schema, generate] of cases) {
+                const value = Array.from({ length: n }, (_, i) => generate(i));
+                const start = Date.now();
+                expect(schema.validate(value).error).to.not.exist();
+                expect(Date.now() - start).to.be.below(500);
+
+                value.push(generate(n - 1));
+                expect(schema.validate(value).error).to.be.an.error('"[10000]" contains a duplicate value');
+            }
+        });
+
+        it('detects deeply equal objects regardless of their shape', () => {
+
+            const date = new Date(0);
+            const cyclic1 = { a: 1 };
+            cyclic1.self = cyclic1;
+            const cyclic2 = { a: 1 };
+            cyclic2.self = { a: 1, self: cyclic2 };
+            const nullProto = Object.assign(Object.create(null), { a: 1 });
+            const schema = Joi.array().unique();
+
+            Helper.validate(schema, [
+                [[{ a: 1, b: 2 }, { b: 2, a: 1 }], false, '"[1]" contains a duplicate value'],
+                [[{ a: new Date(0) }, { a: date }], false, '"[1]" contains a duplicate value'],
+                [[{ a: new Date(0) }, { a: new Date(1) }], true],
+                [[{ a: 'x,y' }, { a: 'x', y: undefined }], true],
+                [[{ a: 0 }, { a: '0' }], true],
+                [[[1, [2]], [1, [2]]], false, '"[1]" contains a duplicate value'],
+                [[cyclic1, cyclic2], false, '"[1]" contains a duplicate value'],
+                [[nullProto, { a: 1 }], true],
+                [[nullProto, Object.assign(Object.create(null), { a: 1 })], false, '"[1]" contains a duplicate value'],
+                [[null, null], false, '"[1]" contains a duplicate value'],
+                [[new Map([[1, { a: 1 }]]), new Map([[1, { a: 1 }]])], false, '"[1]" contains a duplicate value'],
+                [[new Set([1]), new Set([2])], true],
+                [[{ a: true, b: undefined }, { a: true, b: undefined }], false, '"[1]" contains a duplicate value'],
+                [[{ a: true }, { a: false }], true],
+                [[{ a: 1n }, { a: 1n }], false, '"[1]" contains a duplicate value'],
+                [[{ a: 1n }, { a: 2n }], true]
+            ]);
+        });
     });
 
     describe('validate()', () => {
