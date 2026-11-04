@@ -2550,6 +2550,20 @@ describe('object', () => {
             Helper.validate(schema, [[{ a1: undefined, a2: null, a3: 'test' }, true, { a1: undefined, a2: undefined, a3: 'test' }]]);
         });
 
+        it('strips keys matched by a pattern', () => {
+
+            const schema = Joi.object().pattern(/^x/, Joi.string().strip()).unknown();
+            Helper.validate(schema, [[{ xa: 'test', b: 'test' }, true, { b: 'test' }]]);
+        });
+
+        it('keeps the original value of an errored key matched by a stripping pattern', () => {
+
+            const schema = Joi.object().pattern(/^x/, Joi.string().strip()).unknown();
+            const { error, value } = schema.validate({ xa: 5, b: 'test' }, { abortEarly: false });
+            expect(error).to.be.an.error('"xa" must be a string');
+            expect(value).to.equal({ xa: 5, b: 'test' });
+        });
+
         it('compiles if pattern is not regex or schema', () => {
 
             const schema = Joi.object().pattern('x', Joi.boolean());
