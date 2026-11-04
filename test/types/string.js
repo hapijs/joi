@@ -5787,6 +5787,14 @@ describe('string', () => {
 
     describe('isoDuration()', () => {
 
+        it('rejects malformed fractional seconds', () => {
+
+            const schema = Joi.string().isoDuration();
+            for (const value of ['PT.5S', 'PT,5S', 'PT5.S', 'PT5,S', 'PT5.1.2S', 'PT5,1,2S', 'PT5.1S2M']) {
+                expect(schema.validate(value).error).to.be.an.error();
+            }
+        });
+
         it('validates isoDuration', () => {
 
             Helper.validate(Joi.string().isoDuration(), [
@@ -5799,6 +5807,10 @@ describe('string', () => {
                 ['P6M4DT12H30M5S', true],
                 ['PT10H20M5S', true],
                 ['PT40S', true],
+                ['PT4.4S', true],
+                ['PT4,4S', true],
+                ['PT0.001S', true],
+                ['P3Y6M4DT12H30M5.125S', true],
                 ['PT0S', true],
                 ['P0D', true],
                 ['P30S', false, {
