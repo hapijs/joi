@@ -4764,6 +4764,8 @@ describe('string', () => {
                     context: { value: '-', label: 'value' }
                 }],
                 ['2387628', false, '"value" must be a valid hostname'],
+                ['v1.$(id)', false, '"value" must be a valid hostname'],
+                ['v0.a;b&c', false, '"value" must be a valid hostname'],
                 ['01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789', false, {
                     message: '"value" must be a valid hostname',
                     path: [],
