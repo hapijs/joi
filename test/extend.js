@@ -1776,4 +1776,52 @@ describe('extension', () => {
 
         expect(() => Joi.extend({ type: 'x' })).to.throw('Cannot override name x');
     });
+
+    it('auto-generates rule method with args when method is omitted', () => {
+
+        const custom = Joi.extend({
+            type: 'divisible',
+            base: Joi.number(),
+            messages: {
+                'divisible.by': '{{#label}} must be divisible by {{#q}}'
+            },
+            rules: {
+                by: {
+                    args: [
+                        {
+                            name: 'q',
+                            ref: true,
+                            assert: (value) => typeof value === 'number' && !isNaN(value),
+                            message: 'must be a number'
+                        },
+                        {
+                            name: 'rem',
+                            assert: (value) => typeof value === 'number' && !isNaN(value),
+                            message: 'must be a number'
+                        }
+                    ],
+                    validate(value, helpers, args, options) {
+
+                        const rem = args.rem || 0;
+                        if (value % args.q === rem) {
+                            return value;
+                        }
+
+                        return helpers.error('divisible.by', { q: args.q });
+                    }
+                }
+            }
+        });
+
+        const schema = custom.object({
+            a: custom.divisible().by(Joi.ref('b')),
+            b: custom.number(),
+            c: custom.divisible().by(5, 1)
+        });
+
+        expect(schema.validate({ a: 15, b: 3 }).value).to.equal({ a: 15, b: 3 });
+        expect(schema.validate({ a: 16, b: 3 }).error.message).to.equal('"a" must be divisible by 3');
+        expect(schema.validate({ a: 15, b: 3, c: 11 }).value).to.equal({ a: 15, b: 3, c: 11 });
+        expect(schema.validate({ a: 15, b: 3, c: 10 }).error.message).to.equal('"c" must be divisible by 5');
+    });
 });
