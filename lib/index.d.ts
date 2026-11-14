@@ -718,6 +718,11 @@ declare namespace Joi {
     details: ValidationErrorItem[];
 
     /**
+     * warnings generated before an asynchronous validation failure.
+     */
+    warning?: ValidationWarning;
+
+    /**
      * function that returns a string with an annotated version of the object pointing at the places where errors occurred.
      *
      * NOTE: This method does not exist in browser builds of Joi

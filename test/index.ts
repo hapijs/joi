@@ -181,6 +181,7 @@ stringRegexOpts = { invert: bool };
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
 const validErr = new Joi.ValidationError('message', [], 'original');
+expect.type<Joi.ValidationWarning | undefined>(validErr.warning);
 let validErrItem: Joi.ValidationErrorItem;
 let validErrFunc: Joi.ValidationErrorFunction;
 
