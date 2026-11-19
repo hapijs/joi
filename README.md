@@ -9,7 +9,7 @@
 
 ## Useful resources
 
-- [Documentation and API](https://joi.dev/api/)
-- [Versions status](https://joi.dev/resources/status/#joi)
+- [Documentation and API](https://joi.dev/api/18.x.x)
+- [Versions status](https://joi.dev/resources/status)
 - [Changelog](https://joi.dev/resources/changelog/)
-- [Project policies](https://joi.dev/policies/)
+- [Project policies](https://joi.dev/policies/coc)
