@@ -334,6 +334,8 @@ anySchema = Joi.any();
   anySchema = anySchema.meta(obj);
   anySchema = anySchema.example(obj);
   anySchema = anySchema.unit(str);
+  anySchema = anySchema.tailor(str);
+  anySchema = anySchema.tailor(strArr);
 
   anySchema = anySchema.preferences(validOpts);
   anySchema = anySchema.strict();
@@ -966,6 +968,8 @@ strSchema = strSchema.dataUri(dataUriOpts);
   strSchema = strSchema.meta(obj);
   strSchema = strSchema.example(obj);
   strSchema = strSchema.unit(str);
+  strSchema = strSchema.tailor(str);
+  strSchema = strSchema.tailor(strArr);
 
   strSchema = strSchema.preferences(validOpts);
   strSchema = strSchema.strict();

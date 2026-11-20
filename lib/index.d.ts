@@ -1334,7 +1334,7 @@ declare namespace Joi {
     /**
      * Applies any assigned target alterations to a copy of the schema that were applied via `any.alter()`.
      */
-    tailor(targets: string | string[]): Schema;
+    tailor(targets: string | string[]): this;
 
     /**
      * Annotates the key with an unit name.
