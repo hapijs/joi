@@ -397,6 +397,48 @@ describe('Joi', () => {
         Helper.validate(Joi.compile({ other: Joi.number() }), [[{ foo: 'bar' }, false, '"foo" is not allowed']]);
     });
 
+    it('local unknown setting always overrides global allowUnknown setting', () => {
+        const input = {
+            a: {
+                b: "h",
+                c: "f"
+            },
+            d: "h"
+        };
+
+        Helper.validate(
+            Joi.object({
+                a: Joi.object().keys({
+                    b: Joi.string()
+                }).unknown(true)
+            }),
+            { allowUnknown: false },
+            [[input, false, '"d" is not allowed']]
+        );
+
+        Helper.validate(
+            Joi.object({
+                a: Joi.object().keys({
+                    b: Joi.string()
+                }).unknown(false)
+            }),
+            { allowUnknown: true },
+            [[input, false, '"a.c" is not allowed']]
+        );
+
+        Helper.validate(
+            Joi.object({
+                a: Joi.object().keys({
+                    b: Joi.string()
+                })
+            }),
+            { allowUnknown: true },
+            [[input, false, '"a.c" is not allowed']]
+        );
+
+    });
+    
+
     it('validates required key with multiple options', () => {
 
         const config = {
