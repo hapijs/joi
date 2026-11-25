@@ -1776,4 +1776,36 @@ describe('extension', () => {
 
         expect(() => Joi.extend({ type: 'x' })).to.throw('Cannot override name x');
     });
+
+    it('allows reusing the same extension object instance', () => {
+
+        const extension = {
+            type: 'foo',
+            base: Joi.string(),
+            rules: {
+                bar: {
+                    args: [
+                        {
+                            name: 'baz',
+                            assert: Joi.string()
+                        }
+                    ],
+                    validate(value, helpers, args, rule) {
+
+                        return value;
+                    }
+                }
+            }
+        };
+
+        const assert = extension.rules.bar.args[0].assert;
+
+        const first = Joi.extend(extension);
+        const second = Joi.extend(extension);
+
+        expect(first.foo().bar('x').validate('y').error).to.not.exist();
+        expect(second.foo().bar('x').validate('y').error).to.not.exist();
+        expect(extension.rules.bar.argsByName).to.not.exist();
+        expect(extension.rules.bar.args[0].assert).to.equal(assert);
+    });
 });
